@@ -197,7 +197,10 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   3. Onboarding communicates what the app does (sleep/journal/privacy) and rejects empty/invalid names.
   4. The empty first-run dashboard presents one clear primary action with sleep-only permission priming before any OS prompt.
 
-**Plans:** Not yet planned
+**Plans:** 3 plans
+- [ ] 10-01-PLAN.md — Native web loader + animated brand-intro splash gate + splash-skip test seam (wave 1)
+- [ ] 10-02-PLAN.md — Patient-first welcome reframe + onboarding expectations & name guard (wave 2)
+- [ ] 10-03-PLAN.md — Guided empty-dashboard first-run (modular, sleep-only priming) (wave 3)
 **UI hint**: yes
 
 ### Phase 11: Insightful Data Displays
