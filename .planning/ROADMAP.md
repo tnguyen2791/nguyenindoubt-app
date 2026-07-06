@@ -178,7 +178,10 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   2. Tappable cards signal it; non-actionable or disabled rows are visually distinct and never silently absorb a tap.
   3. The journal shows an empty state and supports per-entry delete with confirmation.
 
-**Plans:** Not yet planned
+**Plans:** 3 plans
+- [ ] 09-01-PLAN.md — Crisis actions dial/text directly: url_launcher + injectable CrisisLauncher seam, SafetyScreen rewire, graceful web fallback (wave 1)
+- [ ] 09-02-PLAN.md — Affordance truth: clinician invite rows tappable+chevron vs muted/no-ripple inert rows (wave 1)
+- [ ] 09-03-PLAN.md — Journal EmptyState + per-entry delete with confirm, deleteJournalEntry through state + both repositories + Firestore rules test (wave 1)
 **UI hint**: yes
 
 ### Phase 10: Brand Arrival and Guided Onboarding
@@ -263,7 +266,7 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 6. Real Sleep Import Providers | 1/1 | Complete    | 2026-07-06 |
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
-| 9. Safety & Affordance Integrity | 0/0 | Not started | - |
+| 9. Safety & Affordance Integrity | 0/3 | Planned | - |
 | 10. Brand Arrival & Guided Onboarding | 0/0 | Not started | - |
 | 11. Insightful Data Displays | 0/0 | Not started | - |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
