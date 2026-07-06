@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/app_models.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
+import '../theme/tokens.dart';
 import 'common_widgets.dart';
 
 class ClinicianDashboard extends StatelessWidget {
@@ -19,7 +20,7 @@ class ClinicianDashboard extends StatelessWidget {
         final list = _PatientList(state: state);
 
         return ListView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(NidSpace.xl),
           children: [
             const BrandHeader(
               title: 'Clinician dashboard',
@@ -27,22 +28,23 @@ class ClinicianDashboard extends StatelessWidget {
                   'Accepted invites only. Sleep summaries, never journals.',
               trailing: StatusPill(
                 label: 'no messaging',
+                tone: PillTone.neutral,
                 icon: Icons.forum_outlined,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: NidSpace.l),
             if (isWide)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(width: 310, child: list),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: NidSpace.l),
                   Expanded(child: detail),
                 ],
               )
             else ...[
               list,
-              const SizedBox(height: 16),
+              const SizedBox(height: NidSpace.l),
               detail,
             ],
           ],
@@ -73,12 +75,12 @@ class _PatientList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Invite status', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 10),
+        const SizedBox(height: NidSpace.s),
         for (final link in state.clinicianLinkStatuses)
           Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.only(bottom: NidSpace.s),
             child: InkWell(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(NidRadius.card),
               onTap: link.canOpenSleepSummary
                   ? () => state.selectPatient(link.patientUserId)
                   : null,
@@ -92,7 +94,7 @@ class _PatientList extends StatelessWidget {
                         (link.patientDisplayName ?? '?').characters.first,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: NidSpace.m),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +103,7 @@ class _PatientList extends StatelessWidget {
                             link.patientDisplayName ?? 'Unknown patient',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: NidSpace.xs),
                           Text(
                             '${link.inviteCode} - ${_linkStatusLabel(link.status)}',
                           ),
@@ -111,7 +113,10 @@ class _PatientList extends StatelessWidget {
                     if (link.canOpenSleepSummary)
                       const Icon(Icons.chevron_right, color: NidColors.canopy)
                     else
-                      StatusPill(label: _linkStatusLabel(link.status)),
+                      StatusPill(
+                        label: _linkStatusLabel(link.status),
+                        tone: _linkStatusTone(link.status),
+                      ),
                   ],
                 ),
               ),
@@ -128,6 +133,15 @@ String _linkStatusLabel(LinkStatus status) {
     LinkStatus.pending => 'pending',
     LinkStatus.revoked => 'revoked',
     LinkStatus.expired => 'expired',
+  };
+}
+
+PillTone _linkStatusTone(LinkStatus status) {
+  return switch (status) {
+    LinkStatus.accepted => PillTone.good,
+    LinkStatus.pending => PillTone.caution,
+    LinkStatus.revoked => PillTone.flag,
+    LinkStatus.expired => PillTone.caution,
   };
 }
 
@@ -174,13 +188,16 @@ class _PatientDetail extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  const StatusPill(label: 'journal private'),
+                  const StatusPill(
+                    label: 'journal private',
+                    tone: PillTone.private,
+                  ),
                 ],
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: NidSpace.l),
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
+                spacing: NidSpace.m,
+                runSpacing: NidSpace.m,
                 children: [
                   _ClinicianMetric(
                     label: '7-day avg',
@@ -196,12 +213,12 @@ class _PatientDetail extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: NidSpace.l),
               SleepTrendBars(summaries: summaries),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: NidSpace.l),
         SectionCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,7 +227,7 @@ class _PatientDetail extends StatelessWidget {
                 'Clinician visibility',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: NidSpace.s),
               const Text(
                 'Visible: sleep samples, daily summaries, trend flags. Hidden: journal entries, drafts, private reflections.',
               ),
@@ -235,21 +252,20 @@ class _ClinicianMetric extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: NidColors.mint,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(NidRadius.card),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(NidSpace.m),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label.toUpperCase(),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: NidColors.canopy,
-                  fontWeight: FontWeight.w900,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: NidSpace.s),
               Text(value, style: Theme.of(context).textTheme.headlineSmall),
             ],
           ),
