@@ -9,7 +9,8 @@ class NguyenInDoubtState extends ChangeNotifier {
     required this.repository,
     required this.healthDataProvider,
   }) {
-    _currentUser = repository.patientDemo;
+    _session = repository.currentSession;
+    _currentUser = _userForSession(_session);
     refresh();
   }
 
@@ -17,6 +18,7 @@ class NguyenInDoubtState extends ChangeNotifier {
   final HealthDataProvider healthDataProvider;
 
   late AppUser _currentUser;
+  late AppSession _session;
   List<DailySummary> _summaries = [];
   List<JournalEntry> _journalEntries = [];
   List<ResourceCard> _resources = [];
@@ -25,6 +27,8 @@ class NguyenInDoubtState extends ChangeNotifier {
   bool _healthPermissionGranted = false;
   bool _isBusy = false;
 
+  AppSession get session => _session;
+  SessionStage get sessionStage => _session.stage;
   AppUser get currentUser => _currentUser;
   List<DailySummary> get summaries => _summaries;
   List<JournalEntry> get journalEntries => _journalEntries;
@@ -33,33 +37,94 @@ class NguyenInDoubtState extends ChangeNotifier {
   PatientSleepBundle? get selectedPatientBundle => _selectedPatientBundle;
   bool get healthPermissionGranted => _healthPermissionGranted;
   bool get isBusy => _isBusy;
-  bool get isClinician => _currentUser.role == UserRole.clinician;
+  bool get isSignedOut => _session.stage == SessionStage.signedOut;
+  bool get isOnboarding => _session.stage == SessionStage.onboarding;
+  bool get isPatient => _session.stage == SessionStage.patient;
+  bool get isClinician => _session.stage == SessionStage.clinician;
 
   Future<void> refresh() async {
     _resources = await repository.getResourceCards();
     if (isClinician) {
+      _summaries = [];
+      _journalEntries = [];
       _linkedPatients = await repository.getLinkedPatients(_currentUser.id);
       if (_linkedPatients.isNotEmpty) {
         _selectedPatientBundle = await repository.getPatientSleepSummary(
           clinicianId: _currentUser.id,
           patientId: _linkedPatients.first.id,
         );
+      } else {
+        _selectedPatientBundle = null;
       }
+    } else if (isPatient) {
+      _linkedPatients = [];
+      _selectedPatientBundle = null;
+      _summaries = await repository.getDailySummariesForPatient(
+        requesterUserId: _currentUser.id,
+        patientId: _currentUser.id,
+      );
+      _journalEntries = await repository.getJournalEntriesForPatient(
+        requesterUserId: _currentUser.id,
+        patientId: _currentUser.id,
+      );
     } else {
-      _summaries = await repository.getDailySummaries(_currentUser.id);
-      _journalEntries = await repository.getJournalEntries(_currentUser.id);
+      _summaries = [];
+      _journalEntries = [];
+      _linkedPatients = [];
+      _selectedPatientBundle = null;
     }
     notifyListeners();
   }
 
+  Future<void> startPatientOnboarding() async {
+    _session = const AppSession(stage: SessionStage.onboarding);
+    _currentUser = repository.patientDemo;
+    await repository.saveSession(_session);
+    await refresh();
+  }
+
+  Future<void> completePatientOnboarding({required String displayName}) async {
+    final normalizedName = displayName.trim().isEmpty
+        ? repository.patientDemo.displayName
+        : displayName.trim();
+    _currentUser = await repository.updateDemoPatientProfile(
+      displayName: normalizedName,
+    );
+    _session = AppSession(stage: SessionStage.patient, userId: _currentUser.id);
+    await repository.saveSession(_session);
+    await refresh();
+  }
+
   Future<void> continueAsPatient() async {
     _currentUser = repository.patientDemo;
-    _selectedPatientBundle = null;
+    _session = AppSession(stage: SessionStage.patient, userId: _currentUser.id);
+    await repository.saveSession(_session);
     await refresh();
   }
 
   Future<void> continueAsClinician() async {
+    await continueAsClinicianDemo();
+  }
+
+  Future<void> continueAsClinicianDemo() async {
     _currentUser = repository.clinicianDemo;
+    _session = AppSession(
+      stage: SessionStage.clinician,
+      userId: _currentUser.id,
+    );
+    await repository.saveSession(_session);
+    await refresh();
+  }
+
+  Future<void> signOut() async {
+    _session = const AppSession.signedOut();
+    _currentUser = repository.patientDemo;
+    _summaries = [];
+    _journalEntries = [];
+    _linkedPatients = [];
+    _selectedPatientBundle = null;
+    _healthPermissionGranted = false;
+    await repository.saveSession(_session);
     await refresh();
   }
 
@@ -83,11 +148,29 @@ class NguyenInDoubtState extends ChangeNotifier {
       ),
     );
     await repository.saveImportedSleep(
-      userId: currentUser.id,
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
       samples: samples,
     );
     await refresh();
     _setBusy(false);
+  }
+
+  Future<void> resetDemoData() async {
+    _setBusy(true);
+    try {
+      await repository.resetDemoData();
+      _session = const AppSession.signedOut();
+      _currentUser = repository.patientDemo;
+      _summaries = [];
+      _journalEntries = [];
+      _linkedPatients = [];
+      _selectedPatientBundle = null;
+      _healthPermissionGranted = false;
+      await refresh();
+    } finally {
+      _setBusy(false);
+    }
   }
 
   Future<void> addJournalEntry({
@@ -96,7 +179,8 @@ class NguyenInDoubtState extends ChangeNotifier {
     String? moodTag,
   }) async {
     await repository.addJournalEntry(
-      JournalEntry(
+      requesterUserId: currentUser.id,
+      entry: JournalEntry(
         id: 'journal-${DateTime.now().microsecondsSinceEpoch}',
         userId: currentUser.id,
         title: title,
@@ -105,7 +189,10 @@ class NguyenInDoubtState extends ChangeNotifier {
         createdAt: DateTime.now(),
       ),
     );
-    _journalEntries = await repository.getJournalEntries(currentUser.id);
+    _journalEntries = await repository.getJournalEntriesForPatient(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+    );
     notifyListeners();
   }
 
@@ -120,5 +207,13 @@ class NguyenInDoubtState extends ChangeNotifier {
   void _setBusy(bool value) {
     _isBusy = value;
     notifyListeners();
+  }
+
+  AppUser _userForSession(AppSession session) {
+    if (session.stage == SessionStage.clinician) {
+      return repository.clinicianDemo;
+    }
+
+    return repository.patientDemo;
   }
 }

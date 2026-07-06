@@ -17,7 +17,6 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  bool _started = false;
   int _selectedIndex = 0;
 
   @override
@@ -25,33 +24,48 @@ class _AppShellState extends State<AppShell> {
     return AnimatedBuilder(
       animation: widget.state,
       builder: (context, _) {
-        if (!_started) {
+        if (widget.state.isSignedOut) {
           return _OnboardingScreen(
             onPatient: () async {
-              await widget.state.continueAsPatient();
+              await widget.state.startPatientOnboarding();
               setState(() {
-                _started = true;
                 _selectedIndex = 0;
               });
             },
             onClinician: () async {
-              await widget.state.continueAsClinician();
+              await widget.state.continueAsClinicianDemo();
               setState(() {
-                _started = true;
                 _selectedIndex = 0;
               });
             },
           );
         }
 
+        if (widget.state.isOnboarding) {
+          return _PatientOnboardingScreen(
+            initialName: widget.state.currentUser.displayName,
+            onBack: widget.state.signOut,
+            onComplete: (displayName) async {
+              await widget.state.completePatientOnboarding(
+                displayName: displayName,
+              );
+              setState(() => _selectedIndex = 0);
+            },
+          );
+        }
+
         if (widget.state.isClinician) {
           return Scaffold(
-            appBar: _AppBar(
-              state: widget.state,
-              onPatientMode: _switchToPatient,
-              onClinicianMode: _switchToClinician,
+            appBar: _AppBar(state: widget.state, onSignOut: _signOut),
+            body: Column(
+              children: [
+                _DemoNotice(
+                  isBusy: widget.state.isBusy,
+                  onReset: _confirmResetDemoData,
+                ),
+                Expanded(child: ClinicianDashboard(state: widget.state)),
+              ],
             ),
-            body: ClinicianDashboard(state: widget.state),
           );
         }
 
@@ -66,11 +80,7 @@ class _AppShellState extends State<AppShell> {
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 880;
             return Scaffold(
-              appBar: _AppBar(
-                state: widget.state,
-                onPatientMode: _switchToPatient,
-                onClinicianMode: _switchToClinician,
-              ),
+              appBar: _AppBar(state: widget.state, onSignOut: _signOut),
               body: Row(
                 children: [
                   if (isWide)
@@ -99,7 +109,17 @@ class _AppShellState extends State<AppShell> {
                         ),
                       ],
                     ),
-                  Expanded(child: screens[_selectedIndex]),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _DemoNotice(
+                          isBusy: widget.state.isBusy,
+                          onReset: _confirmResetDemoData,
+                        ),
+                        Expanded(child: screens[_selectedIndex]),
+                      ],
+                    ),
+                  ),
                 ],
               ),
               bottomNavigationBar: isWide
@@ -135,33 +155,114 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  Future<void> _switchToPatient() async {
-    await widget.state.continueAsPatient();
+  Future<void> _signOut() async {
+    await widget.state.signOut();
     setState(() => _selectedIndex = 0);
   }
 
-  Future<void> _switchToClinician() async {
-    await widget.state.continueAsClinician();
-    setState(() => _selectedIndex = 0);
+  Future<void> _confirmResetDemoData() async {
+    final shouldReset = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset demo data'),
+        content: const Text(
+          'Reset demo data: clear journal entries, imported sleep samples, and consent state stored on this device, then restore the seeded demo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Reset demo data'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldReset != true) {
+      return;
+    }
+
+    await widget.state.resetDemoData();
+    if (mounted) {
+      setState(() => _selectedIndex = 0);
+    }
+  }
+}
+
+class _DemoNotice extends StatelessWidget {
+  const _DemoNotice({required this.isBusy, required this.onReset});
+
+  final bool isBusy;
+  final VoidCallback onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: NidColors.mint.withValues(alpha: 0.72),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final copy = Text(
+                'Demo data is stored on this device. It does not sync across desktop, phone, or the GitHub Pages demo.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: NidColors.canopy,
+                  fontWeight: FontWeight.w700,
+                ),
+              );
+              final reset = OutlinedButton.icon(
+                onPressed: isBusy ? null : onReset,
+                icon: const Icon(Icons.restart_alt_outlined),
+                label: const Text('Reset demo data'),
+              );
+
+              if (constraints.maxWidth < 560) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    copy,
+                    const SizedBox(height: 8),
+                    Align(alignment: Alignment.centerLeft, child: reset),
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: copy),
+                  const SizedBox(width: 12),
+                  reset,
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _AppBar({
-    required this.state,
-    required this.onPatientMode,
-    required this.onClinicianMode,
-  });
+  const _AppBar({required this.state, required this.onSignOut});
 
   final NguyenInDoubtState state;
-  final VoidCallback onPatientMode;
-  final VoidCallback onClinicianMode;
+  final VoidCallback onSignOut;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 560;
+    final roleLabel = state.isClinician
+        ? 'Clinician demo override'
+        : 'Patient demo';
+
     return AppBar(
       backgroundColor: NidColors.fog,
       titleSpacing: 20,
@@ -176,30 +277,40 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const SizedBox(width: 10),
-          const Text('NguyenInDoubt'),
+          const Flexible(child: Text('NguyenInDoubt')),
         ],
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: SegmentedButton<bool>(
-            segments: const [
-              ButtonSegment(
-                value: false,
-                icon: Icon(Icons.person_outline),
-                label: Text('Patient'),
-              ),
-              ButtonSegment(
-                value: true,
-                icon: Icon(Icons.badge_outlined),
-                label: Text('Clinician'),
-              ),
-            ],
-            selected: {state.isClinician},
-            onSelectionChanged: (selection) {
-              selection.first ? onClinicianMode() : onPatientMode();
-            },
-          ),
+          child: compact
+              ? IconButton(
+                  tooltip: 'Sign out',
+                  onPressed: onSignOut,
+                  icon: const Icon(Icons.logout_outlined),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      state.isClinician
+                          ? Icons.badge_outlined
+                          : Icons.person_outline,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      roleLabel,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    const SizedBox(width: 12),
+                    TextButton.icon(
+                      onPressed: onSignOut,
+                      icon: const Icon(Icons.logout_outlined),
+                      label: const Text('Sign out'),
+                    ),
+                  ],
+                ),
         ),
       ],
     );
@@ -280,6 +391,14 @@ class _HeroCopy extends StatelessWidget {
           'Sleep data, private reflection, and mental-health guides with enough humility to leave room for doubt.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
+        const SizedBox(height: 10),
+        Text(
+          'Demo auth is local to this device. Firebase sign-in is not live yet.',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: NidColors.moss,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(height: 22),
         Wrap(
           spacing: 12,
@@ -293,11 +412,100 @@ class _HeroCopy extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onClinician,
               icon: const Icon(Icons.badge_outlined),
-              label: const Text('Clinician demo'),
+              label: const Text('Clinician demo override'),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _PatientOnboardingScreen extends StatefulWidget {
+  const _PatientOnboardingScreen({
+    required this.initialName,
+    required this.onBack,
+    required this.onComplete,
+  });
+
+  final String initialName;
+  final VoidCallback onBack;
+  final ValueChanged<String> onComplete;
+
+  @override
+  State<_PatientOnboardingScreen> createState() =>
+      _PatientOnboardingScreenState();
+}
+
+class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                  tooltip: 'Back',
+                  onPressed: widget.onBack,
+                  icon: const Icon(Icons.arrow_back_outlined),
+                ),
+                const SizedBox(height: 18),
+                Image.asset(
+                  'assets/brand/nguyenindoubt-square-mark.png',
+                  width: 64,
+                  height: 64,
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Patient onboarding',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'This demo stores your profile, journal entries, sleep imports, and consent state on this device only.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 22),
+                TextField(
+                  controller: _nameController,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    labelText: 'Display name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  onSubmitted: widget.onComplete,
+                ),
+                const SizedBox(height: 22),
+                FilledButton.icon(
+                  onPressed: () => widget.onComplete(_nameController.text),
+                  icon: const Icon(Icons.check_outlined),
+                  label: const Text('Continue'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

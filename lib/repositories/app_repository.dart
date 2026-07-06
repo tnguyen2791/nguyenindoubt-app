@@ -9,27 +9,32 @@ import '../services/health_data_provider.dart';
 abstract class AppRepository {
   Future<List<ResourceCard>> getResourceCards();
 
-  Future<List<JournalEntry>> getJournalEntries(String userId);
+  Future<List<JournalEntry>> getJournalEntriesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  });
 
-  Future<void> addJournalEntry(JournalEntry entry);
+  Future<void> addJournalEntry({
+    required String requesterUserId,
+    required JournalEntry entry,
+  });
 
   Future<void> saveImportedSleep({
-    required String userId,
+    required String requesterUserId,
+    required String patientId,
     required List<HealthSample> samples,
   });
 
-  Future<List<DailySummary>> getDailySummaries(String userId);
+  Future<List<DailySummary>> getDailySummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  });
 }
 
 abstract class ClinicianRepository {
   Future<List<AppUser>> getLinkedPatients(String clinicianId);
 
   Future<PatientSleepBundle> getPatientSleepSummary({
-    required String clinicianId,
-    required String patientId,
-  });
-
-  Future<List<JournalEntry>> getPatientJournalEntries({
     required String clinicianId,
     required String patientId,
   });
@@ -69,6 +74,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
   final List<DailySummary> _summaries = [];
   final List<JournalEntry> _entries = [];
   final List<ResourceCard> _resources = [];
+  AppSession _session = const AppSession.signedOut();
 
   void _seedDemoData() {
     _users
@@ -89,6 +95,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     _resources
       ..clear()
       ..addAll(seedResources);
+    _session = const AppSession.signedOut();
   }
 
   bool _restore(String savedJson) {
@@ -125,6 +132,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
             (json) => _entryFromJson(json as Map<String, Object?>),
           ),
         );
+      _session = _sessionFromJson(decoded['session'] as Map<String, Object?>?);
       return _users.isNotEmpty;
     } on Object {
       _users.clear();
@@ -132,6 +140,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
       _samples.clear();
       _summaries.clear();
       _entries.clear();
+      _session = const AppSession.signedOut();
       return false;
     }
   }
@@ -150,15 +159,38 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
         'links': _links.map(_linkToJson).toList(),
         'samples': _samples.map(_sampleToJson).toList(),
         'entries': _entries.map(_entryToJson).toList(),
+        'session': _sessionToJson(_session),
       }),
     );
   }
+
+  Future<void> resetDemoData() async {
+    await preferences?.remove(storageKey);
+    _seedDemoData();
+  }
+
+  AppSession get currentSession => _session;
 
   AppUser get patientDemo =>
       _users.firstWhere((user) => user.id == demoPatient.id);
 
   AppUser get clinicianDemo =>
       _users.firstWhere((user) => user.id == demoClinician.id);
+
+  Future<void> saveSession(AppSession session) async {
+    _session = session;
+    await _persist();
+  }
+
+  Future<AppUser> updateDemoPatientProfile({
+    required String displayName,
+  }) async {
+    final index = _users.indexWhere((user) => user.id == demoPatient.id);
+    final updated = _users[index].copyWith(displayName: displayName);
+    _users[index] = updated;
+    await _persist();
+    return updated;
+  }
 
   Future<AppUser> grantPatientConsent(
     String patientId,
@@ -192,21 +224,43 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
   }
 
   @override
-  Future<void> addJournalEntry(JournalEntry entry) async {
+  Future<void> addJournalEntry({
+    required String requesterUserId,
+    required JournalEntry entry,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: entry.userId,
+      resourceName: 'journal entries',
+    );
     _entries.insert(0, entry);
     await _persist();
   }
 
   @override
-  Future<List<DailySummary>> getDailySummaries(String userId) async {
-    return _summaries.where((summary) => summary.userId == userId).toList()
-      ..sort((a, b) => a.date.compareTo(b.date));
+  Future<List<DailySummary>> getDailySummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'daily summaries',
+    );
+    return _dailySummariesFor(patientId);
   }
 
   @override
-  Future<List<JournalEntry>> getJournalEntries(String userId) async {
-    return _entries.where((entry) => entry.userId == userId).toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  Future<List<JournalEntry>> getJournalEntriesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'journal entries',
+    );
+    return _journalEntriesFor(patientId);
   }
 
   @override
@@ -217,11 +271,22 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
 
   @override
   Future<void> saveImportedSleep({
-    required String userId,
+    required String requesterUserId,
+    required String patientId,
     required List<HealthSample> samples,
   }) async {
-    _samples.removeWhere((sample) => sample.userId == userId);
-    _summaries.removeWhere((summary) => summary.userId == userId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'sleep samples',
+    );
+    if (samples.any((sample) => sample.userId != patientId)) {
+      throw const PrivacyException(
+        'Imported sleep samples must belong to the patient.',
+      );
+    }
+    _samples.removeWhere((sample) => sample.userId == patientId);
+    _summaries.removeWhere((summary) => summary.userId == patientId);
     _samples.addAll(samples);
     _summaries.addAll(summarizeSleepSamples(samples));
     await _persist();
@@ -260,7 +325,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     }
 
     final patient = _users.firstWhere((user) => user.id == patientId);
-    final summaries = await getDailySummaries(patientId);
+    final summaries = _dailySummariesFor(patientId);
     final samples = _samples
         .where((sample) => sample.userId == patientId)
         .toList();
@@ -271,12 +336,30 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     );
   }
 
-  @override
-  Future<List<JournalEntry>> getPatientJournalEntries({
+  Future<void> updateDemoClinicianLinkStatus({
     required String clinicianId,
     required String patientId,
+    required LinkStatus status,
   }) async {
-    throw const PrivacyException('Journal entries are private in v1.');
+    final index = _links.indexWhere(
+      (link) =>
+          link.clinicianUserId == clinicianId &&
+          link.patientUserId == patientId,
+    );
+    if (index < 0) {
+      return;
+    }
+
+    final existing = _links[index];
+    _links[index] = ClinicianLink(
+      inviteCode: existing.inviteCode,
+      clinicianUserId: existing.clinicianUserId,
+      patientUserId: existing.patientUserId,
+      status: status,
+      createdAt: existing.createdAt,
+      updatedAt: DateTime.now(),
+    );
+    await _persist();
   }
 
   bool _hasAcceptedLink(String clinicianId, String patientId) {
@@ -286,6 +369,28 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
           link.patientUserId == patientId &&
           link.status == LinkStatus.accepted,
     );
+  }
+
+  List<DailySummary> _dailySummariesFor(String patientId) {
+    return _summaries.where((summary) => summary.userId == patientId).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  List<JournalEntry> _journalEntriesFor(String patientId) {
+    return _entries.where((entry) => entry.userId == patientId).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  void _ensurePatientOwnsData({
+    required String requesterUserId,
+    required String patientId,
+    required String resourceName,
+  }) {
+    if (requesterUserId != patientId) {
+      throw PrivacyException(
+        'Only the patient can access their own $resourceName.',
+      );
+    }
   }
 }
 
@@ -379,4 +484,18 @@ JournalEntry _entryFromJson(Map<String, Object?> json) {
     createdAt: DateTime.parse(json['createdAt'] as String),
     privateByDefault: json['privateByDefault'] as bool? ?? true,
   );
+}
+
+Map<String, Object?> _sessionToJson(AppSession session) {
+  return {'stage': session.stage.name, 'userId': session.userId};
+}
+
+AppSession _sessionFromJson(Map<String, Object?>? json) {
+  if (json == null) {
+    return const AppSession.signedOut();
+  }
+
+  final stage = SessionStage.values.byName(json['stage'] as String);
+  final userId = json['userId'] as String?;
+  return AppSession(stage: stage, userId: userId);
 }

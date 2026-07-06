@@ -45,9 +45,10 @@ class BrandHeader extends StatelessWidget {
         color: NidColors.canopy,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        children: [
-          ClipRRect(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 520;
+          final mark = ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               'assets/brand/nguyenindoubt-square-mark.png',
@@ -55,9 +56,8 @@ class BrandHeader extends StatelessWidget {
               height: isWide ? 82 : 62,
               fit: BoxFit.cover,
             ),
-          ),
-          const SizedBox(width: 18),
-          Expanded(
+          );
+          final copy = Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -76,9 +76,30 @@ class BrandHeader extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          if (trailing != null) ...[const SizedBox(width: 16), trailing!],
-        ],
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [mark, const SizedBox(width: 18), copy]),
+                if (trailing != null) ...[
+                  const SizedBox(height: 14),
+                  Align(alignment: Alignment.centerLeft, child: trailing!),
+                ],
+              ],
+            );
+          }
+
+          return Row(
+            children: [
+              mark,
+              const SizedBox(width: 18),
+              copy,
+              if (trailing != null) ...[const SizedBox(width: 16), trailing!],
+            ],
+          );
+        },
       ),
     );
   }

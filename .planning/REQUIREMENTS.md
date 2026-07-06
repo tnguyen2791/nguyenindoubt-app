@@ -9,26 +9,26 @@ Requirements for the next release arc. The existing local MVP is the baseline; t
 
 ### Demo Baseline
 
-- [ ] **DEMO-01**: Patient can complete the current demo flow from onboarding to sleep import, dashboard review, private journaling, resources, and safety page without regressions.
-- [ ] **DEMO-02**: Clinician can complete the current accepted-link demo flow and view linked-patient sleep summaries without journal visibility.
-- [ ] **DEMO-03**: Journal, resources, safety, and clinician screens render correctly on phone-width and desktop-width layouts.
-- [ ] **DEMO-04**: Mutable local demo state persists across browser/app refresh and can be reset or clearly explained as device-local demo data.
-- [ ] **DEMO-05**: Safety content remains educational and clearly routes urgent situations to external crisis resources without implying in-app emergency monitoring.
+- [x] **DEMO-01**: Patient can complete the current demo flow from onboarding to sleep import, dashboard review, private journaling, resources, and safety page without regressions.
+- [x] **DEMO-02**: Clinician can complete the current accepted-link demo flow and view linked-patient sleep summaries without journal visibility.
+- [x] **DEMO-03**: Journal, resources, safety, and clinician screens render correctly on phone-width and desktop-width layouts.
+- [x] **DEMO-04**: Mutable local demo state persists across browser/app refresh and can be reset or clearly explained as device-local demo data.
+- [x] **DEMO-05**: Safety content remains educational and clearly routes urgent situations to external crisis resources without implying in-app emergency monitoring.
 
 ### Auth and Onboarding
 
-- [ ] **AUTH-01**: User can move through explicit signed-out, onboarding, patient, and clinician states without relying on a fake role switch as production auth.
-- [ ] **AUTH-02**: Patient onboarding captures the minimum profile state needed for the app while preserving the local/demo mode.
-- [ ] **AUTH-03**: Clinician access depends on a trusted clinician role source or demo override, not arbitrary client-side selection.
-- [ ] **AUTH-04**: Session state restores predictably after app refresh without exposing the wrong role or patient data.
+- [x] **AUTH-01**: User can move through explicit signed-out, onboarding, patient, and clinician states without relying on a fake role switch as production auth.
+- [x] **AUTH-02**: Patient onboarding captures the minimum profile state needed for the app while preserving the local/demo mode.
+- [x] **AUTH-03**: Clinician access depends on a trusted clinician role source or demo override, not arbitrary client-side selection.
+- [x] **AUTH-04**: Session state restores predictably after app refresh without exposing the wrong role or patient data.
 
 ### Privacy and Data Access
 
-- [ ] **PRIV-01**: Repository contracts make patient journal reads unavailable to clinician-facing code paths.
-- [ ] **PRIV-02**: Tests cover accepted, pending, revoked, and missing clinician links for sleep-summary access.
-- [ ] **PRIV-03**: Tests prove clinician access to journal entries is denied regardless of link status.
-- [ ] **PRIV-04**: Screens and state models avoid passing journal data into clinician views.
-- [ ] **PRIV-05**: Privacy copy consistently explains that clinicians see sleep summaries only after consent.
+- [x] **PRIV-01**: Repository contracts make patient journal reads unavailable to clinician-facing code paths.
+- [x] **PRIV-02**: Tests cover accepted, pending, revoked, and missing clinician links for sleep-summary access.
+- [x] **PRIV-03**: Tests prove clinician access to journal entries is denied regardless of link status.
+- [x] **PRIV-04**: Screens and state models avoid passing journal data into clinician views.
+- [x] **PRIV-05**: Privacy copy consistently explains that clinicians see sleep summaries only after consent.
 
 ### Firebase Backend
 
@@ -101,20 +101,20 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DEMO-01 | Phase 1 | Pending |
-| DEMO-02 | Phase 1 | Pending |
-| DEMO-03 | Phase 1 | Pending |
-| DEMO-04 | Phase 1 | Pending |
-| DEMO-05 | Phase 1 | Pending |
-| AUTH-01 | Phase 2 | Pending |
-| AUTH-02 | Phase 2 | Pending |
-| AUTH-03 | Phase 2 | Pending |
-| AUTH-04 | Phase 2 | Pending |
-| PRIV-01 | Phase 3 | Pending |
-| PRIV-02 | Phase 3 | Pending |
-| PRIV-03 | Phase 3 | Pending |
-| PRIV-04 | Phase 3 | Pending |
-| PRIV-05 | Phase 3 | Pending |
+| DEMO-01 | Phase 1 | Complete |
+| DEMO-02 | Phase 1 | Complete |
+| DEMO-03 | Phase 1 | Complete |
+| DEMO-04 | Phase 1 | Complete |
+| DEMO-05 | Phase 1 | Complete |
+| AUTH-01 | Phase 2 | Complete |
+| AUTH-02 | Phase 2 | Complete |
+| AUTH-03 | Phase 2 | Complete |
+| AUTH-04 | Phase 2 | Complete |
+| PRIV-01 | Phase 3 | Complete |
+| PRIV-02 | Phase 3 | Complete |
+| PRIV-03 | Phase 3 | Complete |
+| PRIV-04 | Phase 3 | Complete |
+| PRIV-05 | Phase 3 | Complete |
 | FIRE-01 | Phase 4 | Pending |
 | FIRE-02 | Phase 4 | Pending |
 | FIRE-03 | Phase 4 | Pending |
@@ -136,6 +136,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | PROD-04 | Phase 7 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 33 total
 - Mapped to phases: 33
 - Unmapped: 0 ✓

@@ -58,16 +58,19 @@ class _JournalScreenState extends State<JournalScreen> {
                 decoration: const InputDecoration(labelText: 'What shifted?'),
               ),
               const SizedBox(height: 10),
-              SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'steady', label: Text('Steady')),
-                  ButtonSegment(value: 'uneasy', label: Text('Uneasy')),
-                  ButtonSegment(value: 'low', label: Text('Low')),
-                ],
-                selected: {_moodTag},
-                onSelectionChanged: (selected) {
-                  setState(() => _moodTag = selected.first);
-                },
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(value: 'steady', label: Text('Steady')),
+                    ButtonSegment(value: 'uneasy', label: Text('Uneasy')),
+                    ButtonSegment(value: 'low', label: Text('Low')),
+                  ],
+                  selected: {_moodTag},
+                  onSelectionChanged: (selected) {
+                    setState(() => _moodTag = selected.first);
+                  },
+                ),
               ),
               const SizedBox(height: 12),
               FilledButton.icon(

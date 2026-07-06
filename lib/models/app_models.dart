@@ -8,6 +8,21 @@ enum LinkStatus { pending, accepted, revoked }
 
 enum MetricType { sleep, steps, heartRate, hrv, mindfulMinutes, medication }
 
+enum SessionStage { signedOut, onboarding, patient, clinician }
+
+@immutable
+class AppSession {
+  const AppSession({required this.stage, this.userId});
+
+  const AppSession.signedOut() : stage = SessionStage.signedOut, userId = null;
+
+  final SessionStage stage;
+  final String? userId;
+
+  bool get isAuthenticated =>
+      stage == SessionStage.patient || stage == SessionStage.clinician;
+}
+
 @immutable
 class AppUser {
   const AppUser({

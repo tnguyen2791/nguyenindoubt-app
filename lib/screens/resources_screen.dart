@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/app_models.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import 'common_widgets.dart';
@@ -19,62 +20,82 @@ class ResourcesScreen extends StatelessWidget {
             ? 2
             : 1;
 
+        if (columns == 1) {
+          return ListView.separated(
+            padding: const EdgeInsets.all(20),
+            itemCount: state.resources.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              return _ResourceCard(card: state.resources[index]);
+            },
+          );
+        }
+
         return GridView.count(
           padding: const EdgeInsets.all(20),
           crossAxisCount: columns,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
-          childAspectRatio: columns == 1 ? 1.65 : 1.12,
+          childAspectRatio: 1.12,
           children: [
             for (final card in state.resources)
-              SectionCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          card.crisisFlag
-                              ? Icons.emergency_outlined
-                              : Icons.local_florist_outlined,
-                          color: card.crisisFlag
-                              ? NidColors.ember
-                              : NidColors.canopy,
-                        ),
-                        const SizedBox(width: 8),
-                        StatusPill(
-                          label: card.category,
-                          color: card.crisisFlag
-                              ? NidColors.ember.withValues(alpha: 0.12)
-                              : NidColors.mint,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      card.title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Text(card.body, overflow: TextOverflow.fade),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      card.disclaimer,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: card.crisisFlag
-                            ? NidColors.ember
-                            : NidColors.canopy,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _ResourceCard(card: card, constrainBody: true),
           ],
         );
       },
+    );
+  }
+}
+
+class _ResourceCard extends StatelessWidget {
+  const _ResourceCard({required this.card, this.constrainBody = false});
+
+  final ResourceCard card;
+  final bool constrainBody;
+
+  @override
+  Widget build(BuildContext context) {
+    final body = Text(
+      card.body,
+      overflow: constrainBody ? TextOverflow.fade : TextOverflow.visible,
+    );
+
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: constrainBody ? MainAxisSize.max : MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(
+                card.crisisFlag
+                    ? Icons.emergency_outlined
+                    : Icons.local_florist_outlined,
+                color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
+              ),
+              const SizedBox(width: 8),
+              StatusPill(
+                label: card.category,
+                color: card.crisisFlag
+                    ? NidColors.ember.withValues(alpha: 0.12)
+                    : NidColors.mint,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(card.title, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          if (constrainBody) Expanded(child: body) else body,
+          const SizedBox(height: 10),
+          Text(
+            card.disclaimer,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -107,12 +128,22 @@ class SafetyScreen extends StatelessWidget {
                 runSpacing: 10,
                 children: [
                   FilledButton.icon(
-                    onPressed: () {},
+                    onPressed: () => _showSafetyInstructions(
+                      context,
+                      title: 'Call or text 988',
+                      body:
+                          'Use the 988 Suicide and Crisis Lifeline for urgent emotional distress or self-harm concern in the U.S. Call or text 988 now.',
+                    ),
                     icon: const Icon(Icons.call_outlined),
-                    label: const Text('Call 988'),
+                    label: const Text('Call or text 988'),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () => _showSafetyInstructions(
+                      context,
+                      title: 'Emergency care',
+                      body:
+                          'For immediate danger, call 911 in the U.S. or go to the nearest emergency department. Use local emergency services if you are outside the U.S.',
+                    ),
                     icon: const Icon(Icons.local_hospital_outlined),
                     label: const Text('Emergency care'),
                   ),
@@ -128,6 +159,26 @@ class SafetyScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _showSafetyInstructions(
+    BuildContext context, {
+    required String title,
+    required String body,
+  }) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
     );
   }
 }
