@@ -84,6 +84,10 @@ describe('firestore privacy rules', () => {
     await assertFails(getDoc(doc(clinicianDb, 'healthSamples/sample-a')));
     await assertFails(getDoc(doc(clinicianDb, 'dailySummaries/summary-a')));
 
+    await seedBaseData({ linkStatus: 'expired' });
+    await assertFails(getDoc(doc(clinicianDb, 'healthSamples/sample-a')));
+    await assertFails(getDoc(doc(clinicianDb, 'dailySummaries/summary-a')));
+
     await seedBaseData({ linkStatus: null });
     await assertFails(getDoc(doc(clinicianDb, 'healthSamples/sample-a')));
     await assertFails(getDoc(doc(clinicianDb, 'dailySummaries/summary-a')));
@@ -132,6 +136,90 @@ describe('firestore privacy rules', () => {
         status: 'accepted',
         createdAt: new Date('2026-01-01T08:00:00.000Z'),
         updatedAt: new Date('2026-01-01T09:00:00.000Z'),
+      }),
+    );
+
+    await seedBaseData({ linkStatus: 'accepted' });
+    await assertSucceeds(
+      updateDoc(doc(patientDb, 'clinicianLinks/clinician-a_patient-a'), {
+        status: 'revoked',
+        updatedAt: new Date('2026-01-01T10:00:00.000Z'),
+      }),
+    );
+    await assertFails(getDoc(doc(clinicianDb, 'healthSamples/sample-a')));
+  });
+
+  it('keeps consent history append-only and metadata-only', async () => {
+    await seedBaseData({ linkStatus: 'accepted' });
+
+    const patientDb = authedDb('patient-a');
+    const adminDb = authedDb('admin-a', { admin: true });
+
+    await assertSucceeds(
+      setDoc(doc(adminDb, 'consentEvents/event-accepted'), {
+        patientUserId: 'patient-a',
+        clinicianUserId: 'clinician-a',
+        inviteCode: 'NID-0001',
+        previousStatus: 'notAsked',
+        nextStatus: 'granted',
+        action: 'accepted',
+        actorUserId: 'admin-a',
+        occurredAt: new Date('2026-01-01T09:00:00.000Z'),
+      }),
+    );
+    await assertSucceeds(
+      setDoc(doc(patientDb, 'consentEvents/event-revoked'), {
+        patientUserId: 'patient-a',
+        clinicianUserId: 'clinician-a',
+        inviteCode: 'NID-0001',
+        previousStatus: 'granted',
+        nextStatus: 'revoked',
+        action: 'revoked',
+        actorUserId: 'patient-a',
+        occurredAt: new Date('2026-01-01T10:00:00.000Z'),
+      }),
+    );
+    await assertFails(
+      setDoc(doc(patientDb, 'consentEvents/event-raw-journal'), {
+        patientUserId: 'patient-a',
+        clinicianUserId: 'clinician-a',
+        inviteCode: 'NID-0001',
+        previousStatus: 'granted',
+        nextStatus: 'revoked',
+        action: 'revoked',
+        actorUserId: 'patient-a',
+        occurredAt: new Date('2026-01-01T10:00:00.000Z'),
+        journalBody: 'Private reflection.',
+      }),
+    );
+    await assertFails(
+      setDoc(doc(patientDb, 'consentEvents/event-raw-sleep'), {
+        patientUserId: 'patient-a',
+        clinicianUserId: 'clinician-a',
+        inviteCode: 'NID-0001',
+        previousStatus: 'granted',
+        nextStatus: 'revoked',
+        action: 'revoked',
+        actorUserId: 'patient-a',
+        occurredAt: new Date('2026-01-01T10:00:00.000Z'),
+        sleepSamples: [{ value: 7 }],
+      }),
+    );
+    await assertFails(
+      setDoc(doc(patientDb, 'consentEvents/event-self-accepted'), {
+        patientUserId: 'patient-a',
+        clinicianUserId: 'clinician-a',
+        inviteCode: 'NID-0001',
+        previousStatus: 'notAsked',
+        nextStatus: 'granted',
+        action: 'accepted',
+        actorUserId: 'patient-a',
+        occurredAt: new Date('2026-01-01T09:00:00.000Z'),
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(adminDb, 'consentEvents/event-accepted'), {
+        action: 'revoked',
       }),
     );
   });

@@ -13,7 +13,9 @@ Future<void> main() async {
   final repository = InMemoryAppRepository(preferences: preferences);
   final state = NguyenInDoubtState(
     repository: repository,
-    healthDataProvider: MockHealthDataProvider(),
+    healthDataProvider: createDefaultHealthDataProvider(
+      userId: repository.patientDemo.id,
+    ),
   );
   runApp(NguyenInDoubtApp(state: state));
 }

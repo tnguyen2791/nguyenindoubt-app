@@ -40,26 +40,26 @@ Requirements for the next release arc. The existing local MVP is the baseline; t
 
 ### Consent and Invites
 
-- [ ] **CONS-01**: Patient can validate and accept a real invite code instead of hardcoded `NID-1138`.
-- [ ] **CONS-02**: Patient can revoke clinician sleep-summary sharing.
-- [ ] **CONS-03**: Invite and consent status changes are atomic and cannot grant access before invite validation succeeds.
-- [ ] **CONS-04**: Clinician dashboard updates when a link is accepted, revoked, expired, or missing.
-- [ ] **CONS-05**: Consent history is represented well enough for audit, support, or future compliance review.
+- [x] **CONS-01**: Patient can validate and accept a real invite code instead of hardcoded `NID-1138`.
+- [x] **CONS-02**: Patient can revoke clinician sleep-summary sharing.
+- [x] **CONS-03**: Invite and consent status changes are atomic and cannot grant access before invite validation succeeds.
+- [x] **CONS-04**: Clinician dashboard updates when a link is accepted, revoked, expired, or missing.
+- [x] **CONS-05**: Consent history is represented well enough for audit, support, or future compliance review.
 
 ### Sleep Import Providers
 
-- [ ] **HLTH-01**: HealthKit and Health Connect implementations sit behind `HealthDataProvider`.
-- [ ] **HLTH-02**: Patient sees clear permission states for unavailable, not requested, partial, denied, revoked, and ready health access.
-- [ ] **HLTH-03**: Sleep imports request sleep-only access for the MVP.
-- [ ] **HLTH-04**: Imported health samples normalize into the existing `HealthSample` and `DailySummary` model.
-- [ ] **HLTH-05**: Production imports deduplicate and incrementally sync samples rather than replacing all prior production data.
+- [x] **HLTH-01**: HealthKit and Health Connect implementations sit behind `HealthDataProvider`.
+- [x] **HLTH-02**: Patient sees clear permission states for unavailable, not requested, partial, denied, revoked, and ready health access.
+- [x] **HLTH-03**: Sleep imports request sleep-only access for the MVP.
+- [x] **HLTH-04**: Imported health samples normalize into the existing `HealthSample` and `DailySummary` model.
+- [x] **HLTH-05**: Production imports deduplicate and incrementally sync samples rather than replacing all prior production data.
 
 ### Production Posture
 
-- [ ] **PROD-01**: Public demo hosting clearly distinguishes demo-local data from account-backed production data.
-- [ ] **PROD-02**: User data retention, export, and deletion expectations are documented before production launch.
-- [ ] **PROD-03**: Deployment verification includes `flutter analyze`, `flutter test`, and `flutter build web`.
-- [ ] **PROD-04**: Production release notes identify privacy-sensitive changes and any remaining compliance blockers.
+- [x] **PROD-01**: Public demo hosting clearly distinguishes demo-local data from account-backed production data.
+- [x] **PROD-02**: User data retention, export, and deletion expectations are documented before production launch.
+- [x] **PROD-03**: Deployment verification includes `flutter analyze`, `flutter test`, and `flutter build web`.
+- [x] **PROD-04**: Production release notes identify privacy-sensitive changes and any remaining compliance blockers.
 
 ## v2 Requirements
 
@@ -120,20 +120,20 @@ Explicitly excluded. Documented to prevent scope creep.
 | FIRE-03 | Phase 4 | Complete |
 | FIRE-04 | Phase 4 | Complete |
 | FIRE-05 | Phase 4 | Complete |
-| CONS-01 | Phase 5 | Pending |
-| CONS-02 | Phase 5 | Pending |
-| CONS-03 | Phase 5 | Pending |
-| CONS-04 | Phase 5 | Pending |
-| CONS-05 | Phase 5 | Pending |
-| HLTH-01 | Phase 6 | Pending |
-| HLTH-02 | Phase 6 | Pending |
-| HLTH-03 | Phase 6 | Pending |
-| HLTH-04 | Phase 6 | Pending |
-| HLTH-05 | Phase 6 | Pending |
-| PROD-01 | Phase 7 | Pending |
-| PROD-02 | Phase 7 | Pending |
-| PROD-03 | Phase 7 | Pending |
-| PROD-04 | Phase 7 | Pending |
+| CONS-01 | Phase 5 | Complete |
+| CONS-02 | Phase 5 | Complete |
+| CONS-03 | Phase 5 | Complete |
+| CONS-04 | Phase 5 | Complete |
+| CONS-05 | Phase 5 | Complete |
+| HLTH-01 | Phase 6 | Complete |
+| HLTH-02 | Phase 6 | Complete |
+| HLTH-03 | Phase 6 | Complete |
+| HLTH-04 | Phase 6 | Complete |
+| HLTH-05 | Phase 6 | Complete |
+| PROD-01 | Phase 7 | Complete |
+| PROD-02 | Phase 7 | Complete |
+| PROD-03 | Phase 7 | Complete |
+| PROD-04 | Phase 7 | Complete |
 
 **Coverage:**
 
@@ -143,4 +143,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-07-06*
-*Last updated: 2026-07-06 after initial definition*
+*Last updated: 2026-07-06 after Phase 7 verification*

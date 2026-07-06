@@ -25,7 +25,7 @@ ThemeData buildNidTheme() {
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: NidColors.fog,
-    fontFamily: 'Avenir Next',
+    fontFamily: 'Inter',
     textTheme: const TextTheme(
       displaySmall: TextStyle(
         fontSize: 34,
@@ -57,7 +57,7 @@ ThemeData buildNidTheme() {
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: NidColors.canopy.withValues(alpha: 0.12)),
+        side: BorderSide(color: NidColors.canopy.withValues(alpha: 0.16)),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

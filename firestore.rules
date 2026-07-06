@@ -28,6 +28,36 @@ service cloud.firestore {
         get(/databases/$(database)/documents/clinicianLinks/$(request.auth.uid + '_' + patientId)).data.status == 'accepted';
     }
 
+    function validLinkStatus(data) {
+      return data.status in ['pending', 'accepted', 'revoked', 'expired'];
+    }
+
+    function validConsentEvent(data) {
+      return data.keys().hasOnly([
+        'patientUserId',
+        'clinicianUserId',
+        'inviteCode',
+        'previousStatus',
+        'nextStatus',
+        'action',
+        'actorUserId',
+        'occurredAt'
+      ]) &&
+        data.previousStatus in ['notAsked', 'granted', 'revoked'] &&
+        data.nextStatus in ['notAsked', 'granted', 'revoked'] &&
+        data.action in ['accepted', 'revoked'];
+    }
+
+    function patientRevokesAcceptedLink(linkId) {
+      return signedIn() &&
+        resource.data.patientUserId == request.auth.uid &&
+        linkId == resource.data.clinicianUserId + '_' + resource.data.patientUserId &&
+        resource.data.status == 'accepted' &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'updatedAt']) &&
+        request.resource.data.status == 'revoked';
+    }
+
     function ownsDoc() {
       return isSelf(resource.data.userId);
     }
@@ -52,8 +82,22 @@ service cloud.firestore {
          resource.data.clinicianUserId == request.auth.uid);
       allow create, update: if isAdmin() &&
         linkId == request.resource.data.clinicianUserId + '_' + request.resource.data.patientUserId &&
-        request.resource.data.status in ['pending', 'accepted', 'revoked'];
+        validLinkStatus(request.resource.data);
+      allow update: if patientRevokesAcceptedLink(linkId);
       allow delete: if false;
+    }
+
+    match /consentEvents/{eventId} {
+      allow read: if signedIn() &&
+        (resource.data.patientUserId == request.auth.uid ||
+         resource.data.clinicianUserId == request.auth.uid ||
+         isAdmin());
+      allow create: if validConsentEvent(request.resource.data) &&
+        (isAdmin() ||
+         (isSelf(request.resource.data.patientUserId) &&
+          request.resource.data.action == 'revoked' &&
+          request.resource.data.actorUserId == request.auth.uid));
+      allow update, delete: if false;
     }
 
     match /healthSamples/{sampleId} {

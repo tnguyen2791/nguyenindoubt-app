@@ -5,7 +5,8 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 import 'app_repository.dart';
 
-class FirebaseAppRepository implements AppRepository, ClinicianRepository {
+class FirebaseAppRepository
+    implements AppRepository, ClinicianRepository, ConsentRepository {
   FirebaseAppRepository({required this.firestore, required this.auth});
 
   final FirebaseFirestore firestore;
@@ -23,6 +24,8 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
       firestore.collection('journalEntries');
   CollectionReference<Map<String, dynamic>> get _resources =>
       firestore.collection('resourceCards');
+  CollectionReference<Map<String, dynamic>> get _consentEvents =>
+      firestore.collection('consentEvents');
 
   @override
   Future<List<ResourceCard>> getResourceCards() async {
@@ -82,23 +85,27 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
       );
     }
 
-    final existingSamples = await _samples
+    final existingSnapshot = await _samples
         .where('userId', isEqualTo: patientId)
         .get();
-    final existingSummaries = await _summaries
-        .where('userId', isEqualTo: patientId)
-        .get();
+    final mergedSamples = dedupeSleepSamples([
+      ...existingSnapshot.docs
+          .map((doc) => _sampleFromDoc(doc))
+          .where((sample) => sample.metricType == MetricType.sleep),
+      ...samples,
+    ]);
     final batch = firestore.batch();
-    for (final doc in existingSamples.docs) {
-      batch.delete(doc.reference);
+    for (final doc in existingSnapshot.docs) {
+      final sample = _sampleFromDoc(doc);
+      if (sample.metricType == MetricType.sleep &&
+          doc.id != _sampleId(sample)) {
+        batch.delete(doc.reference);
+      }
     }
-    for (final doc in existingSummaries.docs) {
-      batch.delete(doc.reference);
-    }
-    for (final sample in samples) {
+    for (final sample in mergedSamples) {
       batch.set(_samples.doc(_sampleId(sample)), _sampleToFirestore(sample));
     }
-    for (final summary in summarizeSleepSamples(samples)) {
+    for (final summary in summarizeSleepSamples(mergedSamples)) {
       batch.set(
         _summaries.doc(_summaryId(summary)),
         _summaryToFirestore(summary),
@@ -127,6 +134,170 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
   }
 
   @override
+  Future<InviteValidationResult> validateInviteCode({
+    required String patientId,
+    required String inviteCode,
+  }) async {
+    _requireSignedInAs(patientId);
+    final normalized = _normalizeInviteCode(inviteCode);
+    if (normalized.isEmpty) {
+      return const InviteValidationResult(
+        status: InviteValidationStatus.empty,
+        normalizedCode: '',
+        message: 'Enter an invite code before validating.',
+      );
+    }
+    if (!_invitePattern.hasMatch(normalized)) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.malformed,
+        normalizedCode: normalized,
+        message: 'Invite codes use the format NID-1234.',
+      );
+    }
+
+    final snapshot = await _links
+        .where('inviteCode', isEqualTo: normalized)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isEmpty) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.missing,
+        normalizedCode: normalized,
+        message: 'No invite with that code was found.',
+      );
+    }
+
+    final link = snapshot.docs.first.data();
+    final linkPatientId = link['patientUserId'] as String;
+    final clinicianId = link['clinicianUserId'] as String;
+    final clinicianDoc = await _users.doc(clinicianId).get();
+    final clinicianName = clinicianDoc.data()?['displayName'] as String?;
+    if (linkPatientId != patientId) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.wrongPatient,
+        normalizedCode: normalized,
+        patientUserId: linkPatientId,
+        clinicianUserId: clinicianId,
+        clinicianDisplayName: clinicianName,
+        message: 'This invite is for a different patient account.',
+      );
+    }
+
+    final status = LinkStatus.values.byName(link['status'] as String);
+    return switch (status) {
+      LinkStatus.pending => InviteValidationResult(
+        status: InviteValidationStatus.valid,
+        normalizedCode: normalized,
+        patientUserId: linkPatientId,
+        clinicianUserId: clinicianId,
+        clinicianDisplayName: clinicianName,
+        message: 'Invite validated. Review sharing before accepting.',
+      ),
+      LinkStatus.accepted => InviteValidationResult(
+        status: InviteValidationStatus.alreadyAccepted,
+        normalizedCode: normalized,
+        patientUserId: linkPatientId,
+        clinicianUserId: clinicianId,
+        clinicianDisplayName: clinicianName,
+        message: 'This invite is already accepted.',
+      ),
+      LinkStatus.revoked => InviteValidationResult(
+        status: InviteValidationStatus.revoked,
+        normalizedCode: normalized,
+        patientUserId: linkPatientId,
+        clinicianUserId: clinicianId,
+        clinicianDisplayName: clinicianName,
+        message: 'This invite was revoked and cannot be reused.',
+      ),
+      LinkStatus.expired => InviteValidationResult(
+        status: InviteValidationStatus.expired,
+        normalizedCode: normalized,
+        patientUserId: linkPatientId,
+        clinicianUserId: clinicianId,
+        clinicianDisplayName: clinicianName,
+        message: 'This invite has expired. Ask for a new code.',
+      ),
+    };
+  }
+
+  @override
+  Future<AppUser> acceptInvite({
+    required String patientId,
+    required String inviteCode,
+  }) async {
+    _requireSignedInAs(patientId);
+    throw const PrivacyException(
+      'Invite acceptance requires a trusted backend operation in Firebase mode.',
+    );
+  }
+
+  @override
+  Future<AppUser> revokeConsent({required String patientId}) async {
+    _requireSignedInAs(patientId);
+    final acceptedLinks = await _links
+        .where('patientUserId', isEqualTo: patientId)
+        .where('status', isEqualTo: LinkStatus.accepted.name)
+        .limit(1)
+        .get();
+    if (acceptedLinks.docs.isEmpty) {
+      throw const PrivacyException('No active clinician link to revoke.');
+    }
+
+    final userDoc = await _users.doc(patientId).get();
+    if (!userDoc.exists) {
+      throw const PrivacyException('Patient profile was not found.');
+    }
+    final previous = _userFromDoc(userDoc);
+    final linkDoc = acceptedLinks.docs.first;
+    final link = linkDoc.data();
+    final now = DateTime.now();
+    final batch = firestore.batch();
+    batch.update(userDoc.reference, {
+      'consentStatus': ConsentStatus.revoked.name,
+      'clinicCode': null,
+      'updatedAt': Timestamp.fromDate(now),
+    });
+    batch.update(linkDoc.reference, {
+      'status': LinkStatus.revoked.name,
+      'updatedAt': Timestamp.fromDate(now),
+    });
+    batch.set(
+      _consentEvents.doc('consent-${now.microsecondsSinceEpoch}'),
+      _consentEventToFirestore(
+        ConsentHistoryEvent(
+          id: 'consent-${now.microsecondsSinceEpoch}',
+          patientUserId: patientId,
+          clinicianUserId: link['clinicianUserId'] as String,
+          inviteCode: link['inviteCode'] as String,
+          previousStatus: previous.consentStatus,
+          nextStatus: ConsentStatus.revoked,
+          action: ConsentEventAction.revoked,
+          actorUserId: patientId,
+          occurredAt: now,
+        ),
+      ),
+    );
+    await batch.commit();
+
+    return previous.copyWith(
+      consentStatus: ConsentStatus.revoked,
+      clearClinicCode: true,
+    );
+  }
+
+  @override
+  Future<List<ConsentHistoryEvent>> getConsentHistory({
+    required String patientId,
+  }) async {
+    _requireSignedInAs(patientId);
+    final snapshot = await _consentEvents
+        .where('patientUserId', isEqualTo: patientId)
+        .orderBy('occurredAt', descending: true)
+        .get();
+    return snapshot.docs.map((doc) => _consentEventFromDoc(doc)).toList();
+  }
+
+  @override
   Future<List<AppUser>> getLinkedPatients(String clinicianId) async {
     _requireSignedInAs(clinicianId);
     final linkSnapshot = await _links
@@ -148,6 +319,33 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
       }
     }
     return patients;
+  }
+
+  @override
+  Future<List<ClinicianLinkStatusView>> getClinicianLinkStatuses(
+    String clinicianId,
+  ) async {
+    _requireSignedInAs(clinicianId);
+    final snapshot = await _links
+        .where('clinicianUserId', isEqualTo: clinicianId)
+        .get();
+    final statuses = <ClinicianLinkStatusView>[];
+    for (final link in snapshot.docs) {
+      final data = link.data();
+      final patientId = data['patientUserId'] as String;
+      final patientDoc = await _users.doc(patientId).get();
+      statuses.add(
+        ClinicianLinkStatusView(
+          patientUserId: patientId,
+          patientDisplayName: patientDoc.data()?['displayName'] as String?,
+          inviteCode: data['inviteCode'] as String,
+          status: LinkStatus.values.byName(data['status'] as String),
+          updatedAt: _dateTime(data['updatedAt']),
+        ),
+      );
+    }
+    statuses.sort(_compareClinicianLinkStatus);
+    return statuses;
   }
 
   @override
@@ -177,8 +375,15 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
         .orderBy('start')
         .get();
 
+    final patient = _userFromDoc(patientDoc);
+    if (patient.consentStatus != ConsentStatus.granted) {
+      throw const PrivacyException(
+        'Patient has not granted active sleep sharing.',
+      );
+    }
+
     return PatientSleepBundle(
-      patient: _userFromDoc(patientDoc),
+      patient: patient,
       summaries: summarySnapshot.docs
           .map((doc) => _summaryFromDoc(doc))
           .toList(),
@@ -209,8 +414,22 @@ class FirebaseAppRepository implements AppRepository, ClinicianRepository {
 String _linkId(String clinicianId, String patientId) =>
     '${clinicianId}_$patientId';
 
-String _sampleId(HealthSample sample) =>
-    '${sample.userId}_${sample.start.millisecondsSinceEpoch}';
+String _sampleId(HealthSample sample) {
+  return [
+    sample.userId,
+    sample.metricType.name,
+    _docSafe(sample.source),
+    sample.start.millisecondsSinceEpoch,
+    sample.end.millisecondsSinceEpoch,
+  ].join('_');
+}
+
+String _docSafe(String value) {
+  return value
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+}
 
 String _summaryId(DailySummary summary) {
   final date = summary.date;
@@ -218,6 +437,33 @@ String _summaryId(DailySummary summary) {
   final mm = date.month.toString().padLeft(2, '0');
   final dd = date.day.toString().padLeft(2, '0');
   return '${summary.userId}_$yyyy$mm$dd';
+}
+
+final _invitePattern = RegExp(r'^NID-\d{4}$');
+
+String _normalizeInviteCode(String inviteCode) =>
+    inviteCode.trim().toUpperCase();
+
+int _compareClinicianLinkStatus(
+  ClinicianLinkStatusView a,
+  ClinicianLinkStatusView b,
+) {
+  final byStatus = _linkStatusSortOrder(
+    a.status,
+  ).compareTo(_linkStatusSortOrder(b.status));
+  if (byStatus != 0) {
+    return byStatus;
+  }
+  return b.updatedAt.compareTo(a.updatedAt);
+}
+
+int _linkStatusSortOrder(LinkStatus status) {
+  return switch (status) {
+    LinkStatus.accepted => 0,
+    LinkStatus.pending => 1,
+    LinkStatus.revoked => 2,
+    LinkStatus.expired => 3,
+  };
 }
 
 AppUser _userFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -314,6 +560,38 @@ ResourceCard _resourceFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     crisisFlag: data['crisisFlag'] as bool? ?? false,
     sortOrder: data['sortOrder'] as int,
   );
+}
+
+ConsentHistoryEvent _consentEventFromDoc(
+  DocumentSnapshot<Map<String, dynamic>> doc,
+) {
+  final data = doc.data()!;
+  return ConsentHistoryEvent(
+    id: doc.id,
+    patientUserId: data['patientUserId'] as String,
+    clinicianUserId: data['clinicianUserId'] as String,
+    inviteCode: data['inviteCode'] as String,
+    previousStatus: ConsentStatus.values.byName(
+      data['previousStatus'] as String,
+    ),
+    nextStatus: ConsentStatus.values.byName(data['nextStatus'] as String),
+    action: ConsentEventAction.values.byName(data['action'] as String),
+    actorUserId: data['actorUserId'] as String,
+    occurredAt: _dateTime(data['occurredAt']),
+  );
+}
+
+Map<String, Object?> _consentEventToFirestore(ConsentHistoryEvent event) {
+  return {
+    'patientUserId': event.patientUserId,
+    'clinicianUserId': event.clinicianUserId,
+    'inviteCode': event.inviteCode,
+    'previousStatus': event.previousStatus.name,
+    'nextStatus': event.nextStatus.name,
+    'action': event.action.name,
+    'actorUserId': event.actorUserId,
+    'occurredAt': Timestamp.fromDate(event.occurredAt),
+  };
 }
 
 DateTime _dateTime(Object? value) {

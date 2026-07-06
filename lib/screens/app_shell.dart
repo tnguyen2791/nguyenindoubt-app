@@ -209,7 +209,7 @@ class _DemoNotice extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final copy = Text(
-                'Demo data is stored on this device. It does not sync across desktop, phone, or the GitHub Pages demo.',
+                'Demo mode: data stays on this device. It does not sync across browsers, phones, or the GitHub Pages demo, and it is not production storage.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: NidColors.canopy,
                   fontWeight: FontWeight.w700,
@@ -482,7 +482,7 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'This demo stores your profile, journal entries, sleep imports, and consent state on this device only.',
+                  'Demo mode stores your profile, journal entries, sleep imports, and consent state on this device only. Account-backed production storage is not enabled.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 22),
