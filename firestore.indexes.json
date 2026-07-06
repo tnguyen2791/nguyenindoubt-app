@@ -1,0 +1,30 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "dailySummaries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "healthSamples",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "metricType", "order": "ASCENDING" },
+        { "fieldPath": "start", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "clinicianLinks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clinicianUserId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
