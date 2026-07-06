@@ -329,9 +329,31 @@ class _ConsentHistoryList extends StatelessWidget {
         else
           for (final event in events)
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Text(
-                '${_eventActionLabel(event.action)} ${event.inviteCode} on ${_shortDate(event.occurredAt)}',
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  Icon(
+                    event.action == ConsentEventAction.accepted
+                        ? Icons.verified_user_outlined
+                        : Icons.link_off_outlined,
+                    size: 18,
+                    color: event.action == ConsentEventAction.accepted
+                        ? NidColors.canopy
+                        : NidColors.ember,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '${_eventActionLabel(event.action)} ${event.inviteCode}',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _shortDate(event.occurredAt),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
               ),
             ),
       ],
