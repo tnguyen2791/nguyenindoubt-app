@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
+import '../theme/tokens.dart';
 import 'clinician_dashboard.dart';
+import 'common_widgets.dart';
 import 'journal_screen.dart';
 import 'patient_dashboard.dart';
 import 'resources_screen.dart';
@@ -205,14 +207,17 @@ class _DemoNotice extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+            horizontal: NidSpace.l,
+            vertical: NidSpace.m,
+          ),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final copy = Text(
                 'Demo mode: data stays on this device. It does not sync across browsers, phones, or the GitHub Pages demo, and it is not production storage.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: NidColors.canopy,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               );
               final reset = OutlinedButton.icon(
@@ -226,7 +231,7 @@ class _DemoNotice extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     copy,
-                    const SizedBox(height: 8),
+                    const SizedBox(height: NidSpace.s),
                     Align(alignment: Alignment.centerLeft, child: reset),
                   ],
                 );
@@ -235,7 +240,7 @@ class _DemoNotice extends StatelessWidget {
               return Row(
                 children: [
                   Expanded(child: copy),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: NidSpace.m),
                   reset,
                 ],
               );
@@ -265,24 +270,17 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       backgroundColor: NidColors.fog,
-      titleSpacing: 20,
+      titleSpacing: NidSpace.xl,
       title: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: Image.asset(
-              'assets/brand/nguyenindoubt-square-mark.png',
-              width: 34,
-              height: 34,
-            ),
-          ),
-          const SizedBox(width: 10),
+          const BrandMark(size: 34),
+          const SizedBox(width: NidSpace.m),
           const Flexible(child: Text('NguyenInDoubt')),
         ],
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.only(right: NidSpace.m),
           child: compact
               ? IconButton(
                   tooltip: 'Sign out',
@@ -298,12 +296,12 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
                           : Icons.person_outline,
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: NidSpace.s),
                     Text(
                       roleLabel,
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: NidSpace.m),
                     TextButton.icon(
                       onPressed: onSignOut,
                       icon: const Icon(Icons.logout_outlined),
@@ -333,7 +331,7 @@ class _OnboardingScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 980),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(NidSpace.xl),
                 child: isWide
                     ? Row(
                         children: [
@@ -343,7 +341,7 @@ class _OnboardingScreen extends StatelessWidget {
                               onClinician: onClinician,
                             ),
                           ),
-                          const SizedBox(width: 28),
+                          const SizedBox(width: NidSpace.xxl),
                           const Expanded(child: _StagPanel()),
                         ],
                       )
@@ -354,7 +352,7 @@ class _OnboardingScreen extends StatelessWidget {
                             onPatient: onPatient,
                             onClinician: onClinician,
                           ),
-                          const SizedBox(height: 18),
+                          const SizedBox(height: NidSpace.l),
                           const _StagPanel(),
                         ],
                       ),
@@ -379,30 +377,26 @@ class _HeroCopy extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset(
-          'assets/brand/nguyenindoubt-square-mark.png',
-          width: 82,
-          height: 82,
-        ),
-        const SizedBox(height: 18),
+        const BrandMark(size: 82),
+        const SizedBox(height: NidSpace.l),
         Text('NguyenInDoubt', style: Theme.of(context).textTheme.displaySmall),
-        const SizedBox(height: 10),
+        const SizedBox(height: NidSpace.m),
         Text(
           'Sleep data, private reflection, and mental-health guides with enough humility to leave room for doubt.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: NidSpace.m),
         Text(
           'Demo auth is local to this device. Firebase sign-in is not live yet.',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: NidColors.moss,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: NidSpace.xl),
         Wrap(
-          spacing: 12,
-          runSpacing: 12,
+          spacing: NidSpace.m,
+          runSpacing: NidSpace.m,
           children: [
             FilledButton.icon(
               onPressed: onPatient,
@@ -459,7 +453,7 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 520),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(NidSpace.xl),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,23 +463,19 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                   onPressed: widget.onBack,
                   icon: const Icon(Icons.arrow_back_outlined),
                 ),
-                const SizedBox(height: 18),
-                Image.asset(
-                  'assets/brand/nguyenindoubt-square-mark.png',
-                  width: 64,
-                  height: 64,
-                ),
-                const SizedBox(height: 18),
+                const SizedBox(height: NidSpace.l),
+                const BrandMark(size: 64),
+                const SizedBox(height: NidSpace.l),
                 Text(
                   'Patient onboarding',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: NidSpace.m),
                 Text(
                   'Demo mode stores your profile, journal entries, sleep imports, and consent state on this device only. Account-backed production storage is not enabled.',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 22),
+                const SizedBox(height: NidSpace.xl),
                 TextField(
                   controller: _nameController,
                   textInputAction: TextInputAction.done,
@@ -495,7 +485,7 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                   ),
                   onSubmitted: widget.onComplete,
                 ),
-                const SizedBox(height: 22),
+                const SizedBox(height: NidSpace.xl),
                 FilledButton.icon(
                   onPressed: () => widget.onComplete(_nameController.text),
                   icon: const Icon(Icons.check_outlined),
@@ -516,7 +506,7 @@ class _StagPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(NidRadius.card),
       child: Stack(
         alignment: Alignment.bottomLeft,
         children: [
@@ -529,7 +519,7 @@ class _StagPanel extends StatelessWidget {
           ),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(NidSpace.l),
             color: NidColors.ink.withValues(alpha: 0.72),
             child: Text(
               'Just ask. Then protect what should stay private.',
