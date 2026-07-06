@@ -19,6 +19,11 @@ abstract class AppRepository {
     required JournalEntry entry,
   });
 
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  });
+
   Future<void> saveImportedSleep({
     required String requesterUserId,
     required String patientId,
@@ -422,6 +427,25 @@ class InMemoryAppRepository
       resourceName: 'journal entries',
     );
     _entries.insert(0, entry);
+    await _persist();
+  }
+
+  @override
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  }) async {
+    final index = _entries.indexWhere((entry) => entry.id == entryId);
+    if (index < 0) {
+      // Idempotent no-op: nothing to delete, so there is nothing to own.
+      return;
+    }
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: _entries[index].userId,
+      resourceName: 'journal entries',
+    );
+    _entries.removeAt(index);
     await _persist();
   }
 

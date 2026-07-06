@@ -68,6 +68,18 @@ class FirebaseAppRepository
   }
 
   @override
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    // The server-side `ownsDoc()` rule on journalEntries authoritatively
+    // enforces that only the owning patient can delete. Journal stays
+    // patient-only (SAFE-03) — there is deliberately no clinician path.
+    await _entries.doc(entryId).delete();
+  }
+
+  @override
   Future<void> saveImportedSleep({
     required String requesterUserId,
     required String patientId,
