@@ -14,7 +14,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] **Phase 1: Demo Promise Hardening** - Preserve the existing local patient and clinician demo while tightening responsiveness, local-state clarity, and safety boundaries. (completed 2026-07-06)
 - [x] **Phase 2: Auth and Session Model** - Replace the fake production role switch with explicit signed-out, onboarding, patient, clinician, and refresh-safe session states. (completed 2026-07-06)
 - [x] **Phase 3: Privacy and Repository Contract Hardening** - Make clinician-facing paths incapable of reading patient journals while preserving consented sleep-summary access. (completed 2026-07-06)
-- [ ] **Phase 4: Firebase Auth and Firestore Adapter** - Add account-backed auth/storage behind repository interfaces with emulator-proven Firestore privacy rules.
+- [x] **Phase 4: Firebase Auth and Firestore Adapter** - Add account-backed auth/storage behind repository interfaces with emulator-proven Firestore privacy rules. (completed 2026-07-06)
 - [ ] **Phase 5: Consent Management and Invite Lifecycle** - Replace the hardcoded invite with validated invite, consent, revocation, status, and history flows.
 - [ ] **Phase 6: Real Sleep Import Providers** - Add HealthKit and Health Connect providers behind `HealthDataProvider` with sleep-only permissions and safe sync behavior.
 - [ ] **Phase 7: Production Deployment Posture** - Make release verification, data expectations, and compliance blockers explicit before production launch.
@@ -84,7 +84,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. Emulator coverage exercises users, clinician links, health samples, daily summaries, journal entries, and resource cards.
   5. Analytics, Crashlytics, and telemetry remain disabled unless a separate compliance-reviewed decision enables them.
 
-**Plans:** TBD
+**Plans:** 1/1 plans complete
 **UI hint**: yes
 
 ### Phase 5: Consent Management and Invite Lifecycle
@@ -147,7 +147,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Demo Promise Hardening | 1/1 | Complete    | 2026-07-06 |
 | 2. Auth and Session Model | 1/1 | Complete    | 2026-07-06 |
 | 3. Privacy and Repository Contract Hardening | 1/1 | Complete    | 2026-07-06 |
-| 4. Firebase Auth and Firestore Adapter | 0/TBD | Not started | - |
+| 4. Firebase Auth and Firestore Adapter | 1/1 | Complete    | 2026-07-06 |
 | 5. Consent Management and Invite Lifecycle | 0/TBD | Not started | - |
 | 6. Real Sleep Import Providers | 0/TBD | Not started | - |
 | 7. Production Deployment Posture | 0/TBD | Not started | - |

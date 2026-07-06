@@ -32,11 +32,11 @@ Requirements for the next release arc. The existing local MVP is the baseline; t
 
 ### Firebase Backend
 
-- [ ] **FIRE-01**: Firebase Auth and Firestore remain behind repository interfaces rather than direct screen calls.
-- [ ] **FIRE-02**: Firestore rules enforce patient-owned journal access and accepted-link sleep-only clinician access.
-- [ ] **FIRE-03**: Firestore rules deny pending, revoked, missing, or malformed clinician links.
-- [ ] **FIRE-04**: Firestore emulator tests cover users, clinician links, health samples, daily summaries, journal entries, and resource cards.
-- [ ] **FIRE-05**: Analytics, Crashlytics, and telemetry remain disabled unless a separate compliance-reviewed decision enables them.
+- [x] **FIRE-01**: Firebase Auth and Firestore remain behind repository interfaces rather than direct screen calls.
+- [x] **FIRE-02**: Firestore rules enforce patient-owned journal access and accepted-link sleep-only clinician access.
+- [x] **FIRE-03**: Firestore rules deny pending, revoked, missing, or malformed clinician links.
+- [x] **FIRE-04**: Firestore emulator tests cover users, clinician links, health samples, daily summaries, journal entries, and resource cards.
+- [x] **FIRE-05**: Analytics, Crashlytics, and telemetry remain disabled unless a separate compliance-reviewed decision enables them.
 
 ### Consent and Invites
 
@@ -115,11 +115,11 @@ Explicitly excluded. Documented to prevent scope creep.
 | PRIV-03 | Phase 3 | Complete |
 | PRIV-04 | Phase 3 | Complete |
 | PRIV-05 | Phase 3 | Complete |
-| FIRE-01 | Phase 4 | Pending |
-| FIRE-02 | Phase 4 | Pending |
-| FIRE-03 | Phase 4 | Pending |
-| FIRE-04 | Phase 4 | Pending |
-| FIRE-05 | Phase 4 | Pending |
+| FIRE-01 | Phase 4 | Complete |
+| FIRE-02 | Phase 4 | Complete |
+| FIRE-03 | Phase 4 | Complete |
+| FIRE-04 | Phase 4 | Complete |
+| FIRE-05 | Phase 4 | Complete |
 | CONS-01 | Phase 5 | Pending |
 | CONS-02 | Phase 5 | Pending |
 | CONS-03 | Phase 5 | Pending |

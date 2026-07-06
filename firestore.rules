@@ -14,9 +14,17 @@ service cloud.firestore {
       return signedIn() && request.auth.token.admin == true;
     }
 
-    function acceptedClinicianLink(patientId) {
+    function isClinician() {
       return signedIn() &&
+        (request.auth.token.role == 'clinician' ||
+         request.auth.token.clinician == true);
+    }
+
+    function acceptedClinicianLink(patientId) {
+      return isClinician() &&
         exists(/databases/$(database)/documents/clinicianLinks/$(request.auth.uid + '_' + patientId)) &&
+        get(/databases/$(database)/documents/clinicianLinks/$(request.auth.uid + '_' + patientId)).data.clinicianUserId == request.auth.uid &&
+        get(/databases/$(database)/documents/clinicianLinks/$(request.auth.uid + '_' + patientId)).data.patientUserId == patientId &&
         get(/databases/$(database)/documents/clinicianLinks/$(request.auth.uid + '_' + patientId)).data.status == 'accepted';
     }
 
@@ -29,7 +37,12 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, create, update: if isSelf(userId);
+      allow read: if isSelf(userId) || acceptedClinicianLink(userId);
+      allow create: if isSelf(userId) &&
+        request.resource.data.role == 'patient';
+      allow update: if isSelf(userId) &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['displayName', 'consentStatus', 'clinicCode', 'updatedAt']);
       allow delete: if false;
     }
 
@@ -37,9 +50,9 @@ service cloud.firestore {
       allow read: if signedIn() &&
         (resource.data.patientUserId == request.auth.uid ||
          resource.data.clinicianUserId == request.auth.uid);
-      allow create, update: if signedIn() &&
-        (request.resource.data.patientUserId == request.auth.uid ||
-         request.resource.data.clinicianUserId == request.auth.uid);
+      allow create, update: if isAdmin() &&
+        linkId == request.resource.data.clinicianUserId + '_' + request.resource.data.patientUserId &&
+        request.resource.data.status in ['pending', 'accepted', 'revoked'];
       allow delete: if false;
     }
 
@@ -62,7 +75,8 @@ service cloud.firestore {
 
     match /resourceCards/{cardId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if false;
     }
   }
 }
