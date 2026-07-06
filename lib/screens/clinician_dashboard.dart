@@ -79,50 +79,72 @@ class _PatientList extends StatelessWidget {
         for (final link in state.clinicianLinkStatuses)
           Padding(
             padding: const EdgeInsets.only(bottom: NidSpace.s),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(NidRadius.card),
-              onTap: link.canOpenSleepSummary
-                  ? () => state.selectPatient(link.patientUserId)
-                  : null,
-              child: SectionCard(
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: NidColors.mint,
-                      foregroundColor: NidColors.canopy,
-                      child: Text(
-                        (link.patientDisplayName ?? '?').characters.first,
+            // Affordance truth (SAFE-02): only rows that actually open a sleep
+            // summary present as tappable. Accepted rows keep the InkWell +
+            // chevron; inert rows (pending/revoked/expired) drop the ink ripple
+            // and tap target entirely, mute to reduced opacity, and let the
+            // status pill carry the "why".
+            child: link.canOpenSleepSummary
+                ? InkWell(
+                    borderRadius: BorderRadius.circular(NidRadius.card),
+                    onTap: () => state.selectPatient(link.patientUserId),
+                    child: _InviteRow(
+                      link: link,
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: NidColors.canopy,
                       ),
                     ),
-                    const SizedBox(width: NidSpace.m),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            link.patientDisplayName ?? 'Unknown patient',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: NidSpace.xs),
-                          Text(
-                            '${link.inviteCode} - ${_linkStatusLabel(link.status)}',
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (link.canOpenSleepSummary)
-                      const Icon(Icons.chevron_right, color: NidColors.canopy)
-                    else
-                      StatusPill(
+                  )
+                : Opacity(
+                    opacity: 0.6,
+                    child: _InviteRow(
+                      link: link,
+                      trailing: StatusPill(
                         label: _linkStatusLabel(link.status),
                         tone: _linkStatusTone(link.status),
                       ),
-                  ],
-                ),
-              ),
-            ),
+                    ),
+                  ),
           ),
       ],
+    );
+  }
+}
+
+class _InviteRow extends StatelessWidget {
+  const _InviteRow({required this.link, required this.trailing});
+
+  final ClinicianLinkStatusView link;
+  final Widget trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: NidColors.mint,
+            foregroundColor: NidColors.canopy,
+            child: Text((link.patientDisplayName ?? '?').characters.first),
+          ),
+          const SizedBox(width: NidSpace.m),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  link.patientDisplayName ?? 'Unknown patient',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: NidSpace.xs),
+                Text('${link.inviteCode} - ${_linkStatusLabel(link.status)}'),
+              ],
+            ),
+          ),
+          trailing,
+        ],
+      ),
     );
   }
 }
