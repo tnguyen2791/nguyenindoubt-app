@@ -19,6 +19,15 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] **Phase 6: Real Sleep Import Providers** - Add HealthKit and Health Connect providers behind `HealthDataProvider` with sleep-only permissions and safe sync behavior. (completed 2026-07-06)
 - [x] **Phase 7: Production Deployment Posture** - Make release verification, data expectations, and compliance blockers explicit before production launch. (completed 2026-07-06)
 
+### Milestone v1.1 — Experience &amp; Insight (design critique)
+
+- [ ] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work)
+- [ ] **Phase 9: Safety &amp; Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete.
+- [ ] **Phase 10: Brand Arrival &amp; Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run.
+- [ ] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights.
+- [ ] **Phase 12: Sharing as a First-Class Flow** - Promote consent to its own destination, one vocabulary, confirm-gated revoke, explicit 2-step invite.
+- [ ] **Phase 13: Motion &amp; Feedback Choreography** - Cross-fade transitions, reassuring consent/import confirmations, sleep-bar grow-in, calm loading and micro-interactions.
+
 ## Phase Details
 
 ### Phase 1: Demo Promise Hardening
@@ -137,10 +146,109 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 **Plans:** 1/1 plans complete
 **UI hint**: yes
 
+### Phase 8: Design System Foundations
+
+**Goal:** The app has a real, tokenized design system so every later surface reads as a deliberate premium health product, not templated Material.
+**Mode:** mvp
+**Depends on:** v1.0 complete; this refactors the shared theme/components the rest of v1.1 builds on, so it goes first.
+**Requirements:** DS-01, DS-02, DS-03, DS-04, DS-05
+**Success Criteria** (what must be TRUE):
+
+  1. A defined type ladder (distinct heading/body/label sizes and weights) is applied; no widget relies on an undefined text token or piles on w800/w900.
+  2. Spacing and radius tokens exist and replace the freehand magic numbers and one-off logo radii across cards, headers, and gaps.
+  3. `StatusPill` renders by semantic tone (state-encoded color), not a single default mint chip.
+  4. No on-screen color comes from an un-blessed Material seed tone or a stray stock color; dialogs, nav, segmented buttons, and outlines use palette values.
+  5. A single `BrandMark` widget with min-size/clearspace rules is used everywhere the logo appears.
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
+### Phase 9: Safety &amp; Affordance Integrity
+
+**Goal:** Controls do what they look like they do, and the one screen where latency is dangerous — Safety — takes real action in a single tap.
+**Mode:** mvp
+**Depends on:** Phase 8; uses the new tokens/components, but is otherwise independent and high-priority (recommended first execution).
+**Requirements:** SAFE-01, SAFE-02, SAFE-03
+**Success Criteria** (what must be TRUE):
+
+  1. Crisis actions launch `tel:`/`sms:` (988, emergency) directly rather than opening an explanatory dialog, while remaining educational and non-monitoring.
+  2. Tappable cards signal it; non-actionable or disabled rows are visually distinct and never silently absorb a tap.
+  3. The journal shows an empty state and supports per-entry delete with confirmation.
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
+### Phase 10: Brand Arrival &amp; Guided Onboarding
+
+**Goal:** The first minute feels calm, branded, and guided — from cold-start to a clear first action — instead of a blank frame and a graveyard of placeholders.
+**Mode:** mvp
+**Depends on:** Phase 8; the splash, welcome, and first-run surfaces use the tokenized system.
+**Requirements:** ONB-01, ONB-02, ONB-03, ONB-04
+**Success Criteria** (what must be TRUE):
+
+  1. Cold-start shows an on-brand loader and a gentle animated brand-intro (once per cold launch, no analytics) rather than a blank white boot frame.
+  2. The welcome leads with a single patient-first primary action; clinician demo access is de-emphasized; required local-only disclosure reads as calm secondary copy.
+  3. Onboarding communicates what the app does (sleep/journal/privacy) and rejects empty/invalid names.
+  4. The empty first-run dashboard presents one clear primary action with sleep-only permission priming before any OS prompt.
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
+### Phase 11: Insightful Data Displays
+
+**Goal:** Data surfaces deliver Oura-grade insight — hierarchy, honest charts, and gentle observations — instead of raw, redundant numbers.
+**Mode:** mvp
+**Depends on:** Phase 8; also coordinates with Phase 12 (moving "clinician link" out of the metric row).
+**Requirements:** INS-01, INS-02, INS-03, INS-04, INS-05
+**Success Criteria** (what must be TRUE):
+
+  1. The dashboard has a clear hero readout and does not present a connection toggle as a co-equal health metric.
+  2. The 0–100 measure is retired or rebuilt as a real, multi-factor, non-diagnostic score shown as a ring with an explicit scale.
+  3. Trend bars use a fixed hour axis with a target/average reference line and honest heights (no window-max normalization or floor clamp).
+  4. A gentle, strictly-observational insight line (week-over-week / last-night-vs-baseline) is present and never labels the person.
+  5. Consistency/balance micro-insights and a directional clinician summary replace raw counts like "samples".
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
+### Phase 12: Sharing as a First-Class Flow
+
+**Goal:** A patient can always find, understand, and safely control who sees their data, with one vocabulary and no one-tap trapdoors.
+**Mode:** mvp
+**Depends on:** Phase 8; touches the consent surfaces from v1.0 Phase 5 without changing the privacy contract.
+**Requirements:** SHARE-01, SHARE-02, SHARE-03, SHARE-04, SHARE-05
+**Success Criteria** (what must be TRUE):
+
+  1. Consent/sharing is a first-class destination with a compact status + deep link from the Sleep tab.
+  2. A single "sharing" vocabulary replaces the mixed clinician-link/invite/shared-sleep status terms.
+  3. Revoke is gated by a confirmation that states the one-way consequence before the action.
+  4. The invite flow is an explicit 2-step (validate → confirm) with one primary action at a time and the shared/hidden scope shown inline.
+  5. Casing and dates are normalized and the clinician scope is framed positively.
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
+### Phase 13: Motion &amp; Feedback Choreography
+
+**Goal:** The app feels alive and calming — transitions fade, actions confirm reassuringly, and data settles gently — never static or janky.
+**Mode:** mvp
+**Depends on:** Phase 8; best executed after Phases 10–12 so it animates the final surfaces.
+**Requirements:** MOT-01, MOT-02, MOT-03, MOT-04
+**Success Criteria** (what must be TRUE):
+
+  1. Screen/tab/role transitions cross-fade rather than pop.
+  2. Consent accept/revoke and sleep import give reassuring, non-diagnostic confirmations and calm error handling (no silent outcomes).
+  3. Sleep bars animate in gently and async loads settle via skeleton/opacity rather than blinking.
+  4. Micro-interactions (icon↔spinner cross-fade, subtle press feedback, softened destructive reset) feel calm and intentional.
+
+**Plans:** Not yet planned
+**UI hint**: yes
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+v1.0 (complete): 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
+v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is the recommended first real fix; 13 last so it animates the final surfaces)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -151,3 +259,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 5. Consent Management and Invite Lifecycle | 1/1 | Complete    | 2026-07-06 |
 | 6. Real Sleep Import Providers | 1/1 | Complete    | 2026-07-06 |
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
+| 8. Design System Foundations | 0/0 | Not started | - |
+| 9. Safety & Affordance Integrity | 0/0 | Not started | - |
+| 10. Brand Arrival & Guided Onboarding | 0/0 | Not started | - |
+| 11. Insightful Data Displays | 0/0 | Not started | - |
+| 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
+| 13. Motion & Feedback Choreography | 0/0 | Not started | - |

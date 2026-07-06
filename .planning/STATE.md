@@ -1,20 +1,20 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-current_phase: 7
-current_phase_name: Production Deployment Posture
-status: complete
-stopped_at: Phase 7 executed and verified
-last_updated: "2026-07-06T16:22:30Z"
+milestone: v1.1
+milestone_name: Experience & Insight
+current_phase: 8
+current_phase_name: Design System Foundations
+status: ready_to_plan
+stopped_at: v1.1 roadmap defined from 5-lens design critique; Phase 8 ready to plan
+last_updated: "2026-07-06T17:55:00Z"
 last_activity: 2026-07-06
-last_activity_desc: Phase 7 complete; v1 roadmap phases complete
+last_activity_desc: v1.1 (Experience & Insight) milestone added from design critique; Phases 8-13 defined
 progress:
-  total_phases: 7
+  total_phases: 13
   completed_phases: 7
   total_plans: 7
   completed_plans: 7
-  percent: 100
+  percent: 54
 ---
 
 # Project State
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** Patients can explore sleep context and private reflection while clinicians see only consented sleep summaries, never journal content.
-**Current focus:** v1 roadmap phases complete; ready for ship/review workflow
+**Current focus:** v1.1 Experience & Insight — 6 design phases (8-13) defined from critique; Phase 8 ready to plan
 
 ## Current Position
 
-Phase: 7 of 7 (Production Deployment Posture)
-Plan: 1/1 complete
-Status: Complete
-Last activity: 2026-07-06 — Phase 7 complete; v1 roadmap phases complete
+Phase: 8 of 13 (Design System Foundations) — v1.1 milestone
+Plan: not yet planned
+Status: Ready to plan
+Last activity: 2026-07-06 — v1.1 milestone added from 5-lens design critique; Phases 8-13 defined
 
-Progress: [##########] 100%
+Progress: [#####-----] 54% (7/13 phases)
 
 ## Performance Metrics
 
