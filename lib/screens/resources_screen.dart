@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/app_models.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
+import '../theme/tokens.dart';
 import 'common_widgets.dart';
 
 class ResourcesScreen extends StatelessWidget {
@@ -22,9 +23,9 @@ class ResourcesScreen extends StatelessWidget {
 
         if (columns == 1) {
           return ListView.separated(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(NidSpace.xl),
             itemCount: state.resources.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder: (_, _) => const SizedBox(height: NidSpace.m),
             itemBuilder: (context, index) {
               return _ResourceCard(card: state.resources[index]);
             },
@@ -32,10 +33,10 @@ class ResourcesScreen extends StatelessWidget {
         }
 
         return GridView.count(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(NidSpace.xl),
           crossAxisCount: columns,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+          crossAxisSpacing: NidSpace.m,
+          mainAxisSpacing: NidSpace.m,
           childAspectRatio: 1.12,
           children: [
             for (final card in state.resources)
@@ -73,25 +74,22 @@ class _ResourceCard extends StatelessWidget {
                     : Icons.local_florist_outlined,
                 color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: NidSpace.s),
               StatusPill(
                 label: card.category,
-                color: card.crisisFlag
-                    ? NidColors.ember.withValues(alpha: 0.12)
-                    : NidColors.mint,
+                tone: card.crisisFlag ? PillTone.flag : PillTone.neutral,
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: NidSpace.m),
           Text(card.title, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
+          const SizedBox(height: NidSpace.s),
           if (constrainBody) Expanded(child: body) else body,
-          const SizedBox(height: 10),
+          const SizedBox(height: NidSpace.m),
           Text(
             card.disclaimer,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
-              fontWeight: FontWeight.w800,
             ),
           ),
         ],
@@ -106,14 +104,18 @@ class SafetyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(NidSpace.xl),
       children: [
         const BrandHeader(
           title: 'Safety and limits',
           subtitle: 'A companion can hold patterns. It cannot hold a crisis.',
-          trailing: StatusPill(label: '988 / 911', icon: Icons.call_outlined),
+          trailing: StatusPill(
+            label: '988 / 911',
+            tone: PillTone.neutral,
+            icon: Icons.call_outlined,
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         SectionCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,10 +124,10 @@ class SafetyScreen extends StatelessWidget {
                 'Use urgent support for danger, self-harm risk, harm to someone else, psychosis, intoxication, or when staying safe is uncertain.',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: NidSpace.l),
               Wrap(
-                spacing: 10,
-                runSpacing: 10,
+                spacing: NidSpace.m,
+                runSpacing: NidSpace.m,
                 children: [
                   FilledButton.icon(
                     onPressed: () => _showSafetyInstructions(
@@ -152,7 +154,7 @@ class SafetyScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         const SectionCard(
           child: Text(
             'NguyenInDoubt does not provide diagnosis, treatment, emergency monitoring, or patient-to-clinician messaging in this MVP.',
