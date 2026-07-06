@@ -61,9 +61,9 @@ Requirements for the next release arc. The existing local MVP is the baseline; t
 - [x] **PROD-03**: Deployment verification includes `flutter analyze`, `flutter test`, and `flutter build web`.
 - [x] **PROD-04**: Production release notes identify privacy-sensitive changes and any remaining compliance blockers.
 
-## v1.1 Requirements (Experience &amp; Insight)
+## v1.1 Requirements (Experience and Insight)
 
-Derived 2026-07-06 from a five-lens senior design critique (visual/brand, IA &amp; affordances, onboarding &amp; splash, data-viz &amp; insights, motion &amp; micro-UX). All preserve the standing constraints: no analytics/telemetry; clinician sleep-only, post-consent, never journals; explicit local/demo disclosure; no emergency-monitoring or clinical-decision-support claims; motion stays gentle (fade/ease, never pop); insights stay observational, never diagnostic.
+Derived 2026-07-06 from a five-lens senior design critique (visual/brand, IA and affordances, onboarding and splash, data-viz and insights, motion and micro-UX). All preserve the standing constraints: no analytics/telemetry; clinician sleep-only, post-consent, never journals; explicit local/demo disclosure; no emergency-monitoring or clinical-decision-support claims; motion stays gentle (fade/ease, never pop); insights stay observational, never diagnostic.
 
 ### Design System (Phase 8)
 
@@ -73,13 +73,13 @@ Derived 2026-07-06 from a five-lens senior design critique (visual/brand, IA &am
 - [ ] **DS-04**: The Material `fromSeed` leak is neutralized — dialogs, segmented buttons, navigation, and outline/surface tones use blessed palette values; stray stock colors (e.g. `Colors.red`) are replaced with `NidColors` equivalents.
 - [ ] **DS-05**: A single `BrandMark` widget with a min-size rule and one lockup replaces the three-radii/two-treatment logo usage across app bar, header, and onboarding.
 
-### Safety &amp; Affordance Integrity (Phase 9)
+### Safety and Affordance Integrity (Phase 9)
 
 - [ ] **SAFE-01**: Crisis actions (988 call/text, emergency) launch `tel:`/`sms:` directly via `url_launcher` instead of showing a dialog, while staying educational and non-monitoring.
 - [ ] **SAFE-02**: Interactive cards signal tappability; non-actionable / disabled rows are visually distinct (reduced opacity, no ripple) and never silently absorb taps.
 - [ ] **SAFE-03**: Journal has an `EmptyState` and per-entry delete with confirmation, completing the private-journal promise.
 
-### Brand Arrival &amp; Onboarding (Phase 10)
+### Brand Arrival and Onboarding (Phase 10)
 
 - [ ] **ONB-01**: Cold-start is on-brand — a native web loader plus a gentle animated brand-intro splash (plays once per cold launch, no analytics) replaces the blank boot frame.
 - [ ] **ONB-02**: Welcome leads with a single patient-first primary action; clinician demo access is de-emphasized; the required local-only disclosure moves to calm secondary copy.
@@ -102,7 +102,7 @@ Derived 2026-07-06 from a five-lens senior design critique (visual/brand, IA &am
 - [ ] **SHARE-04**: The invite flow is an explicit 2-step (validate → confirm sharing) with a single primary action at a time and the shared/hidden scope shown inline.
 - [ ] **SHARE-05**: Casing and dates are normalized (consent history uses the friendly `shortDate`) and the clinician scope is framed positively ("Sleep summaries only").
 
-### Motion &amp; Feedback (Phase 13)
+### Motion and Feedback (Phase 13)
 
 - [ ] **MOT-01**: Screen / tab / role transitions cross-fade (never pop), honoring the gentle-motion rule.
 - [ ] **MOT-02**: Consent accept/revoke and sleep import surface reassuring, non-diagnostic confirmations and calm error handling — no silent success/failure.

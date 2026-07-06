@@ -1,7 +1,7 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.1
-milestone_name: — Experience &amp; Insight
+milestone_name: Experience and Insight
 current_phase: 08
 status: completed
 stopped_at: v1.1 roadmap defined from 5-lens design critique; Phase 8 ready to plan

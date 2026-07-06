@@ -19,14 +19,14 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] **Phase 6: Real Sleep Import Providers** - Add HealthKit and Health Connect providers behind `HealthDataProvider` with sleep-only permissions and safe sync behavior. (completed 2026-07-06)
 - [x] **Phase 7: Production Deployment Posture** - Make release verification, data expectations, and compliance blockers explicit before production launch. (completed 2026-07-06)
 
-### Milestone v1.1 — Experience &amp; Insight (design critique)
+### Milestone v1.1 — Experience and Insight (design critique)
 
 - [x] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work) (completed 2026-07-06)
-- [ ] **Phase 9: Safety &amp; Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete.
-- [ ] **Phase 10: Brand Arrival &amp; Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run.
+- [ ] **Phase 9: Safety and Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete.
+- [ ] **Phase 10: Brand Arrival and Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run.
 - [ ] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights.
 - [ ] **Phase 12: Sharing as a First-Class Flow** - Promote consent to its own destination, one vocabulary, confirm-gated revoke, explicit 2-step invite.
-- [ ] **Phase 13: Motion &amp; Feedback Choreography** - Cross-fade transitions, reassuring consent/import confirmations, sleep-bar grow-in, calm loading and micro-interactions.
+- [ ] **Phase 13: Motion and Feedback Choreography** - Cross-fade transitions, reassuring consent/import confirmations, sleep-bar grow-in, calm loading and micro-interactions.
 
 ## Phase Details
 
@@ -166,7 +166,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] 08-03-PLAN.md — Journal + resources + app shell sweep: pill tones, single BrandMark, de-weight, tokens (wave 2)
 **UI hint**: yes
 
-### Phase 9: Safety &amp; Affordance Integrity
+### Phase 9: Safety and Affordance Integrity
 
 **Goal:** Controls do what they look like they do, and the one screen where latency is dangerous — Safety — takes real action in a single tap.
 **Mode:** mvp
@@ -181,7 +181,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 **Plans:** Not yet planned
 **UI hint**: yes
 
-### Phase 10: Brand Arrival &amp; Guided Onboarding
+### Phase 10: Brand Arrival and Guided Onboarding
 
 **Goal:** The first minute feels calm, branded, and guided — from cold-start to a clear first action — instead of a blank frame and a graveyard of placeholders.
 **Mode:** mvp
@@ -231,7 +231,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 **Plans:** Not yet planned
 **UI hint**: yes
 
-### Phase 13: Motion &amp; Feedback Choreography
+### Phase 13: Motion and Feedback Choreography
 
 **Goal:** The app feels alive and calming — transitions fade, actions confirm reassuringly, and data settles gently — never static or janky.
 **Mode:** mvp
