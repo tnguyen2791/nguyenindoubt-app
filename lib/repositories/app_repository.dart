@@ -34,8 +34,30 @@ abstract class AppRepository {
 abstract class ClinicianRepository {
   Future<List<AppUser>> getLinkedPatients(String clinicianId);
 
+  Future<List<ClinicianLinkStatusView>> getClinicianLinkStatuses(
+    String clinicianId,
+  );
+
   Future<PatientSleepBundle> getPatientSleepSummary({
     required String clinicianId,
+    required String patientId,
+  });
+}
+
+abstract class ConsentRepository {
+  Future<InviteValidationResult> validateInviteCode({
+    required String patientId,
+    required String inviteCode,
+  });
+
+  Future<AppUser> acceptInvite({
+    required String patientId,
+    required String inviteCode,
+  });
+
+  Future<AppUser> revokeConsent({required String patientId});
+
+  Future<List<ConsentHistoryEvent>> getConsentHistory({
     required String patientId,
   });
 }
@@ -49,7 +71,8 @@ class PrivacyException implements Exception {
   String toString() => message;
 }
 
-class InMemoryAppRepository implements AppRepository, ClinicianRepository {
+class InMemoryAppRepository
+    implements AppRepository, ClinicianRepository, ConsentRepository {
   InMemoryAppRepository({
     this.preferences,
     this.storageKey = _defaultStorageKey,
@@ -74,12 +97,18 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
   final List<DailySummary> _summaries = [];
   final List<JournalEntry> _entries = [];
   final List<ResourceCard> _resources = [];
+  final List<ConsentHistoryEvent> _consentEvents = [];
   AppSession _session = const AppSession.signedOut();
 
   void _seedDemoData() {
     _users
       ..clear()
-      ..addAll([demoPatient, linkedPatient, demoClinician]);
+      ..addAll([
+        demoPatient,
+        linkedPatient,
+        expiredInvitePatient,
+        demoClinician,
+      ]);
     _links
       ..clear()
       ..addAll(seedClinicianLinks());
@@ -95,6 +124,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     _resources
       ..clear()
       ..addAll(seedResources);
+    _consentEvents.clear();
     _session = const AppSession.signedOut();
   }
 
@@ -132,6 +162,13 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
             (json) => _entryFromJson(json as Map<String, Object?>),
           ),
         );
+      _consentEvents
+        ..clear()
+        ..addAll(
+          ((decoded['consentEvents'] as List<dynamic>?) ?? []).map(
+            (json) => _consentEventFromJson(json as Map<String, Object?>),
+          ),
+        );
       _session = _sessionFromJson(decoded['session'] as Map<String, Object?>?);
       return _users.isNotEmpty;
     } on Object {
@@ -140,6 +177,7 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
       _samples.clear();
       _summaries.clear();
       _entries.clear();
+      _consentEvents.clear();
       _session = const AppSession.signedOut();
       return false;
     }
@@ -154,11 +192,12 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     await localPreferences.setString(
       storageKey,
       jsonEncode({
-        'schemaVersion': 1,
+        'schemaVersion': 2,
         'users': _users.map(_userToJson).toList(),
         'links': _links.map(_linkToJson).toList(),
         'samples': _samples.map(_sampleToJson).toList(),
         'entries': _entries.map(_entryToJson).toList(),
+        'consentEvents': _consentEvents.map(_consentEventToJson).toList(),
         'session': _sessionToJson(_session),
       }),
     );
@@ -192,35 +231,184 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     return updated;
   }
 
-  Future<AppUser> grantPatientConsent(
-    String patientId,
-    String inviteCode,
-  ) async {
+  @override
+  Future<InviteValidationResult> validateInviteCode({
+    required String patientId,
+    required String inviteCode,
+  }) async {
+    final normalized = _normalizeInviteCode(inviteCode);
+    if (normalized.isEmpty) {
+      return const InviteValidationResult(
+        status: InviteValidationStatus.empty,
+        normalizedCode: '',
+        message: 'Enter an invite code before validating.',
+      );
+    }
+    if (!_invitePattern.hasMatch(normalized)) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.malformed,
+        normalizedCode: normalized,
+        message: 'Invite codes use the format NID-1234.',
+      );
+    }
+
+    final matches = _links.where((link) => link.inviteCode == normalized);
+    if (matches.isEmpty) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.missing,
+        normalizedCode: normalized,
+        message: 'No invite with that code was found.',
+      );
+    }
+
+    final link = matches.first;
+    final clinician = _findUser(link.clinicianUserId);
+    if (link.patientUserId != patientId) {
+      return InviteValidationResult(
+        status: InviteValidationStatus.wrongPatient,
+        normalizedCode: normalized,
+        patientUserId: link.patientUserId,
+        clinicianUserId: link.clinicianUserId,
+        clinicianDisplayName: clinician?.displayName,
+        message: 'This invite is for a different patient account.',
+      );
+    }
+
+    return switch (link.status) {
+      LinkStatus.pending => InviteValidationResult(
+        status: InviteValidationStatus.valid,
+        normalizedCode: normalized,
+        patientUserId: link.patientUserId,
+        clinicianUserId: link.clinicianUserId,
+        clinicianDisplayName: clinician?.displayName,
+        message: 'Invite validated. Review sharing before accepting.',
+      ),
+      LinkStatus.accepted => InviteValidationResult(
+        status: InviteValidationStatus.alreadyAccepted,
+        normalizedCode: normalized,
+        patientUserId: link.patientUserId,
+        clinicianUserId: link.clinicianUserId,
+        clinicianDisplayName: clinician?.displayName,
+        message: 'This invite is already accepted.',
+      ),
+      LinkStatus.revoked => InviteValidationResult(
+        status: InviteValidationStatus.revoked,
+        normalizedCode: normalized,
+        patientUserId: link.patientUserId,
+        clinicianUserId: link.clinicianUserId,
+        clinicianDisplayName: clinician?.displayName,
+        message: 'This invite was revoked and cannot be reused.',
+      ),
+      LinkStatus.expired => InviteValidationResult(
+        status: InviteValidationStatus.expired,
+        normalizedCode: normalized,
+        patientUserId: link.patientUserId,
+        clinicianUserId: link.clinicianUserId,
+        clinicianDisplayName: clinician?.displayName,
+        message: 'This invite has expired. Ask for a new code.',
+      ),
+    };
+  }
+
+  @override
+  Future<AppUser> acceptInvite({
+    required String patientId,
+    required String inviteCode,
+  }) async {
+    final validation = await validateInviteCode(
+      patientId: patientId,
+      inviteCode: inviteCode,
+    );
+    if (!validation.canAccept) {
+      throw PrivacyException(validation.message);
+    }
+
+    final normalized = validation.normalizedCode;
     final index = _users.indexWhere((user) => user.id == patientId);
+    final previous = _users[index];
     final updated = _users[index].copyWith(
       consentStatus: ConsentStatus.granted,
-      clinicCode: inviteCode,
+      clinicCode: normalized,
     );
-    _users[index] = updated;
 
     final linkIndex = _links.indexWhere(
       (link) =>
-          link.patientUserId == patientId && link.inviteCode == inviteCode,
+          link.patientUserId == patientId && link.inviteCode == normalized,
     );
     final now = DateTime.now();
-    if (linkIndex >= 0) {
-      final existing = _links[linkIndex];
-      _links[linkIndex] = ClinicianLink(
-        inviteCode: existing.inviteCode,
-        clinicianUserId: existing.clinicianUserId,
-        patientUserId: existing.patientUserId,
-        status: LinkStatus.accepted,
-        createdAt: existing.createdAt,
-        updatedAt: now,
-      );
-    }
+    final existing = _links[linkIndex];
+    _users[index] = updated;
+    _links[linkIndex] = ClinicianLink(
+      inviteCode: existing.inviteCode,
+      clinicianUserId: existing.clinicianUserId,
+      patientUserId: existing.patientUserId,
+      status: LinkStatus.accepted,
+      createdAt: existing.createdAt,
+      updatedAt: now,
+    );
+    _addConsentEvent(
+      patientUserId: patientId,
+      clinicianUserId: existing.clinicianUserId,
+      inviteCode: normalized,
+      previousStatus: previous.consentStatus,
+      nextStatus: ConsentStatus.granted,
+      action: ConsentEventAction.accepted,
+      actorUserId: patientId,
+      occurredAt: now,
+    );
     await _persist();
     return updated;
+  }
+
+  @override
+  Future<AppUser> revokeConsent({required String patientId}) async {
+    final linkIndex = _links.indexWhere(
+      (link) =>
+          link.patientUserId == patientId && link.status == LinkStatus.accepted,
+    );
+    if (linkIndex < 0) {
+      throw const PrivacyException('No active clinician link to revoke.');
+    }
+
+    final userIndex = _users.indexWhere((user) => user.id == patientId);
+    final previous = _users[userIndex];
+    final existing = _links[linkIndex];
+    final now = DateTime.now();
+    final updated = previous.copyWith(
+      consentStatus: ConsentStatus.revoked,
+      clearClinicCode: true,
+    );
+    _users[userIndex] = updated;
+    _links[linkIndex] = ClinicianLink(
+      inviteCode: existing.inviteCode,
+      clinicianUserId: existing.clinicianUserId,
+      patientUserId: existing.patientUserId,
+      status: LinkStatus.revoked,
+      createdAt: existing.createdAt,
+      updatedAt: now,
+    );
+    _addConsentEvent(
+      patientUserId: patientId,
+      clinicianUserId: existing.clinicianUserId,
+      inviteCode: existing.inviteCode,
+      previousStatus: previous.consentStatus,
+      nextStatus: ConsentStatus.revoked,
+      action: ConsentEventAction.revoked,
+      actorUserId: patientId,
+      occurredAt: now,
+    );
+    await _persist();
+    return updated;
+  }
+
+  @override
+  Future<List<ConsentHistoryEvent>> getConsentHistory({
+    required String patientId,
+  }) async {
+    return _consentEvents
+        .where((event) => event.patientUserId == patientId)
+        .toList()
+      ..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
   }
 
   @override
@@ -285,10 +473,20 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
         'Imported sleep samples must belong to the patient.',
       );
     }
-    _samples.removeWhere((sample) => sample.userId == patientId);
+    final mergedSamples = dedupeSleepSamples([
+      ..._samples.where(
+        (sample) =>
+            sample.userId == patientId && sample.metricType == MetricType.sleep,
+      ),
+      ...samples,
+    ]);
+    _samples.removeWhere(
+      (sample) =>
+          sample.userId == patientId && sample.metricType == MetricType.sleep,
+    );
     _summaries.removeWhere((summary) => summary.userId == patientId);
-    _samples.addAll(samples);
-    _summaries.addAll(summarizeSleepSamples(samples));
+    _samples.addAll(mergedSamples);
+    _summaries.addAll(summarizeSleepSamples(mergedSamples));
     await _persist();
   }
 
@@ -314,6 +512,27 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
   }
 
   @override
+  Future<List<ClinicianLinkStatusView>> getClinicianLinkStatuses(
+    String clinicianId,
+  ) async {
+    final statuses = _links
+        .where((link) => link.clinicianUserId == clinicianId)
+        .map((link) {
+          final patient = _findUser(link.patientUserId);
+          return ClinicianLinkStatusView(
+            patientUserId: link.patientUserId,
+            patientDisplayName: patient?.displayName,
+            inviteCode: link.inviteCode,
+            status: link.status,
+            updatedAt: link.updatedAt,
+          );
+        })
+        .toList();
+    statuses.sort(_compareClinicianLinkStatus);
+    return statuses;
+  }
+
+  @override
   Future<PatientSleepBundle> getPatientSleepSummary({
     required String clinicianId,
     required String patientId,
@@ -325,6 +544,11 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     }
 
     final patient = _users.firstWhere((user) => user.id == patientId);
+    if (patient.consentStatus != ConsentStatus.granted) {
+      throw const PrivacyException(
+        'Patient has not granted active sleep sharing.',
+      );
+    }
     final summaries = _dailySummariesFor(patientId);
     final samples = _samples
         .where((sample) => sample.userId == patientId)
@@ -371,6 +595,41 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
     );
   }
 
+  void _addConsentEvent({
+    required String patientUserId,
+    required String clinicianUserId,
+    required String inviteCode,
+    required ConsentStatus previousStatus,
+    required ConsentStatus nextStatus,
+    required ConsentEventAction action,
+    required String actorUserId,
+    required DateTime occurredAt,
+  }) {
+    _consentEvents.insert(
+      0,
+      ConsentHistoryEvent(
+        id: 'consent-${occurredAt.microsecondsSinceEpoch}',
+        patientUserId: patientUserId,
+        clinicianUserId: clinicianUserId,
+        inviteCode: inviteCode,
+        previousStatus: previousStatus,
+        nextStatus: nextStatus,
+        action: action,
+        actorUserId: actorUserId,
+        occurredAt: occurredAt,
+      ),
+    );
+  }
+
+  AppUser? _findUser(String userId) {
+    for (final user in _users) {
+      if (user.id == userId) {
+        return user;
+      }
+    }
+    return null;
+  }
+
   List<DailySummary> _dailySummariesFor(String patientId) {
     return _summaries.where((summary) => summary.userId == patientId).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
@@ -392,6 +651,33 @@ class InMemoryAppRepository implements AppRepository, ClinicianRepository {
       );
     }
   }
+}
+
+final _invitePattern = RegExp(r'^NID-\d{4}$');
+
+String _normalizeInviteCode(String inviteCode) =>
+    inviteCode.trim().toUpperCase();
+
+int _compareClinicianLinkStatus(
+  ClinicianLinkStatusView a,
+  ClinicianLinkStatusView b,
+) {
+  final byStatus = _linkStatusSortOrder(
+    a.status,
+  ).compareTo(_linkStatusSortOrder(b.status));
+  if (byStatus != 0) {
+    return byStatus;
+  }
+  return b.updatedAt.compareTo(a.updatedAt);
+}
+
+int _linkStatusSortOrder(LinkStatus status) {
+  return switch (status) {
+    LinkStatus.accepted => 0,
+    LinkStatus.pending => 1,
+    LinkStatus.revoked => 2,
+    LinkStatus.expired => 3,
+  };
 }
 
 Map<String, Object?> _userToJson(AppUser user) {
@@ -483,6 +769,36 @@ JournalEntry _entryFromJson(Map<String, Object?> json) {
     moodTag: json['moodTag'] as String?,
     createdAt: DateTime.parse(json['createdAt'] as String),
     privateByDefault: json['privateByDefault'] as bool? ?? true,
+  );
+}
+
+Map<String, Object?> _consentEventToJson(ConsentHistoryEvent event) {
+  return {
+    'id': event.id,
+    'patientUserId': event.patientUserId,
+    'clinicianUserId': event.clinicianUserId,
+    'inviteCode': event.inviteCode,
+    'previousStatus': event.previousStatus.name,
+    'nextStatus': event.nextStatus.name,
+    'action': event.action.name,
+    'actorUserId': event.actorUserId,
+    'occurredAt': event.occurredAt.toIso8601String(),
+  };
+}
+
+ConsentHistoryEvent _consentEventFromJson(Map<String, Object?> json) {
+  return ConsentHistoryEvent(
+    id: json['id'] as String,
+    patientUserId: json['patientUserId'] as String,
+    clinicianUserId: json['clinicianUserId'] as String,
+    inviteCode: json['inviteCode'] as String,
+    previousStatus: ConsentStatus.values.byName(
+      json['previousStatus'] as String,
+    ),
+    nextStatus: ConsentStatus.values.byName(json['nextStatus'] as String),
+    action: ConsentEventAction.values.byName(json['action'] as String),
+    actorUserId: json['actorUserId'] as String,
+    occurredAt: DateTime.parse(json['occurredAt'] as String),
   );
 }
 

@@ -12,6 +12,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('patient can sign up and import mock sleep data', (tester) async {
+    tester.view.physicalSize = const Size(1000, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final state = NguyenInDoubtState(
       repository: InMemoryAppRepository(),
       healthDataProvider: MockHealthDataProvider(),
@@ -27,12 +32,17 @@ void main() {
 
     expect(find.text('Morning check-in'), findsOneWidget);
     expect(find.text('No sleep samples yet'), findsOneWidget);
+    expect(find.text('sleep permission needed'), findsOneWidget);
+    expect(find.text('Import requests sleep-only access.'), findsOneWidget);
     expect(state.currentUser.displayName, 'Taylor Nguyen');
 
-    await tester.tap(find.text('Import'));
+    final importButton = find.widgetWithText(FilledButton, 'Import');
+    await tester.ensureVisible(importButton);
+    await tester.tap(importButton);
     await tester.pumpAndSettle();
 
     expect(state.summaries, isNotEmpty);
+    expect(find.text('sleep access ready'), findsOneWidget);
     expect(find.text('No sleep samples yet'), findsNothing);
   });
 
@@ -54,13 +64,14 @@ void main() {
 
     expect(
       find.text(
-        'Demo data is stored on this device. It does not sync across desktop, phone, or the GitHub Pages demo.',
+        'Demo mode: data stays on this device. It does not sync across browsers, phones, or the GitHub Pages demo, and it is not production storage.',
       ),
       findsOneWidget,
     );
 
     await state.importMockSleep();
-    await state.acceptClinicInvite();
+    await state.validateInviteCode('NID-1138');
+    await state.acceptValidatedInvite();
     await state.addJournalEntry(
       title: 'Reset title',
       body: 'Reset body',
@@ -95,6 +106,35 @@ void main() {
     expect(find.text('Reset title'), findsNothing);
   });
 
+  testWidgets('public demo discloses local-only data mode', (tester) async {
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Patient sign up'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('Account-backed production storage is not enabled'),
+      findsOneWidget,
+    );
+
+    await tester.enterText(find.byType(TextField), 'Alex Nguyen');
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Demo mode: data stays on this device. It does not sync across browsers, phones, or the GitHub Pages demo, and it is not production storage.',
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('safety actions provide explicit urgent support fallback', (
     tester,
   ) async {
@@ -122,6 +162,53 @@ void main() {
     expect(find.textContaining('call 911'), findsOneWidget);
   });
 
+  testWidgets('patient can validate accept and revoke invite sharing', (
+    tester,
+  ) async {
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpAndSettle();
+    await _completePatientOnboarding(tester);
+
+    await tester.scrollUntilVisible(find.text('Sleep sharing consent'), 200);
+    await tester.pumpAndSettle();
+    expect(find.text('Sleep sharing consent'), findsOneWidget);
+    expect(find.text('No consent events yet.'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField).last, 'bad-code');
+    await tester.tap(find.text('Validate invite'));
+    await tester.pumpAndSettle();
+    expect(find.text('Invite not available'), findsOneWidget);
+    expect(state.currentUser.consentStatus, ConsentStatus.notAsked);
+
+    await tester.enterText(find.byType(TextField).last, 'NID-1138');
+    await tester.tap(find.text('Validate invite'));
+    await tester.pumpAndSettle();
+    expect(find.text('Invite preview'), findsOneWidget);
+    expect(find.text('Clinician: Dr. Nguyen'), findsOneWidget);
+    expect(
+      find.textContaining('Hidden: journal entries, drafts'),
+      findsOneWidget,
+    );
+    expect(state.currentUser.consentStatus, ConsentStatus.notAsked);
+
+    await tester.tap(find.text('Accept sharing'));
+    await tester.pumpAndSettle();
+    expect(state.currentUser.consentStatus, ConsentStatus.granted);
+    expect(find.text('sharing active'), findsOneWidget);
+    expect(find.textContaining('Accepted NID-1138'), findsOneWidget);
+
+    await tester.tap(find.text('Revoke sharing'));
+    await tester.pumpAndSettle();
+    expect(state.currentUser.consentStatus, ConsentStatus.revoked);
+    expect(find.text('sharing revoked'), findsOneWidget);
+    expect(find.textContaining('Revoked NID-1138'), findsOneWidget);
+  });
+
   testWidgets('clinician dashboard keeps sleep-only privacy copy', (
     tester,
   ) async {
@@ -141,12 +228,41 @@ void main() {
       find.text('Accepted invites only. Sleep summaries, never journals.'),
       findsOneWidget,
     );
+    await tester.scrollUntilVisible(
+      find.textContaining(
+        'Visible: sleep samples, daily summaries, trend flags.',
+      ),
+      200,
+    );
+    await tester.pumpAndSettle();
     expect(
-      find.text(
-        'Visible: sleep samples, daily summaries, trend flags. Hidden: journal entries, drafts, private reflections.',
+      find.textContaining(
+        'Visible: sleep samples, daily summaries, trend flags.',
       ),
       findsOneWidget,
     );
+    expect(find.text('A steadier morning'), findsNothing);
+  });
+
+  testWidgets('clinician dashboard shows invite lifecycle statuses', (
+    tester,
+  ) async {
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Clinician demo override'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Invite status'), findsOneWidget);
+    expect(find.text('NID-8274 - accepted'), findsOneWidget);
+    expect(find.text('NID-1138 - pending'), findsOneWidget);
+    expect(find.text('NID-4455 - expired'), findsOneWidget);
+    expect(find.text('pending'), findsOneWidget);
+    expect(find.text('expired'), findsOneWidget);
     expect(find.text('A steadier morning'), findsNothing);
   });
 

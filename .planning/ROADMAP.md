@@ -15,9 +15,9 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] **Phase 2: Auth and Session Model** - Replace the fake production role switch with explicit signed-out, onboarding, patient, clinician, and refresh-safe session states. (completed 2026-07-06)
 - [x] **Phase 3: Privacy and Repository Contract Hardening** - Make clinician-facing paths incapable of reading patient journals while preserving consented sleep-summary access. (completed 2026-07-06)
 - [x] **Phase 4: Firebase Auth and Firestore Adapter** - Add account-backed auth/storage behind repository interfaces with emulator-proven Firestore privacy rules. (completed 2026-07-06)
-- [ ] **Phase 5: Consent Management and Invite Lifecycle** - Replace the hardcoded invite with validated invite, consent, revocation, status, and history flows.
-- [ ] **Phase 6: Real Sleep Import Providers** - Add HealthKit and Health Connect providers behind `HealthDataProvider` with sleep-only permissions and safe sync behavior.
-- [ ] **Phase 7: Production Deployment Posture** - Make release verification, data expectations, and compliance blockers explicit before production launch.
+- [x] **Phase 5: Consent Management and Invite Lifecycle** - Replace the hardcoded invite with validated invite, consent, revocation, status, and history flows. (completed 2026-07-06)
+- [x] **Phase 6: Real Sleep Import Providers** - Add HealthKit and Health Connect providers behind `HealthDataProvider` with sleep-only permissions and safe sync behavior. (completed 2026-07-06)
+- [x] **Phase 7: Production Deployment Posture** - Make release verification, data expectations, and compliance blockers explicit before production launch. (completed 2026-07-06)
 
 ## Phase Details
 
@@ -101,7 +101,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. Clinician dashboard updates when a link is accepted, revoked, expired, or missing.
   5. Consent history is represented well enough to support audit, support, or future compliance review.
 
-**Plans:** TBD
+**Plans:** 1/1 plans complete
 **UI hint**: yes
 
 ### Phase 6: Real Sleep Import Providers
@@ -118,7 +118,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. Imported samples normalize into the existing `HealthSample` and `DailySummary` outputs.
   5. Production import deduplicates and incrementally syncs samples rather than replacing prior data.
 
-**Plans:** TBD
+**Plans:** 1/1 plans complete
 **UI hint**: yes
 
 ### Phase 7: Production Deployment Posture
@@ -134,7 +134,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   3. Deployment verification includes passing `flutter analyze`, `flutter test`, and `flutter build web`.
   4. Production release notes identify privacy-sensitive changes and any remaining compliance blockers.
 
-**Plans:** TBD
+**Plans:** 1/1 plans complete
 **UI hint**: yes
 
 ## Progress
@@ -148,6 +148,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. Auth and Session Model | 1/1 | Complete    | 2026-07-06 |
 | 3. Privacy and Repository Contract Hardening | 1/1 | Complete    | 2026-07-06 |
 | 4. Firebase Auth and Firestore Adapter | 1/1 | Complete    | 2026-07-06 |
-| 5. Consent Management and Invite Lifecycle | 0/TBD | Not started | - |
-| 6. Real Sleep Import Providers | 0/TBD | Not started | - |
-| 7. Production Deployment Posture | 0/TBD | Not started | - |
+| 5. Consent Management and Invite Lifecycle | 1/1 | Complete    | 2026-07-06 |
+| 6. Real Sleep Import Providers | 1/1 | Complete    | 2026-07-06 |
+| 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |

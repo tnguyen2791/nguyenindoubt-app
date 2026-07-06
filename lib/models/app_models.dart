@@ -4,7 +4,21 @@ enum UserRole { patient, clinician, admin }
 
 enum ConsentStatus { notAsked, granted, revoked }
 
-enum LinkStatus { pending, accepted, revoked }
+enum LinkStatus { pending, accepted, revoked, expired }
+
+enum InviteValidationStatus {
+  valid,
+  empty,
+  invalid,
+  expired,
+  alreadyAccepted,
+  revoked,
+  missing,
+  malformed,
+  wrongPatient,
+}
+
+enum ConsentEventAction { accepted, revoked }
 
 enum MetricType { sleep, steps, heartRate, hrv, mindfulMinutes, medication }
 
@@ -45,13 +59,14 @@ class AppUser {
     UserRole? role,
     ConsentStatus? consentStatus,
     String? clinicCode,
+    bool clearClinicCode = false,
   }) {
     return AppUser(
       id: id ?? this.id,
       displayName: displayName ?? this.displayName,
       role: role ?? this.role,
       consentStatus: consentStatus ?? this.consentStatus,
-      clinicCode: clinicCode ?? this.clinicCode,
+      clinicCode: clearClinicCode ? null : clinicCode ?? this.clinicCode,
     );
   }
 }
@@ -73,6 +88,71 @@ class ClinicianLink {
   final LinkStatus status;
   final DateTime createdAt;
   final DateTime updatedAt;
+}
+
+@immutable
+class InviteValidationResult {
+  const InviteValidationResult({
+    required this.status,
+    required this.normalizedCode,
+    required this.message,
+    this.patientUserId,
+    this.clinicianUserId,
+    this.clinicianDisplayName,
+  });
+
+  final InviteValidationStatus status;
+  final String normalizedCode;
+  final String message;
+  final String? patientUserId;
+  final String? clinicianUserId;
+  final String? clinicianDisplayName;
+
+  bool get canAccept => status == InviteValidationStatus.valid;
+}
+
+@immutable
+class ConsentHistoryEvent {
+  const ConsentHistoryEvent({
+    required this.id,
+    required this.patientUserId,
+    required this.clinicianUserId,
+    required this.inviteCode,
+    required this.previousStatus,
+    required this.nextStatus,
+    required this.action,
+    required this.actorUserId,
+    required this.occurredAt,
+  });
+
+  final String id;
+  final String patientUserId;
+  final String clinicianUserId;
+  final String inviteCode;
+  final ConsentStatus previousStatus;
+  final ConsentStatus nextStatus;
+  final ConsentEventAction action;
+  final String actorUserId;
+  final DateTime occurredAt;
+}
+
+@immutable
+class ClinicianLinkStatusView {
+  const ClinicianLinkStatusView({
+    required this.patientUserId,
+    required this.inviteCode,
+    required this.status,
+    required this.updatedAt,
+    this.patientDisplayName,
+  });
+
+  final String patientUserId;
+  final String? patientDisplayName;
+  final String inviteCode;
+  final LinkStatus status;
+  final DateTime updatedAt;
+
+  bool get canOpenSleepSummary => status == LinkStatus.accepted;
 }
 
 @immutable

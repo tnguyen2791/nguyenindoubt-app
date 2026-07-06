@@ -59,12 +59,12 @@ class _PatientList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (state.linkedPatients.isEmpty) {
+    if (state.clinicianLinkStatuses.isEmpty) {
       return const SectionCard(
         child: EmptyState(
           icon: Icons.group_off_outlined,
-          title: 'No linked patients',
-          body: 'Accepted invite links appear here.',
+          title: 'No invite links',
+          body: 'Invite lifecycle status appears here.',
         ),
       );
     }
@@ -72,21 +72,25 @@ class _PatientList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Linked patients', style: Theme.of(context).textTheme.titleLarge),
+        Text('Invite status', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
-        for (final patient in state.linkedPatients)
+        for (final link in state.clinicianLinkStatuses)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => state.selectPatient(patient.id),
+              onTap: link.canOpenSleepSummary
+                  ? () => state.selectPatient(link.patientUserId)
+                  : null,
               child: SectionCard(
                 child: Row(
                   children: [
                     CircleAvatar(
                       backgroundColor: NidColors.mint,
                       foregroundColor: NidColors.canopy,
-                      child: Text(patient.displayName.characters.first),
+                      child: Text(
+                        (link.patientDisplayName ?? '?').characters.first,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -94,15 +98,20 @@ class _PatientList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            patient.displayName,
+                            link.patientDisplayName ?? 'Unknown patient',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 2),
-                          Text(patient.clinicCode ?? 'accepted invite'),
+                          Text(
+                            '${link.inviteCode} - ${_linkStatusLabel(link.status)}',
+                          ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: NidColors.canopy),
+                    if (link.canOpenSleepSummary)
+                      const Icon(Icons.chevron_right, color: NidColors.canopy)
+                    else
+                      StatusPill(label: _linkStatusLabel(link.status)),
                   ],
                 ),
               ),
@@ -111,6 +120,15 @@ class _PatientList extends StatelessWidget {
       ],
     );
   }
+}
+
+String _linkStatusLabel(LinkStatus status) {
+  return switch (status) {
+    LinkStatus.accepted => 'accepted',
+    LinkStatus.pending => 'pending',
+    LinkStatus.revoked => 'revoked',
+    LinkStatus.expired => 'expired',
+  };
 }
 
 class _PatientDetail extends StatelessWidget {

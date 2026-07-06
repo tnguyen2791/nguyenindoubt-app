@@ -11,6 +11,7 @@ class NguyenInDoubtState extends ChangeNotifier {
   }) {
     _session = repository.currentSession;
     _currentUser = _userForSession(_session);
+    _healthPermissionStatus = healthDataProvider.permissionStatus;
     refresh();
   }
 
@@ -23,8 +24,12 @@ class NguyenInDoubtState extends ChangeNotifier {
   List<JournalEntry> _journalEntries = [];
   List<ResourceCard> _resources = [];
   List<AppUser> _linkedPatients = [];
+  List<ClinicianLinkStatusView> _clinicianLinkStatuses = [];
+  List<ConsentHistoryEvent> _consentHistory = [];
   PatientSleepBundle? _selectedPatientBundle;
-  bool _healthPermissionGranted = false;
+  InviteValidationResult? _inviteValidation;
+  HealthPermissionStatus _healthPermissionStatus =
+      HealthPermissionStatus.notRequested;
   bool _isBusy = false;
 
   AppSession get session => _session;
@@ -34,8 +39,14 @@ class NguyenInDoubtState extends ChangeNotifier {
   List<JournalEntry> get journalEntries => _journalEntries;
   List<ResourceCard> get resources => _resources;
   List<AppUser> get linkedPatients => _linkedPatients;
+  List<ClinicianLinkStatusView> get clinicianLinkStatuses =>
+      _clinicianLinkStatuses;
+  List<ConsentHistoryEvent> get consentHistory => _consentHistory;
   PatientSleepBundle? get selectedPatientBundle => _selectedPatientBundle;
-  bool get healthPermissionGranted => _healthPermissionGranted;
+  InviteValidationResult? get inviteValidation => _inviteValidation;
+  HealthPermissionStatus get healthPermissionStatus => _healthPermissionStatus;
+  bool get healthPermissionGranted =>
+      _healthPermissionStatus == HealthPermissionStatus.ready;
   bool get isBusy => _isBusy;
   bool get isSignedOut => _session.stage == SessionStage.signedOut;
   bool get isOnboarding => _session.stage == SessionStage.onboarding;
@@ -47,6 +58,10 @@ class NguyenInDoubtState extends ChangeNotifier {
     if (isClinician) {
       _summaries = [];
       _journalEntries = [];
+      _consentHistory = [];
+      _clinicianLinkStatuses = await repository.getClinicianLinkStatuses(
+        _currentUser.id,
+      );
       _linkedPatients = await repository.getLinkedPatients(_currentUser.id);
       if (_linkedPatients.isNotEmpty) {
         _selectedPatientBundle = await repository.getPatientSleepSummary(
@@ -58,6 +73,7 @@ class NguyenInDoubtState extends ChangeNotifier {
       }
     } else if (isPatient) {
       _linkedPatients = [];
+      _clinicianLinkStatuses = [];
       _selectedPatientBundle = null;
       _summaries = await repository.getDailySummariesForPatient(
         requesterUserId: _currentUser.id,
@@ -67,10 +83,15 @@ class NguyenInDoubtState extends ChangeNotifier {
         requesterUserId: _currentUser.id,
         patientId: _currentUser.id,
       );
+      _consentHistory = await repository.getConsentHistory(
+        patientId: _currentUser.id,
+      );
     } else {
       _summaries = [];
       _journalEntries = [];
+      _consentHistory = [];
       _linkedPatients = [];
+      _clinicianLinkStatuses = [];
       _selectedPatientBundle = null;
     }
     notifyListeners();
@@ -121,39 +142,85 @@ class NguyenInDoubtState extends ChangeNotifier {
     _currentUser = repository.patientDemo;
     _summaries = [];
     _journalEntries = [];
+    _consentHistory = [];
     _linkedPatients = [];
+    _clinicianLinkStatuses = [];
     _selectedPatientBundle = null;
-    _healthPermissionGranted = false;
+    _inviteValidation = null;
+    _healthPermissionStatus = HealthPermissionStatus.notRequested;
     await repository.saveSession(_session);
     await refresh();
   }
 
-  Future<void> acceptClinicInvite() async {
+  Future<void> validateInviteCode(String inviteCode) async {
     _setBusy(true);
-    _currentUser = await repository.grantPatientConsent(
-      _currentUser.id,
-      'NID-1138',
-    );
-    await refresh();
-    _setBusy(false);
+    try {
+      _inviteValidation = await repository.validateInviteCode(
+        patientId: _currentUser.id,
+        inviteCode: inviteCode,
+      );
+      notifyListeners();
+    } finally {
+      _setBusy(false);
+    }
+  }
+
+  Future<void> acceptValidatedInvite() async {
+    final validation = _inviteValidation;
+    if (validation == null || !validation.canAccept) {
+      return;
+    }
+
+    _setBusy(true);
+    try {
+      _currentUser = await repository.acceptInvite(
+        patientId: _currentUser.id,
+        inviteCode: validation.normalizedCode,
+      );
+      _inviteValidation = null;
+      await refresh();
+    } finally {
+      _setBusy(false);
+    }
+  }
+
+  Future<void> revokeConsent() async {
+    _setBusy(true);
+    try {
+      _currentUser = await repository.revokeConsent(patientId: _currentUser.id);
+      _inviteValidation = null;
+      await refresh();
+    } finally {
+      _setBusy(false);
+    }
   }
 
   Future<void> importMockSleep() async {
     _setBusy(true);
-    _healthPermissionGranted = await healthDataProvider.requestPermissions();
-    final samples = await healthDataProvider.fetchSleepSamples(
-      HealthRange(
-        start: DateTime.now().subtract(const Duration(days: 8)),
-        end: DateTime.now().add(const Duration(days: 1)),
-      ),
-    );
-    await repository.saveImportedSleep(
-      requesterUserId: currentUser.id,
-      patientId: currentUser.id,
-      samples: samples,
-    );
-    await refresh();
-    _setBusy(false);
+    try {
+      _healthPermissionStatus = await healthDataProvider
+          .checkPermissionStatus();
+      if (_healthPermissionStatus != HealthPermissionStatus.ready &&
+          _healthPermissionStatus != HealthPermissionStatus.partial) {
+        await healthDataProvider.requestPermissions();
+        _healthPermissionStatus = await healthDataProvider
+            .checkPermissionStatus();
+      }
+      final samples = await healthDataProvider.fetchSleepSamples(
+        HealthRange(
+          start: DateTime.now().subtract(const Duration(days: 8)),
+          end: DateTime.now().add(const Duration(days: 1)),
+        ),
+      );
+      await repository.saveImportedSleep(
+        requesterUserId: currentUser.id,
+        patientId: currentUser.id,
+        samples: samples,
+      );
+      await refresh();
+    } finally {
+      _setBusy(false);
+    }
   }
 
   Future<void> resetDemoData() async {
@@ -164,9 +231,12 @@ class NguyenInDoubtState extends ChangeNotifier {
       _currentUser = repository.patientDemo;
       _summaries = [];
       _journalEntries = [];
+      _consentHistory = [];
       _linkedPatients = [];
+      _clinicianLinkStatuses = [];
       _selectedPatientBundle = null;
-      _healthPermissionGranted = false;
+      _inviteValidation = null;
+      _healthPermissionStatus = HealthPermissionStatus.notRequested;
       await refresh();
     } finally {
       _setBusy(false);

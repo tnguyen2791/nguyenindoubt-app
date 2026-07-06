@@ -17,6 +17,13 @@ final linkedPatient = AppUser(
   clinicCode: 'NID-8274',
 );
 
+const expiredInvitePatient = AppUser(
+  id: 'patient-expired',
+  displayName: 'Jordan Lee',
+  role: UserRole.patient,
+  consentStatus: ConsentStatus.notAsked,
+);
+
 const demoClinician = AppUser(
   id: 'clinician-demo',
   displayName: 'Dr. Nguyen',
@@ -42,6 +49,14 @@ List<ClinicianLink> seedClinicianLinks() {
       status: LinkStatus.pending,
       createdAt: now.subtract(const Duration(days: 1)),
       updatedAt: now.subtract(const Duration(days: 1)),
+    ),
+    ClinicianLink(
+      inviteCode: 'NID-4455',
+      clinicianUserId: demoClinician.id,
+      patientUserId: expiredInvitePatient.id,
+      status: LinkStatus.expired,
+      createdAt: now.subtract(const Duration(days: 15)),
+      updatedAt: now.subtract(const Duration(days: 8)),
     ),
   ];
 }
