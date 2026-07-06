@@ -150,16 +150,20 @@ void main() {
     await tester.tap(find.text('Safety'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Call or text 988'));
-    await tester.pumpAndSettle();
-    expect(find.text('Call or text 988'), findsWidgets);
-    expect(find.textContaining('Call or text 988 now.'), findsOneWidget);
-    await tester.tap(find.text('Got it'));
-    await tester.pumpAndSettle();
+    // Crisis controls are honestly labeled for direct action (SAFE-01). We do
+    // NOT tap them here — the default UrlCrisisLauncher would hit an unmocked
+    // platform channel; URI-launch behavior is covered by safety_screen_test.
+    expect(find.text('Call 988'), findsOneWidget);
+    expect(find.text('Text 988'), findsOneWidget);
+    expect(find.text('Call 911'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
 
-    await tester.tap(find.text('Emergency care'));
+    final disclosure = find.text(
+      'NguyenInDoubt does not provide diagnosis, treatment, emergency monitoring, or patient-to-clinician messaging in this MVP.',
+    );
+    await tester.scrollUntilVisible(disclosure, 200);
     await tester.pumpAndSettle();
-    expect(find.textContaining('call 911'), findsOneWidget);
+    expect(disclosure, findsOneWidget);
   });
 
   testWidgets('patient can validate accept and revoke invite sharing', (

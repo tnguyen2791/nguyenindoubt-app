@@ -73,14 +73,8 @@ void main() {
     expect(tester.takeException(), isNull);
 
     // The launch was attempted through the seam, but nothing auto-dialed.
-    expect(
-      launcher.requests,
-      contains(Uri.parse('tel:988')),
-    );
-    expect(
-      launcher.requests,
-      contains(Uri.parse('tel:911')),
-    );
+    expect(launcher.requests, contains(Uri.parse('tel:988')));
+    expect(launcher.requests, contains(Uri.parse('tel:911')));
   });
 
   testWidgets('educational and non-monitoring copy render without any tap', (
@@ -100,10 +94,7 @@ void main() {
       find.textContaining('988 Suicide and Crisis Lifeline'),
       findsOneWidget,
     );
-    expect(
-      find.textContaining('nearest emergency department'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('nearest emergency department'), findsOneWidget);
     expect(find.byType(AlertDialog), findsNothing);
     expect(find.text('Got it'), findsNothing);
     expect(launcher.requests, isEmpty);
