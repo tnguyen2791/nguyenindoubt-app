@@ -4,6 +4,7 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
+import '../theme/tokens.dart';
 import 'common_widgets.dart';
 
 class PatientDashboard extends StatelessWidget {
@@ -16,7 +17,7 @@ class PatientDashboard extends StatelessWidget {
     final latest = state.summaries.isEmpty ? null : state.summaries.last;
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(NidSpace.xl),
       children: [
         BrandHeader(
           title: 'Morning check-in',
@@ -25,15 +26,18 @@ class PatientDashboard extends StatelessWidget {
             label: state.currentUser.consentStatus == ConsentStatus.granted
                 ? 'shared sleep'
                 : 'private',
+            tone: state.currentUser.consentStatus == ConsentStatus.granted
+                ? PillTone.good
+                : PillTone.private,
             icon: state.currentUser.consentStatus == ConsentStatus.granted
                 ? Icons.verified_user_outlined
                 : Icons.lock_outline,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         Wrap(
-          spacing: 12,
-          runSpacing: 12,
+          spacing: NidSpace.m,
+          runSpacing: NidSpace.m,
           children: [
             _MetricTile(
               label: 'last sleep',
@@ -56,7 +60,7 @@ class PatientDashboard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         SectionCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +68,7 @@ class PatientDashboard extends StatelessWidget {
               Row(
                 children: [
                   const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: NidSpace.s),
                   Expanded(
                     child: Text(
                       'Sleep trend',
@@ -89,14 +93,15 @@ class PatientDashboard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: NidSpace.m),
               Wrap(
-                spacing: 10,
-                runSpacing: 8,
+                spacing: NidSpace.s,
+                runSpacing: NidSpace.s,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   StatusPill(
                     label: _healthPermissionLabel(state.healthPermissionStatus),
+                    tone: _healthPermissionTone(state.healthPermissionStatus),
                     icon: _healthPermissionIcon(state.healthPermissionStatus),
                   ),
                   Text(
@@ -105,12 +110,12 @@ class PatientDashboard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: NidSpace.l),
               SleepTrendBars(summaries: state.summaries),
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         SectionCard(child: _ConsentLifecycleCard(state: state)),
       ],
     );
@@ -154,6 +159,17 @@ IconData _healthPermissionIcon(HealthPermissionStatus status) {
   };
 }
 
+PillTone _healthPermissionTone(HealthPermissionStatus status) {
+  return switch (status) {
+    HealthPermissionStatus.unavailable => PillTone.caution,
+    HealthPermissionStatus.notRequested => PillTone.neutral,
+    HealthPermissionStatus.partial => PillTone.caution,
+    HealthPermissionStatus.denied => PillTone.flag,
+    HealthPermissionStatus.revoked => PillTone.flag,
+    HealthPermissionStatus.ready => PillTone.good,
+  };
+}
+
 class _ConsentLifecycleCard extends StatefulWidget {
   const _ConsentLifecycleCard({required this.state});
 
@@ -183,8 +199,8 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
-          spacing: 10,
-          runSpacing: 8,
+          spacing: NidSpace.s,
+          runSpacing: NidSpace.s,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             StatusPill(
@@ -193,30 +209,38 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
                   : state.currentUser.consentStatus == ConsentStatus.revoked
                   ? 'sharing revoked'
                   : 'invite required',
+              tone: hasActiveSharing
+                  ? PillTone.good
+                  : state.currentUser.consentStatus == ConsentStatus.revoked
+                  ? PillTone.flag
+                  : PillTone.neutral,
               icon: hasActiveSharing
                   ? Icons.verified_user_outlined
                   : Icons.lock_outline,
             ),
             if (state.currentUser.clinicCode != null)
-              StatusPill(label: state.currentUser.clinicCode!),
+              StatusPill(
+                label: state.currentUser.clinicCode!,
+                tone: PillTone.neutral,
+              ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: NidSpace.m),
         Text(
           'Sleep sharing consent',
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: NidSpace.s),
         const Text(
           'Only sleep summaries and samples become visible after consent. Journal notes, drafts, and private reflections stay private.',
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: NidSpace.l),
         if (hasActiveSharing) ...[
           Text(
             'Sharing is active for ${state.currentUser.clinicCode}.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: NidSpace.m),
           OutlinedButton.icon(
             onPressed: state.isBusy ? null : state.revokeConsent,
             icon: const Icon(Icons.link_off_outlined),
@@ -227,7 +251,7 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
             const Text(
               'Sharing was revoked. A revoked invite cannot be reused; validate a new pending code to share again.',
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: NidSpace.m),
           ],
           TextField(
             controller: _inviteController,
@@ -241,10 +265,10 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
                 ? null
                 : (value) => state.validateInviteCode(value),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: NidSpace.m),
           Wrap(
-            spacing: 10,
-            runSpacing: 8,
+            spacing: NidSpace.s,
+            runSpacing: NidSpace.s,
             children: [
               FilledButton.icon(
                 onPressed: state.isBusy
@@ -262,11 +286,11 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
             ],
           ),
           if (validation != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: NidSpace.m),
             _InviteValidationMessage(validation: validation),
           ],
         ],
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         _ConsentHistoryList(events: state.consentHistory),
       ],
     );
@@ -280,15 +304,15 @@ class _InviteValidationMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = validation.canAccept ? NidColors.canopy : Colors.red.shade700;
+    final color = validation.canAccept ? NidColors.canopy : NidColors.ember;
     final clinicianName = validation.clinicianDisplayName;
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(color: color.withValues(alpha: 0.35)),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(NidRadius.card),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(NidSpace.m),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -296,10 +320,10 @@ class _InviteValidationMessage extends StatelessWidget {
               validation.canAccept ? 'Invite preview' : 'Invite not available',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: NidSpace.s),
             Text(validation.message),
             if (validation.canAccept && clinicianName != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: NidSpace.s),
               Text('Clinician: $clinicianName'),
               const Text(
                 'Visible after acceptance: sleep samples, daily summaries, trend flags. Hidden: journal entries, drafts, private reflections.',
@@ -323,13 +347,13 @@ class _ConsentHistoryList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Consent history', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
+        const SizedBox(height: NidSpace.s),
         if (events.isEmpty)
           const Text('No consent events yet.')
         else
           for (final event in events)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: NidSpace.s),
               child: Row(
                 children: [
                   Icon(
@@ -341,14 +365,14 @@ class _ConsentHistoryList extends StatelessWidget {
                         ? NidColors.canopy
                         : NidColors.ember,
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: NidSpace.s),
                   Expanded(
                     child: Text(
                       '${_eventActionLabel(event.action)} ${event.inviteCode}',
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: NidSpace.s),
                   Text(
                     _shortDate(event.occurredAt),
                     style: Theme.of(context).textTheme.bodySmall,
@@ -395,14 +419,13 @@ class _MetricTile extends StatelessWidget {
           children: [
             Text(
               label.toUpperCase(),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: NidColors.canopy,
-                fontWeight: FontWeight.w900,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: NidSpace.s),
             Text(value, style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(height: 4),
+            const SizedBox(height: NidSpace.xs),
             Text(caption, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
