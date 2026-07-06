@@ -9,6 +9,9 @@ class NidColors {
   static const fog = Color(0xFFF6F7F1);
   static const bark = Color(0xFF6A4E35);
   static const ember = Color(0xFFC56844);
+
+  /// Muted caption / legend tone — was a one-off literal outside the palette.
+  static const slate = Color(0xFF54635A);
 }
 
 ThemeData buildNidTheme() {
