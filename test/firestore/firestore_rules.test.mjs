@@ -67,6 +67,28 @@ describe('firestore privacy rules', () => {
     );
   });
 
+  it('lets only the owning patient delete a journal entry', async () => {
+    // firestore.rules already grants `delete: if ownsDoc()` on journalEntries
+    // (Phase 4) — no rule change; this locks owner-only deletion (SAFE-03).
+    await seedBaseData({ linkStatus: 'accepted' });
+
+    const patientDb = authedDb('patient-a');
+    const otherPatientDb = authedDb('patient-b');
+    const clinicianDb = authedDb('clinician-a', { role: 'clinician' });
+
+    // Non-owners cannot delete — their failed attempts leave journal-a intact,
+    // so the owner's delete below still runs against a present doc.
+    await assertFails(
+      deleteDoc(doc(otherPatientDb, 'journalEntries/journal-a')),
+    );
+    await assertFails(deleteDoc(doc(clinicianDb, 'journalEntries/journal-a')));
+
+    // The owning patient can delete their own entry.
+    await assertSucceeds(
+      deleteDoc(doc(patientDb, 'journalEntries/journal-a')),
+    );
+  });
+
   it('allows clinician sleep reads only for accepted links', async () => {
     const clinicianDb = authedDb('clinician-a', { role: 'clinician' });
 
