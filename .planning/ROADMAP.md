@@ -21,7 +21,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 
 ### Milestone v1.1 — Experience &amp; Insight (design critique)
 
-- [ ] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work)
+- [x] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work) (completed 2026-07-06)
 - [ ] **Phase 9: Safety &amp; Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete.
 - [ ] **Phase 10: Brand Arrival &amp; Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run.
 - [ ] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights.
@@ -160,10 +160,10 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. No on-screen color comes from an un-blessed Material seed tone or a stray stock color; dialogs, nav, segmented buttons, and outlines use palette values.
   5. A single `BrandMark` widget with min-size/clearspace rules is used everywhere the logo appears.
 
-**Plans:** 3 plans
-- [ ] 08-01-PLAN.md — Theme foundation: type ladder, NidSpace/NidRadius tokens, seed-leak neutralization, PillTone + BrandMark primitives (wave 1)
-- [ ] 08-02-PLAN.md — Patient + clinician dashboard sweep: pill tones, stock-red fix, de-weight caps labels, tokens (wave 2)
-- [ ] 08-03-PLAN.md — Journal + resources + app shell sweep: pill tones, single BrandMark, de-weight, tokens (wave 2)
+**Plans:** 3/3 plans complete
+- [x] 08-01-PLAN.md — Theme foundation: type ladder, NidSpace/NidRadius tokens, seed-leak neutralization, PillTone + BrandMark primitives (wave 1)
+- [x] 08-02-PLAN.md — Patient + clinician dashboard sweep: pill tones, stock-red fix, de-weight caps labels, tokens (wave 2)
+- [x] 08-03-PLAN.md — Journal + resources + app shell sweep: pill tones, single BrandMark, de-weight, tokens (wave 2)
 **UI hint**: yes
 
 ### Phase 9: Safety &amp; Affordance Integrity
@@ -262,7 +262,7 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 5. Consent Management and Invite Lifecycle | 1/1 | Complete    | 2026-07-06 |
 | 6. Real Sleep Import Providers | 1/1 | Complete    | 2026-07-06 |
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
-| 8. Design System Foundations | 0/3 | Not started | - |
+| 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
 | 9. Safety & Affordance Integrity | 0/0 | Not started | - |
 | 10. Brand Arrival & Guided Onboarding | 0/0 | Not started | - |
 | 11. Insightful Data Displays | 0/0 | Not started | - |
