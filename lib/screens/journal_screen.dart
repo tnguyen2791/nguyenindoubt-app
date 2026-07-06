@@ -84,43 +84,87 @@ class _JournalScreenState extends State<JournalScreen> {
           ),
         ),
         const SizedBox(height: NidSpace.l),
-        ...widget.state.journalEntries.map(
-          (entry) => Padding(
-            padding: const EdgeInsets.only(bottom: NidSpace.m),
-            child: SectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          entry.title,
-                          style: Theme.of(context).textTheme.titleMedium,
+        if (widget.state.journalEntries.isEmpty)
+          const EmptyState(
+            icon: Icons.lock_outline,
+            title: 'Your journal stays private',
+            body: 'Start your first entry — only you can read it.',
+          )
+        else
+          ...widget.state.journalEntries.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: NidSpace.m),
+              child: SectionCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            entry.title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
                         ),
-                      ),
-                      StatusPill(
-                        label: entry.moodTag ?? 'private',
-                        tone: PillTone.neutral,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: NidSpace.s),
-                  Text(entry.body),
-                  const SizedBox(height: NidSpace.m),
-                  Text(
-                    '${shortDate(entry.createdAt)} - private by default',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
-                  ),
-                ],
+                        StatusPill(
+                          label: entry.moodTag ?? 'private',
+                          tone: PillTone.neutral,
+                        ),
+                        const SizedBox(width: NidSpace.xs),
+                        IconButton(
+                          onPressed: () => _confirmDelete(entry.id),
+                          icon: const Icon(Icons.delete_outline),
+                          tooltip: 'Delete entry',
+                          color: NidColors.slate,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: NidSpace.s),
+                    Text(entry.body),
+                    const SizedBox(height: NidSpace.m),
+                    Text(
+                      '${shortDate(entry.createdAt)} - private by default',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
+  }
+
+  Future<void> _confirmDelete(String entryId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete this entry?'),
+        content: const Text(
+          'This entry is permanently removed from this device. It is not '
+          'clinical and is not monitored — only you can read it, and there is '
+          'no undo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete entry'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true) {
+      return;
+    }
+
+    await widget.state.deleteJournalEntry(entryId);
   }
 
   Future<void> _saveEntry() async {

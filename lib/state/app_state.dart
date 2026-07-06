@@ -266,6 +266,18 @@ class NguyenInDoubtState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteJournalEntry(String id) async {
+    await repository.deleteJournalEntry(
+      requesterUserId: currentUser.id,
+      entryId: id,
+    );
+    _journalEntries = await repository.getJournalEntriesForPatient(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+    );
+    notifyListeners();
+  }
+
   Future<void> selectPatient(String patientId) async {
     _selectedPatientBundle = await repository.getPatientSleepSummary(
       clinicianId: currentUser.id,
