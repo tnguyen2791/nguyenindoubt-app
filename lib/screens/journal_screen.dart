@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
+import '../theme/tokens.dart';
 import 'common_widgets.dart';
 
 class JournalScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _JournalScreenState extends State<JournalScreen> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(NidSpace.xl),
       children: [
         const BrandHeader(
           title: 'Private journal',
@@ -36,28 +37,29 @@ class _JournalScreenState extends State<JournalScreen> {
               'The note can be honest because it is not part of the chart.',
           trailing: StatusPill(
             label: 'clinician hidden',
+            tone: PillTone.private,
             icon: Icons.lock_outline,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         SectionCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('New entry', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
+              const SizedBox(height: NidSpace.m),
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Title'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: NidSpace.m),
               TextField(
                 controller: _bodyController,
                 minLines: 4,
                 maxLines: 6,
                 decoration: const InputDecoration(labelText: 'What shifted?'),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: NidSpace.m),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SegmentedButton<String>(
@@ -72,7 +74,7 @@ class _JournalScreenState extends State<JournalScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: NidSpace.m),
               FilledButton.icon(
                 onPressed: _saveEntry,
                 icon: const Icon(Icons.lock_outline),
@@ -81,10 +83,10 @@ class _JournalScreenState extends State<JournalScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: NidSpace.l),
         ...widget.state.journalEntries.map(
           (entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: NidSpace.m),
             child: SectionCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,18 +99,20 @@ class _JournalScreenState extends State<JournalScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
-                      StatusPill(label: entry.moodTag ?? 'private'),
+                      StatusPill(
+                        label: entry.moodTag ?? 'private',
+                        tone: PillTone.neutral,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: NidSpace.s),
                   Text(entry.body),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: NidSpace.m),
                   Text(
                     '${shortDate(entry.createdAt)} - private by default',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: NidColors.canopy,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
                   ),
                 ],
               ),
