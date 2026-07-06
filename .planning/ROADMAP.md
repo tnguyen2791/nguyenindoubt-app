@@ -22,7 +22,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 ### Milestone v1.1 — Experience and Insight (design critique)
 
 - [x] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work) (completed 2026-07-06)
-- [ ] **Phase 9: Safety and Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete.
+- [x] **Phase 9: Safety and Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete. (completed 2026-07-06)
 - [ ] **Phase 10: Brand Arrival and Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run.
 - [ ] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights.
 - [ ] **Phase 12: Sharing as a First-Class Flow** - Promote consent to its own destination, one vocabulary, confirm-gated revoke, explicit 2-step invite.
@@ -178,10 +178,10 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   2. Tappable cards signal it; non-actionable or disabled rows are visually distinct and never silently absorb a tap.
   3. The journal shows an empty state and supports per-entry delete with confirmation.
 
-**Plans:** 3 plans
-- [ ] 09-01-PLAN.md — Crisis actions dial/text directly: url_launcher + injectable CrisisLauncher seam, SafetyScreen rewire, graceful web fallback (wave 1)
-- [ ] 09-02-PLAN.md — Affordance truth: clinician invite rows tappable+chevron vs muted/no-ripple inert rows (wave 1)
-- [ ] 09-03-PLAN.md — Journal EmptyState + per-entry delete with confirm, deleteJournalEntry through state + both repositories + Firestore rules test (wave 1)
+**Plans:** 3/3 plans complete
+- [x] 09-01-PLAN.md — Crisis actions dial/text directly: url_launcher + injectable CrisisLauncher seam, SafetyScreen rewire, graceful web fallback (wave 1)
+- [x] 09-02-PLAN.md — Affordance truth: clinician invite rows tappable+chevron vs muted/no-ripple inert rows (wave 1)
+- [x] 09-03-PLAN.md — Journal EmptyState + per-entry delete with confirm, deleteJournalEntry through state + both repositories + Firestore rules test (wave 1)
 **UI hint**: yes
 
 ### Phase 10: Brand Arrival and Guided Onboarding
@@ -266,7 +266,7 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 6. Real Sleep Import Providers | 1/1 | Complete    | 2026-07-06 |
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
-| 9. Safety & Affordance Integrity | 0/3 | Planned | - |
+| 9. Safety & Affordance Integrity | 3/3 | Complete | 2026-07-06 |
 | 10. Brand Arrival & Guided Onboarding | 0/0 | Not started | - |
 | 11. Insightful Data Displays | 0/0 | Not started | - |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
