@@ -96,8 +96,10 @@ See `docs/deploy_demo.md`. Run the release gate first (caveat #1).
 - Then: Google Cloud BAA + HIPAA-eligible Firebase config.
 
 **Engineering that can start now (build/test ahead; deploy after Stage 1/2):**
-- **Trusted invite-acceptance Cloud Function** — top pick; also a current
-  security gap (Firebase `acceptInvite` refuses client-side).
+- **Trusted-backend Cloud Functions** — **scaffolded** in `functions/`
+  (`acceptInvite`, `deleteAccount`, `retentionSweep`); unverified. Next: add
+  emulator tests, wire the Firebase repo to call them, finalize retention days.
+  See `functions/README.md`.
 - Wire the app to `FirebaseAppRepository` behind a flag (`main.dart` +
   `NguyenInDoubtState` currently hardcode the concrete in-memory type).
 - Cloud Functions for the deletion cascade + scheduled retention sweep.

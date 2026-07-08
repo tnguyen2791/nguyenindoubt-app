@@ -66,12 +66,15 @@ This is the engineering critical path I can begin immediately.
 - [ ] **Wire the app to `FirebaseAppRepository`** behind a build/config flag
       (today `main.dart` hardcodes `InMemoryAppRepository`; `NguyenInDoubtState`
       also depends on the concrete type — needs an interface seam).
-- [ ] **Trusted-backend Cloud Functions** (client cannot be trusted for these):
-  - [ ] Invite **acceptance** (Firebase `acceptInvite` currently throws
-        "requires a trusted backend").
-  - [ ] **Account-deletion cascade** + auth-user deletion + backup propagation
-        (Firebase `deletePatientData` currently defers to this).
-  - [ ] **Scheduled retention sweep** mirroring `applyRetention`.
+- [~] **Trusted-backend Cloud Functions** — **scaffolded** in `functions/`
+      (`acceptInvite`, `deleteAccount`, `retentionSweep`); unverified, needs
+      emulator tests + review + the prod project/BAA. See `functions/README.md`.
+  - [ ] Invite **acceptance** — scaffold done; add emulator tests, then wire
+        `FirebaseAppRepository.acceptInvite` to call it.
+  - [ ] **Account-deletion cascade** + auth-user deletion — scaffold done;
+        add batch pagination + backup propagation; wire `deletePatientData`.
+  - [ ] **Scheduled retention sweep** — scaffold done; set counsel-approved
+        `RETENTION_DAYS`.
 - [ ] **Server-side audit logging** (privacy-preserving; never log journal
       content) — required for breach *detection* per the IR plan.
 - [ ] **Firestore rules tests**: prove clinician role has **no** journal read
