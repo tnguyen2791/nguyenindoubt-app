@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import '../models/app_models.dart';
@@ -218,6 +220,35 @@ class NguyenInDoubtState extends ChangeNotifier {
         samples: samples,
       );
       await refresh();
+    } finally {
+      _setBusy(false);
+    }
+  }
+
+  /// Assembles the current patient's full data export as indented JSON,
+  /// suitable for saving or sharing (data-portability right).
+  Future<String> exportMyData() async {
+    final export = await repository.exportPatientData(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+    );
+    return const JsonEncoder.withIndent(
+      '  ',
+    ).convert(patientDataExportToJson(export));
+  }
+
+  /// Deletes the current patient's personal data (journal, sleep, summaries)
+  /// and ends active clinician sharing, retaining the consent audit trail.
+  /// Distinct from [resetDemoData], which wipes the whole device demo.
+  Future<AccountDeletionResult> deleteMyAccount() async {
+    _setBusy(true);
+    try {
+      final result = await repository.deletePatientData(
+        requesterUserId: currentUser.id,
+        patientId: currentUser.id,
+      );
+      await refresh();
+      return result;
     } finally {
       _setBusy(false);
     }

@@ -46,8 +46,12 @@ Before live use, patients should be able to export at least:
 - daily summaries
 - consent and clinician-link history
 
-The current MVP does not implement production export. Demo users can inspect
-the app state through the UI only.
+The data layer now implements export in the device-local demo: the repository
+assembles a versioned JSON bundle across all of the categories above
+(`exportPatientData` / `patientDataExportToJson`, surfaced via
+`NguyenInDoubtState.exportMyData`). Remaining work: wire the export action into
+the UI (currently data-layer + tests only) and add a production file-download
+path. See `.planning/phases/08-data-rights-retention-export-deletion/08-PLAN.md`.
 
 ## Deletion expectation
 
@@ -59,8 +63,17 @@ Before live use, patients should be able to request deletion of:
 - clinician links and consent state, subject to any legally required audit log
   retention
 
-The current reset action deletes local demo state only. It is not a production
-account deletion workflow.
+The data layer now implements a per-account deletion in the device-local demo
+(`deletePatientData` / `NguyenInDoubtState.deleteMyAccount`): it removes the
+patient's journal, sleep samples, and daily summaries, ends active clinician
+sharing, and **retains the consent audit trail**. This is distinct from "Reset
+demo data", which wipes the whole device demo. Remaining work: wire the delete
+action into the UI, and implement production deletion — removing the auth user,
+cascading across collections, and propagating to backups — in a trusted backend
+(Cloud Function), which the Firebase repository intentionally defers to. A
+`RetentionPolicy` model + enforcement point (`applyRetention`) also exists;
+concrete, counsel-approved retention periods and a scheduled backend sweep remain
+to be set. See `.planning/phases/08-data-rights-retention-export-deletion/08-PLAN.md`.
 
 ## Compliance blockers
 
@@ -77,7 +90,10 @@ Live production use remains blocked until these items are resolved:
   security monitoring reviewed
 - trusted backend operation for invite acceptance implemented
 - real-device HealthKit and Health Connect permission flows validated
-- retention, export, and deletion workflows implemented and tested
+- retention, export, and deletion workflows implemented and tested — **export
+  and per-account deletion implemented in the device-local demo data layer with
+  tests; UI wiring and production trusted-backend deletion/retention sweep
+  remain (see the Export/Deletion sections above)**
 - incident response and support escalation process defined — **draft
   [incident response plan](legal/incident_response_plan.md) and
   [support & crisis-escalation process](legal/support_escalation_process.md) now in
