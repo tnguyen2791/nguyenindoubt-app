@@ -67,16 +67,28 @@ account deletion workflow.
 Live production use remains blocked until these items are resolved:
 
 - privacy policy, terms, and user-facing consent language reviewed for the
-  intended deployment context
+  intended deployment context — **draft templates now in [docs/legal/](legal/README.md)
+  ([privacy policy](legal/privacy_policy.md), [terms of service](legal/terms_of_service.md));
+  pending counsel review and placeholder resolution**
 - HIPAA/BAA and clinical responsibility analysis, if the app is used with a
-  covered entity or care team
+  covered entity or care team — **draft analysis now in
+  [docs/legal/hipaa_baa_analysis.md](legal/hipaa_baa_analysis.md); pending counsel review**
 - Firebase project configuration, Auth role-claim issuance, backup policy, and
   security monitoring reviewed
 - trusted backend operation for invite acceptance implemented
 - real-device HealthKit and Health Connect permission flows validated
 - retention, export, and deletion workflows implemented and tested
-- incident response and support escalation process defined
+- incident response and support escalation process defined — **draft
+  [incident response plan](legal/incident_response_plan.md) and
+  [support & crisis-escalation process](legal/support_escalation_process.md) now in
+  docs/legal/; pending counsel review**
 - telemetry decision reviewed before adding any analytics or crash reporting
+
+> The legal/compliance drafts above are **templates, not final instruments**. Each
+> carries a "requires legal counsel review" banner and an Open Items checklist of
+> bracketed placeholders (legal entity, jurisdiction, contacts, retention periods,
+> region) that must be resolved before the document takes effect. See
+> [docs/legal/README.md](legal/README.md).
 
 ## Release gate
 
