@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
@@ -80,7 +81,12 @@ class _AppShellState extends State<AppShell> {
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 880;
             return Scaffold(
-              appBar: _AppBar(state: widget.state, onSignOut: _signOut),
+              appBar: _AppBar(
+                state: widget.state,
+                onSignOut: _signOut,
+                onExportData: _exportMyData,
+                onDeleteAccount: _confirmDeleteAccount,
+              ),
               body: Row(
                 children: [
                   if (isWide)
@@ -190,6 +196,108 @@ class _AppShellState extends State<AppShell> {
       setState(() => _selectedIndex = 0);
     }
   }
+
+  Future<void> _exportMyData() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final String exportJson;
+    try {
+      exportJson = await widget.state.exportMyData();
+    } on Object catch (error) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Could not export data: $error')),
+      );
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Export my data'),
+        content: SizedBox(
+          width: 460,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              exportJson,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+          FilledButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: exportJson));
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+              messenger.showSnackBar(
+                const SnackBar(content: Text('Data copied to clipboard.')),
+              );
+            },
+            icon: const Icon(Icons.copy_outlined),
+            label: const Text('Copy JSON'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete my account'),
+        content: const Text(
+          'This permanently deletes your journal entries, imported sleep '
+          'samples, and daily summaries from this device, and ends any active '
+          'clinician sharing. Your consent history is kept as an audit record. '
+          'This is different from "Reset demo data", which restores the demo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete my account'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true) {
+      return;
+    }
+
+    try {
+      final result = await widget.state.deleteMyAccount();
+      if (!mounted) {
+        return;
+      }
+      setState(() => _selectedIndex = 0);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            'Account data deleted: ${result.deletedJournalEntries} journal '
+            'entries and ${result.deletedHealthSamples} sleep samples removed. '
+            'Consent history retained.',
+          ),
+        ),
+      );
+    } on Object catch (error) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Could not delete account: $error')),
+      );
+    }
+  }
 }
 
 class _DemoNotice extends StatelessWidget {
@@ -248,10 +356,17 @@ class _DemoNotice extends StatelessWidget {
 }
 
 class _AppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _AppBar({required this.state, required this.onSignOut});
+  const _AppBar({
+    required this.state,
+    required this.onSignOut,
+    this.onExportData,
+    this.onDeleteAccount,
+  });
 
   final NguyenInDoubtState state;
   final VoidCallback onSignOut;
+  final VoidCallback? onExportData;
+  final VoidCallback? onDeleteAccount;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -281,6 +396,38 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        if (onExportData != null || onDeleteAccount != null)
+          PopupMenuButton<String>(
+            tooltip: 'Data & privacy',
+            icon: const Icon(Icons.more_vert_outlined),
+            onSelected: (value) {
+              if (value == 'export') {
+                onExportData?.call();
+              } else if (value == 'delete') {
+                onDeleteAccount?.call();
+              }
+            },
+            itemBuilder: (context) => [
+              if (onExportData != null)
+                const PopupMenuItem<String>(
+                  value: 'export',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.download_outlined),
+                    title: Text('Export my data'),
+                  ),
+                ),
+              if (onDeleteAccount != null)
+                const PopupMenuItem<String>(
+                  value: 'delete',
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.delete_outline),
+                    title: Text('Delete my account'),
+                  ),
+                ),
+            ],
+          ),
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: compact

@@ -6,7 +6,11 @@ import '../services/health_data_provider.dart';
 import 'app_repository.dart';
 
 class FirebaseAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+    implements
+        AppRepository,
+        ClinicianRepository,
+        ConsentRepository,
+        DataRightsRepository {
   FirebaseAppRepository({required this.firestore, required this.auth});
 
   final FirebaseFirestore firestore;
@@ -391,6 +395,85 @@ class FirebaseAppRepository
     );
   }
 
+  @override
+  Future<PatientDataExport> exportPatientData({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'exported data',
+    );
+
+    final userDoc = await _users.doc(patientId).get();
+    if (!userDoc.exists) {
+      throw const PrivacyException('Patient profile was not found.');
+    }
+
+    final journalSnapshot = await _entries
+        .where('userId', isEqualTo: patientId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    final sampleSnapshot = await _samples
+        .where('userId', isEqualTo: patientId)
+        .get();
+    final summarySnapshot = await _summaries
+        .where('userId', isEqualTo: patientId)
+        .orderBy('date')
+        .get();
+    final linkSnapshot = await _links
+        .where('patientUserId', isEqualTo: patientId)
+        .get();
+    final consentSnapshot = await _consentEvents
+        .where('patientUserId', isEqualTo: patientId)
+        .orderBy('occurredAt', descending: true)
+        .get();
+
+    return PatientDataExport(
+      exportVersion: 1,
+      generatedAt: DateTime.now(),
+      patientId: patientId,
+      profile: _userFromDoc(userDoc),
+      journalEntries: journalSnapshot.docs
+          .map((doc) => _journalFromDoc(doc))
+          .toList(),
+      healthSamples: sampleSnapshot.docs
+          .map((doc) => _sampleFromDoc(doc))
+          .toList(),
+      dailySummaries: summarySnapshot.docs
+          .map((doc) => _summaryFromDoc(doc))
+          .toList(),
+      clinicianLinks: linkSnapshot.docs
+          .map((doc) => _linkFromDoc(doc))
+          .toList(),
+      consentHistory: consentSnapshot.docs
+          .map((doc) => _consentEventFromDoc(doc))
+          .toList(),
+    );
+  }
+
+  @override
+  Future<AccountDeletionResult> deletePatientData({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'account data',
+    );
+    // Production account deletion — removing the auth user, cascading the
+    // delete across collections, retaining the required consent audit trail,
+    // and propagating to backups — must run in a trusted backend (Cloud
+    // Function), not from the client. See docs/legal/hipaa_baa_analysis.md.
+    throw const PrivacyException(
+      'Account deletion requires a trusted backend operation in Firebase mode.',
+    );
+  }
+
   void _requireSignedInAs(String userId) {
     final uid = auth.currentUser?.uid;
     if (uid != userId) {
@@ -474,6 +557,21 @@ AppUser _userFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     role: UserRole.values.byName(data['role'] as String),
     consentStatus: ConsentStatus.values.byName(data['consentStatus'] as String),
     clinicCode: data['clinicCode'] as String?,
+  );
+}
+
+ClinicianLink _linkFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  final data = doc.data()!;
+  final updatedAt = _dateTime(data['updatedAt']);
+  return ClinicianLink(
+    inviteCode: data['inviteCode'] as String,
+    clinicianUserId: data['clinicianUserId'] as String,
+    patientUserId: data['patientUserId'] as String,
+    status: LinkStatus.values.byName(data['status'] as String),
+    createdAt: data['createdAt'] == null
+        ? updatedAt
+        : _dateTime(data['createdAt']),
+    updatedAt: updatedAt,
   );
 }
 

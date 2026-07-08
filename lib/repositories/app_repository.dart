@@ -62,6 +62,20 @@ abstract class ConsentRepository {
   });
 }
 
+/// Data-subject-rights operations: export (portability) and account deletion.
+/// Both are patient-owned; a requester may only act on their own data.
+abstract class DataRightsRepository {
+  Future<PatientDataExport> exportPatientData({
+    required String requesterUserId,
+    required String patientId,
+  });
+
+  Future<AccountDeletionResult> deletePatientData({
+    required String requesterUserId,
+    required String patientId,
+  });
+}
+
 class PrivacyException implements Exception {
   const PrivacyException(this.message);
 
@@ -72,10 +86,15 @@ class PrivacyException implements Exception {
 }
 
 class InMemoryAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+    implements
+        AppRepository,
+        ClinicianRepository,
+        ConsentRepository,
+        DataRightsRepository {
   InMemoryAppRepository({
     this.preferences,
     this.storageKey = _defaultStorageKey,
+    this.retentionPolicy = RetentionPolicy.pendingReview,
   }) {
     final savedJson = preferences?.getString(storageKey);
     if (savedJson != null && _restore(savedJson)) {
@@ -87,9 +106,11 @@ class InMemoryAppRepository
   }
 
   static const _defaultStorageKey = 'nguyenindoubt.local_demo.v1';
+  static const _dataExportVersion = 1;
 
   final SharedPreferences? preferences;
   final String storageKey;
+  final RetentionPolicy retentionPolicy;
 
   final List<AppUser> _users = [];
   final List<ClinicianLink> _links = [];
@@ -405,6 +426,175 @@ class InMemoryAppRepository
   Future<List<ConsentHistoryEvent>> getConsentHistory({
     required String patientId,
   }) async {
+    return _consentEventsFor(patientId);
+  }
+
+  @override
+  Future<PatientDataExport> exportPatientData({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'exported data',
+    );
+    final profile = _findUser(patientId);
+    if (profile == null) {
+      throw const PrivacyException('Patient profile was not found.');
+    }
+
+    return PatientDataExport(
+      exportVersion: _dataExportVersion,
+      generatedAt: DateTime.now(),
+      patientId: patientId,
+      profile: profile,
+      journalEntries: _journalEntriesFor(patientId),
+      healthSamples: _samples
+          .where((sample) => sample.userId == patientId)
+          .toList(),
+      dailySummaries: _dailySummariesFor(patientId),
+      clinicianLinks: _links
+          .where((link) => link.patientUserId == patientId)
+          .toList(),
+      consentHistory: _consentEventsFor(patientId),
+    );
+  }
+
+  @override
+  Future<AccountDeletionResult> deletePatientData({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'account data',
+    );
+    final userIndex = _users.indexWhere((user) => user.id == patientId);
+    if (userIndex < 0) {
+      throw const PrivacyException('Patient profile was not found.');
+    }
+
+    final now = DateTime.now();
+    final deletedJournalEntries = _entries
+        .where((entry) => entry.userId == patientId)
+        .length;
+    final deletedHealthSamples = _samples
+        .where((sample) => sample.userId == patientId)
+        .length;
+    final deletedDailySummaries = _summaries
+        .where((summary) => summary.userId == patientId)
+        .length;
+
+    _entries.removeWhere((entry) => entry.userId == patientId);
+    _samples.removeWhere((sample) => sample.userId == patientId);
+    _summaries.removeWhere((summary) => summary.userId == patientId);
+
+    // End any active sharing and record the consent event so the audit trail
+    // survives deletion of the personal data.
+    final previous = _users[userIndex];
+    var revokedClinicianLinks = 0;
+    for (var i = 0; i < _links.length; i++) {
+      final link = _links[i];
+      if (link.patientUserId != patientId ||
+          link.status != LinkStatus.accepted) {
+        continue;
+      }
+      _links[i] = ClinicianLink(
+        inviteCode: link.inviteCode,
+        clinicianUserId: link.clinicianUserId,
+        patientUserId: link.patientUserId,
+        status: LinkStatus.revoked,
+        createdAt: link.createdAt,
+        updatedAt: now,
+      );
+      _addConsentEvent(
+        patientUserId: patientId,
+        clinicianUserId: link.clinicianUserId,
+        inviteCode: link.inviteCode,
+        previousStatus: previous.consentStatus,
+        nextStatus: ConsentStatus.revoked,
+        action: ConsentEventAction.revoked,
+        actorUserId: patientId,
+        occurredAt: now,
+      );
+      revokedClinicianLinks++;
+    }
+
+    // Reset the profile to an emptied account shell. In production, deletion
+    // also removes the auth user and profile record via a trusted backend;
+    // here the demo keeps a shell so the local app stays functional.
+    _users[userIndex] = previous.copyWith(
+      consentStatus: ConsentStatus.revoked,
+      clearClinicCode: true,
+    );
+
+    final retainedConsentEvents = _consentEvents
+        .where((event) => event.patientUserId == patientId)
+        .length;
+
+    await _persist();
+
+    return AccountDeletionResult(
+      patientId: patientId,
+      deletedAt: now,
+      deletedJournalEntries: deletedJournalEntries,
+      deletedHealthSamples: deletedHealthSamples,
+      deletedDailySummaries: deletedDailySummaries,
+      revokedClinicianLinks: revokedClinicianLinks,
+      retainedConsentEvents: retainedConsentEvents,
+    );
+  }
+
+  /// Applies [retentionPolicy], purging records older than each category's
+  /// window. Returns the number of records purged. The default policy purges
+  /// nothing. In production, this enforcement runs as a scheduled trusted
+  /// backend (Cloud Function) job, not on the client.
+  Future<int> applyRetention({DateTime? asOf}) async {
+    final policy = retentionPolicy;
+    if (policy.purgesNothing) {
+      return 0;
+    }
+    final now = asOf ?? DateTime.now();
+    var purged = 0;
+
+    final sampleWindow = policy.healthSamples;
+    if (sampleWindow != null) {
+      final cutoff = now.subtract(sampleWindow);
+      final before = _samples.length;
+      _samples.removeWhere((sample) => sample.createdAt.isBefore(cutoff));
+      purged += before - _samples.length;
+    }
+    final summaryWindow = policy.dailySummaries;
+    if (summaryWindow != null) {
+      final cutoff = now.subtract(summaryWindow);
+      final before = _summaries.length;
+      _summaries.removeWhere((summary) => summary.date.isBefore(cutoff));
+      purged += before - _summaries.length;
+    }
+    final journalWindow = policy.journalEntries;
+    if (journalWindow != null) {
+      final cutoff = now.subtract(journalWindow);
+      final before = _entries.length;
+      _entries.removeWhere((entry) => entry.createdAt.isBefore(cutoff));
+      purged += before - _entries.length;
+    }
+    final consentWindow = policy.consentHistory;
+    if (consentWindow != null) {
+      final cutoff = now.subtract(consentWindow);
+      final before = _consentEvents.length;
+      _consentEvents.removeWhere((event) => event.occurredAt.isBefore(cutoff));
+      purged += before - _consentEvents.length;
+    }
+
+    if (purged > 0) {
+      await _persist();
+    }
+    return purged;
+  }
+
+  List<ConsentHistoryEvent> _consentEventsFor(String patientId) {
     return _consentEvents
         .where((event) => event.patientUserId == patientId)
         .toList()
@@ -770,6 +960,33 @@ JournalEntry _entryFromJson(Map<String, Object?> json) {
     createdAt: DateTime.parse(json['createdAt'] as String),
     privateByDefault: json['privateByDefault'] as bool? ?? true,
   );
+}
+
+Map<String, Object?> _summaryToJson(DailySummary summary) {
+  return {
+    'userId': summary.userId,
+    'date': summary.date.toIso8601String(),
+    'sleepDurationHours': summary.sleepDurationHours,
+    'sleepQualityProxy': summary.sleepQualityProxy,
+    'trendFlag': summary.trendFlag,
+  };
+}
+
+/// Serializes a [PatientDataExport] to a JSON-encodable map, reusing the same
+/// per-model encoders used for local persistence so the export format stays in
+/// sync with stored data.
+Map<String, Object?> patientDataExportToJson(PatientDataExport export) {
+  return {
+    'exportVersion': export.exportVersion,
+    'generatedAt': export.generatedAt.toIso8601String(),
+    'patientId': export.patientId,
+    'profile': _userToJson(export.profile),
+    'journalEntries': export.journalEntries.map(_entryToJson).toList(),
+    'healthSamples': export.healthSamples.map(_sampleToJson).toList(),
+    'dailySummaries': export.dailySummaries.map(_summaryToJson).toList(),
+    'clinicianLinks': export.clinicianLinks.map(_linkToJson).toList(),
+    'consentHistory': export.consentHistory.map(_consentEventToJson).toList(),
+  };
 }
 
 Map<String, Object?> _consentEventToJson(ConsentHistoryEvent event) {

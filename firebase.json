@@ -3,10 +3,21 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "source": "functions"
+  },
   "emulators": {
     "firestore": {
       "host": "127.0.0.1",
       "port": 8085
+    },
+    "functions": {
+      "host": "127.0.0.1",
+      "port": 5001
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
     },
     "ui": {
       "enabled": false

@@ -257,3 +257,86 @@ class PatientSleepBundle {
   final List<DailySummary> summaries;
   final List<HealthSample> samples;
 }
+
+/// A portable snapshot of everything a patient owns, assembled for a
+/// data-export (portability) request. Serialized to JSON by
+/// `patientDataExportToJson` in the repository layer.
+@immutable
+class PatientDataExport {
+  const PatientDataExport({
+    required this.exportVersion,
+    required this.generatedAt,
+    required this.patientId,
+    required this.profile,
+    required this.journalEntries,
+    required this.healthSamples,
+    required this.dailySummaries,
+    required this.clinicianLinks,
+    required this.consentHistory,
+  });
+
+  final int exportVersion;
+  final DateTime generatedAt;
+  final String patientId;
+  final AppUser profile;
+  final List<JournalEntry> journalEntries;
+  final List<HealthSample> healthSamples;
+  final List<DailySummary> dailySummaries;
+  final List<ClinicianLink> clinicianLinks;
+  final List<ConsentHistoryEvent> consentHistory;
+}
+
+/// Summary of a completed account-deletion request. Personal data is removed;
+/// consent history is intentionally retained as an audit record (see
+/// docs/legal/privacy_policy.md and docs/legal/hipaa_baa_analysis.md).
+@immutable
+class AccountDeletionResult {
+  const AccountDeletionResult({
+    required this.patientId,
+    required this.deletedAt,
+    required this.deletedJournalEntries,
+    required this.deletedHealthSamples,
+    required this.deletedDailySummaries,
+    required this.revokedClinicianLinks,
+    required this.retainedConsentEvents,
+  });
+
+  final String patientId;
+  final DateTime deletedAt;
+  final int deletedJournalEntries;
+  final int deletedHealthSamples;
+  final int deletedDailySummaries;
+  final int revokedClinicianLinks;
+  final int retainedConsentEvents;
+}
+
+/// How long each data category is kept before it is eligible for automatic
+/// purge. A `null` duration means the category is retained for the lifetime of
+/// the account (no automatic purge).
+///
+/// The concrete durations are compliance decisions that must be finalized with
+/// counsel before production; see docs/legal/privacy_policy.md and
+/// docs/production_posture.md. The default [pendingReview] policy purges
+/// nothing, so demo behavior is unchanged until real periods are set.
+@immutable
+class RetentionPolicy {
+  const RetentionPolicy({
+    this.healthSamples,
+    this.dailySummaries,
+    this.journalEntries,
+    this.consentHistory,
+  });
+
+  final Duration? healthSamples;
+  final Duration? dailySummaries;
+  final Duration? journalEntries;
+  final Duration? consentHistory;
+
+  static const RetentionPolicy pendingReview = RetentionPolicy();
+
+  bool get purgesNothing =>
+      healthSamples == null &&
+      dailySummaries == null &&
+      journalEntries == null &&
+      consentHistory == null;
+}

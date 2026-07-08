@@ -1,0 +1,17 @@
+{
+  "name": "nguyenindoubt-functions",
+  "description": "Trusted backend (Cloud Functions) for NguyenInDoubt: invite acceptance, account-deletion cascade, and scheduled retention.",
+  "type": "module",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions,firestore,auth",
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.1.0"
+  }
+}
