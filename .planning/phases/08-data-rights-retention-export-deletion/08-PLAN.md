@@ -1,6 +1,6 @@
 # Phase 8 (proposed): Data Rights — Retention, Export & Deletion
 
-**Status:** In progress — data layer implemented; UI wiring pending.
+**Status:** In progress — data layer + demo UI implemented; production trusted-backend work pending.
 **Depends on:** Phase 4 (repository/Firestore boundary), Phase 5 (consent lifecycle).
 **Addresses production blocker:** "retention, export, and deletion workflows implemented and tested" (`docs/production_posture.md`).
 
@@ -55,14 +55,18 @@ per-account deletion and keeps no audit trail.
 - Demo deletion keeps a minimal **profile shell** so the local app stays
   functional; production removes the profile + auth user via the trusted backend.
 
+## UI (implemented)
+
+The patient app bar (`lib/screens/app_shell.dart`) now has a **Data & privacy**
+overflow menu (patient-only) with:
+- **Export my data** → `state.exportMyData()`, shown in a dialog with
+  copy-to-clipboard. A real file download on web/mobile is a follow-up.
+- **Delete my account** → confirmation dialog clearly distinct from "Reset demo
+  data", calling `state.deleteMyAccount()` and reporting the result.
+
 ## Remaining work (next steps)
 
-1. **UI wiring** (deferred — needs the app running to verify): add "Export my
-   data" (serialize via `state.exportMyData()`, copy-to-clipboard + show; a real
-   file download on web/mobile is a follow-up) and a "Delete my account" action
-   with a confirmation dialog clearly distinct from "Reset demo data". Natural
-   home: an app-bar overflow menu or the settings/`_DemoNotice` area in
-   `lib/screens/app_shell.dart`.
+1. **Production file-download** for export (web/mobile) instead of clipboard.
 2. **Trusted-backend Cloud Functions** (gated with the Firebase go-live): account
    deletion cascade + auth-user deletion, and a **scheduled retention sweep**
    mirroring `applyRetention`.

@@ -46,12 +46,13 @@ Before live use, patients should be able to export at least:
 - daily summaries
 - consent and clinician-link history
 
-The data layer now implements export in the device-local demo: the repository
-assembles a versioned JSON bundle across all of the categories above
-(`exportPatientData` / `patientDataExportToJson`, surfaced via
-`NguyenInDoubtState.exportMyData`). Remaining work: wire the export action into
-the UI (currently data-layer + tests only) and add a production file-download
-path. See `.planning/phases/08-data-rights-retention-export-deletion/08-PLAN.md`.
+The device-local demo now implements export end to end: the repository assembles
+a versioned JSON bundle across all of the categories above (`exportPatientData` /
+`patientDataExportToJson` via `NguyenInDoubtState.exportMyData`), surfaced in the
+patient app bar's **Data & privacy** menu ("Export my data" → view + copy JSON).
+Remaining work: a production file-download path (web/mobile) instead of
+copy-to-clipboard. See
+`.planning/phases/08-data-rights-retention-export-deletion/08-PLAN.md`.
 
 ## Deletion expectation
 
@@ -63,12 +64,13 @@ Before live use, patients should be able to request deletion of:
 - clinician links and consent state, subject to any legally required audit log
   retention
 
-The data layer now implements a per-account deletion in the device-local demo
-(`deletePatientData` / `NguyenInDoubtState.deleteMyAccount`): it removes the
+The device-local demo now implements a per-account deletion
+(`deletePatientData` / `NguyenInDoubtState.deleteMyAccount`, surfaced in the
+patient app bar's **Data & privacy** menu as "Delete my account"): it removes the
 patient's journal, sleep samples, and daily summaries, ends active clinician
 sharing, and **retains the consent audit trail**. This is distinct from "Reset
-demo data", which wipes the whole device demo. Remaining work: wire the delete
-action into the UI, and implement production deletion — removing the auth user,
+demo data", which wipes the whole device demo. Remaining work: implement
+production deletion — removing the auth user,
 cascading across collections, and propagating to backups — in a trusted backend
 (Cloud Function), which the Firebase repository intentionally defers to. A
 `RetentionPolicy` model + enforcement point (`applyRetention`) also exists;
