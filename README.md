@@ -19,6 +19,9 @@ by default. See:
 - [v1 release notes](docs/release_notes_v1.md)
 - [Compliance & legal documents](docs/legal/README.md) (draft privacy policy,
   terms, HIPAA/BAA analysis, incident response, support & crisis escalation)
+- [Publish the demo](docs/deploy_demo.md) (device-local web deploy runbook)
+- [Production go-live plan](.planning/GO-LIVE.md) (critical path from demo to a
+  live, account-backed service)
 
 ## Demo flows
 
