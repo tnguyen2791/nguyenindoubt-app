@@ -95,16 +95,19 @@ class MockHealthDataProvider implements HealthDataProvider {
     }
 
     final now = DateTime.now();
-    return List<HealthSample>.generate(_mockDurations.length, (index) {
+    return List<HealthSample>.generate(_mockDays, (index) {
+      // index 0 is the oldest day, _mockDays-1 is last night.
+      final ageDays = _mockDays - index - 1;
+      final hours = _mockSleepHours(index);
       final sleepEnd = DateTime(
         now.year,
         now.month,
         now.day,
         6 + index % 2,
         45,
-      ).subtract(Duration(days: _mockDurations.length - index - 1));
+      ).subtract(Duration(days: ageDays));
       final sleepStart = sleepEnd.subtract(
-        Duration(minutes: (_mockDurations[index] * 60).round()),
+        Duration(minutes: (hours * 60).round()),
       );
 
       return HealthSample(
@@ -113,7 +116,7 @@ class MockHealthDataProvider implements HealthDataProvider {
         metricType: MetricType.sleep,
         start: sleepStart,
         end: sleepEnd,
-        value: _mockDurations[index],
+        value: hours,
         unit: 'hours',
         createdAt: now,
       );
@@ -173,8 +176,11 @@ class MockHealthDataProvider implements HealthDataProvider {
     }).toList();
   }
 
-  static const _mockDurations = <double>[7.4, 6.1, 6.8, 7.9, 5.7, 7.1, 7.6];
-  static const _mockDays = 7;
+  /// The mock emits a rolling quarter of deterministic history so the Trends
+  /// tab's Week / Month / Quarter ranges all have a real series. Everything is
+  /// a closed-form function of the day offset — no clock, no randomness — so
+  /// tests fully control the values and the whole window is reproducible.
+  static const int _mockDays = 90;
 
   static const _mockReadinessMetrics = <MetricType>[
     MetricType.hrv,
@@ -186,38 +192,65 @@ class MockHealthDataProvider implements HealthDataProvider {
     MetricType.steps,
   ];
 
-  /// Deterministic per-day readings across the 7-day window. Values sit in
-  /// realistic ranges and drift gently so the readiness score and each
-  /// contributor land in believable, non-flat states.
+  /// A small deterministic triangle wave in [0, 1] over the day [index]. Two
+  /// gently out-of-phase periods give the series believable, non-flat drift
+  /// without any randomness (so it round-trips identically in every test run).
+  static double _wave(int index, int period, int phase) {
+    final t = (index + phase) % period;
+    final half = period / 2;
+    final up = t <= half ? t / half : (period - t) / half;
+    return up.clamp(0.0, 1.0);
+  }
+
+  /// Deterministic sleep hours for day [index]. Trends up gently across the
+  /// quarter (older nights shorter) with a weekly ripple, so weekly averages
+  /// climb and a handful of short nights land honestly on the heatmap.
+  static double _mockSleepHours(int index) {
+    final trend = 6.2 + (index / (_mockDays - 1)) * 1.3; // 6.2 -> 7.5
+    final ripple = (_wave(index, 7, 2) - 0.5) * 1.6; // ±0.8h weekly ripple
+    final hours = trend + ripple;
+    return double.parse(hours.clamp(4.4, 9.1).toStringAsFixed(1));
+  }
+
+  /// Deterministic per-day readings across the quarter window. Values sit in
+  /// realistic ranges and drift gently (via [_wave]) so the readiness score and
+  /// each contributor land in believable, non-flat states across all ranges.
   ({double value, String unit}) _mockReading(MetricType metric, int index) {
+    final progress = index / (_mockDays - 1); // 0 (oldest) -> 1 (last night)
     switch (metric) {
       case MetricType.hrv:
-        // ms, SDNN-style. Gentle rise across the week.
-        const values = <double>[42, 39, 45, 48, 44, 50, 52];
-        return (value: values[index], unit: 'ms');
+        // ms, SDNN-style. Gentle rise across the quarter with a weekly ripple.
+        final value = 38 + progress * 14 + (_wave(index, 7, 1) - 0.5) * 8;
+        return (value: value.clamp(28, 68).roundToDouble(), unit: 'ms');
       case MetricType.restingHeartRate:
-        // bpm, low-50s, within a personal baseline band.
-        const values = <double>[54, 56, 53, 51, 55, 52, 51];
-        return (value: values[index], unit: 'bpm');
+        // bpm, low-50s, easing down as recovery improves.
+        final value = 57 - progress * 5 + (_wave(index, 6, 0) - 0.5) * 4;
+        return (value: value.clamp(46, 64).roundToDouble(), unit: 'bpm');
       case MetricType.respiratoryRate:
-        // breaths/min overnight.
-        const values = <double>[14.6, 15.1, 14.4, 14.2, 15.3, 14.5, 14.3];
-        return (value: values[index], unit: 'brpm');
+        // breaths/min overnight, tight personal band.
+        final value = 14.5 + (_wave(index, 5, 2) - 0.5) * 1.4;
+        return (
+          value: double.parse(value.clamp(13.2, 15.8).toStringAsFixed(1)),
+          unit: 'brpm',
+        );
       case MetricType.temperature:
-        // Overnight skin/body temperature deviation from baseline, °C.
-        const values = <double>[0.1, 0.4, -0.1, -0.2, 0.6, 0.0, -0.1];
-        return (value: values[index], unit: '°C');
+        // Overnight temperature deviation from baseline, °C — mostly small.
+        final value = (_wave(index, 9, 3) - 0.5) * 1.0;
+        return (
+          value: double.parse(value.clamp(-0.4, 0.7).toStringAsFixed(1)),
+          unit: '°C',
+        );
       case MetricType.bloodOxygen:
         // SpO2 percent.
-        const values = <double>[97, 96, 97, 98, 96, 97, 98];
-        return (value: values[index], unit: '%');
+        final value = 96 + (_wave(index, 4, 0) * 2);
+        return (value: value.clamp(95, 99).roundToDouble(), unit: '%');
       case MetricType.activeEnergy:
-        // kcal active energy for the prior day.
-        const values = <double>[420, 260, 510, 640, 300, 480, 560];
-        return (value: values[index], unit: 'kcal');
+        // kcal active energy for the prior day — a broad weekly swing.
+        final value = 400 + (_wave(index, 7, 4) - 0.5) * 460;
+        return (value: value.clamp(180, 720).roundToDouble(), unit: 'kcal');
       case MetricType.steps:
-        const values = <double>[7200, 4300, 9100, 11200, 5200, 8600, 9800];
-        return (value: values[index], unit: 'count');
+        final value = 7500 + (_wave(index, 7, 4) - 0.5) * 7000;
+        return (value: value.clamp(3200, 12500).roundToDouble(), unit: 'count');
       case MetricType.sleep:
       case MetricType.heartRate:
       case MetricType.mindfulMinutes:

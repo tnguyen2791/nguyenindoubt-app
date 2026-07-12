@@ -35,6 +35,16 @@ class NidStateColors {
   static const fair = Color(0xFFA08B48);
   static const attention = Color(0xFFC4633E);
 
+  /// The consistency-heatmap ramp (design `.l1`-`.l4`): more filled = closer to
+  /// target. l1 is a pale mint-green, climbing to canopy at l4. `heatFlag`
+  /// marks a short/attention day and matches the attention tone.
+  static const heatEmpty = Color(0x00000000); // transparent gap cell
+  static const heatL1 = Color(0xFFD7E4C9);
+  static const heatL2 = NidColors.sage; // #A9BA92
+  static const heatL3 = NidColors.moss; // #5D7F43
+  static const heatL4 = NidColors.canopy; // #1E4A34
+  static const heatFlag = Color(0xFFC4633E);
+
   /// Gradient stops for the continuous short-to-optimal sleep-hours ramp.
   static const rampStops = <double>[0.0, 0.22, 0.42, 0.60, 0.80, 1.0];
 

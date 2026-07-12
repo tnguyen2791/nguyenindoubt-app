@@ -90,6 +90,7 @@ class NguyenInDoubtState extends ChangeNotifier {
   late AppSession _session;
   List<DailySummary> _summaries = [];
   ReadinessSummary? _readiness;
+  List<ReadinessSummary> _readinessHistory = [];
   List<JournalEntry> _journalEntries = [];
   List<ResourceCard> _resources = [];
   List<AppUser> _linkedPatients = [];
@@ -121,6 +122,11 @@ class NguyenInDoubtState extends ChangeNotifier {
   /// Null until wearable signals have been read at least once. Patient-only —
   /// the clinician surface never exposes readiness (sleep-only contract).
   ReadinessSummary? get readiness => _readiness;
+
+  /// The patient's readiness series across the imported window (oldest first),
+  /// feeding the Trends tab's Readiness and Activity signals. Patient-only —
+  /// the clinician surface never exposes readiness (sleep-only contract).
+  List<ReadinessSummary> get readinessHistory => _readinessHistory;
   List<JournalEntry> get journalEntries => _journalEntries;
   List<ResourceCard> get resources => _resources;
   List<AppUser> get linkedPatients => _linkedPatients;
@@ -143,6 +149,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     if (isClinician) {
       _summaries = [];
       _readiness = null;
+      _readinessHistory = [];
       _journalEntries = [];
       _consentHistory = [];
       _clinicianLinkStatuses = await repository.getClinicianLinkStatuses(
@@ -179,10 +186,12 @@ class NguyenInDoubtState extends ChangeNotifier {
         requesterUserId: _currentUser.id,
         patientId: _currentUser.id,
       );
+      _readinessHistory = readiness;
       _readiness = readiness.isEmpty ? null : readiness.last;
     } else {
       _summaries = [];
       _readiness = null;
+      _readinessHistory = [];
       _journalEntries = [];
       _consentHistory = [];
       _linkedPatients = [];
@@ -250,6 +259,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     _currentUser = demo.patientDemo;
     _summaries = [];
     _readiness = null;
+    _readinessHistory = [];
     _journalEntries = [];
     _consentHistory = [];
     _linkedPatients = [];
@@ -341,8 +351,10 @@ class NguyenInDoubtState extends ChangeNotifier {
         _healthPermissionStatus = await healthDataProvider
             .checkPermissionStatus();
       }
+      // A rolling quarter so the Trends tab's Week / Month / Quarter ranges
+      // all have a real series (the mock emits ~90 deterministic days).
       final range = HealthRange(
-        start: DateTime.now().subtract(const Duration(days: 8)),
+        start: DateTime.now().subtract(const Duration(days: 91)),
         end: DateTime.now().add(const Duration(days: 1)),
       );
       final samples = await healthDataProvider.fetchSleepSamples(range);
@@ -364,12 +376,13 @@ class NguyenInDoubtState extends ChangeNotifier {
     }
   }
 
-  /// Reads the multi-signal readiness samples for [range], reduces the most
-  /// recent day into [ReadinessInputs], scores it against the recent-sleep
-  /// window, and persists the resulting [ReadinessSummary]. Pure scoring lives
-  /// in readiness.dart; this only orchestrates the read + persist. The sleep
-  /// window uses the summaries just imported so the sleep-balance contributor
-  /// reflects a window, not one night.
+  /// Reads the multi-signal readiness samples for [range] and scores a
+  /// [ReadinessSummary] for EACH day in the window, persisting the whole
+  /// series. The most recent day is Today's hero; the full series feeds the
+  /// Trends tab (readiness + activity over Week / Month / Quarter). Pure
+  /// scoring lives in readiness.dart; this only orchestrates the read +
+  /// per-day reduce + persist. Each day's sleep-balance contributor reflects a
+  /// trailing 7-night window so one short night never sinks it.
   Future<void> _computeAndSaveReadiness(HealthRange range) async {
     final samples = await healthDataProvider.fetchSamples(
       metrics: kReadinessMetricTypes,
@@ -379,39 +392,57 @@ class NguyenInDoubtState extends ChangeNotifier {
       return;
     }
 
-    // The most recent sample day drives Today's readiness.
     DateTime dayOf(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
-    final latestDay = samples
-        .map((s) => dayOf(s.end))
-        .reduce((a, b) => a.isAfter(b) ? a : b);
-    final daySamples = samples.where((s) => dayOf(s.end) == latestDay).toList();
 
-    final recentSummaries = await repository.getDailySummariesForPatient(
+    // Group the day's readings by calendar day so each day scores once.
+    final samplesByDay = <DateTime, List<HealthSample>>{};
+    for (final sample in samples) {
+      samplesByDay.putIfAbsent(dayOf(sample.end), () => []).add(sample);
+    }
+    final days = samplesByDay.keys.toList()..sort((a, b) => a.compareTo(b));
+
+    // Sleep summaries for the same window, keyed by day for the sleep-balance
+    // contributor. A trailing 7-night average is used per day.
+    final summaries = await repository.getDailySummariesForPatient(
       requesterUserId: currentUser.id,
       patientId: currentUser.id,
     );
-    final recentSleepHours = recentSummaries
-        .map((summary) => summary.sleepDurationHours)
-        .toList();
-    final latestSleepHours = recentSummaries.isEmpty
-        ? null
-        : recentSummaries.last.sleepDurationHours;
+    final sleepByDay = <DateTime, double>{
+      for (final summary in summaries)
+        dayOf(summary.date): summary.sleepDurationHours,
+    };
+    final orderedSleep = summaries.toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
 
-    final inputs = readinessInputsFromSamples(
-      userId: currentUser.id,
-      date: latestDay,
-      samples: daySamples,
-      sleepHours: latestSleepHours,
-    );
-    final summary = computeReadiness(
-      inputs: inputs,
-      recentSleepHours: recentSleepHours,
-    );
+    final computed = <ReadinessSummary>[];
+    for (final day in days) {
+      // The trailing 7-night sleep window up to and including this day.
+      final window = orderedSleep
+          .where((s) => !dayOf(s.date).isAfter(day))
+          .map((s) => s.sleepDurationHours)
+          .toList();
+      final recentSleepHours = window.length <= 7
+          ? window
+          : window.sublist(window.length - 7);
 
+      final inputs = readinessInputsFromSamples(
+        userId: currentUser.id,
+        date: day,
+        samples: samplesByDay[day]!,
+        sleepHours: sleepByDay[day],
+      );
+      computed.add(
+        computeReadiness(inputs: inputs, recentSleepHours: recentSleepHours),
+      );
+    }
+
+    if (computed.isEmpty) {
+      return;
+    }
     await repository.saveReadinessSummaries(
       requesterUserId: currentUser.id,
       patientId: currentUser.id,
-      summaries: [summary],
+      summaries: computed,
     );
   }
 
@@ -424,6 +455,7 @@ class NguyenInDoubtState extends ChangeNotifier {
       _currentUser = demo.patientDemo;
       _summaries = [];
       _readiness = null;
+      _readinessHistory = [];
       _journalEntries = [];
       _consentHistory = [];
       _linkedPatients = [];

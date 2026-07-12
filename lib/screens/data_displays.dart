@@ -11,8 +11,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../services/sleep_insights.dart';
+import '../services/trends.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
+import 'common_widgets.dart';
 
 /// Maps a readiness subscore [fraction] (0.0-1.0) to a [StateTone] using the
 /// same bands the readiness scoring uses (>=.85 optimal, >=.70 good, >=.50
@@ -371,6 +373,377 @@ class StatDeltaRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// A calm score/metric trend line (design `06-trend-line` / `20-trends`): three
+/// faint gridlines, a soft area fill under the line, the moss polyline with
+/// round joins, an end dot on the latest point, and a date axis beneath. Honest
+/// axes — the vertical scale spans the series' own min..max with a little
+/// padding, so the line reads its real shape without fake normalization.
+class TrendLine extends StatelessWidget {
+  const TrendLine({
+    super.key,
+    required this.points,
+    this.height = 130,
+  });
+
+  final List<TrendPoint> points;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: height,
+          child: CustomPaint(
+            painter: _TrendLinePainter(points: points),
+            size: Size.infinite,
+          ),
+        ),
+        const SizedBox(height: NidSpace.s),
+        _TrendAxis(points: points),
+      ],
+    );
+  }
+}
+
+class _TrendAxis extends StatelessWidget {
+  const _TrendAxis({required this.points});
+
+  final List<TrendPoint> points;
+
+  @override
+  Widget build(BuildContext context) {
+    if (points.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    // Three ticks: first, middle, last — matching the mock's calm 3-label axis.
+    final first = points.first.date;
+    final mid = points[points.length ~/ 2].date;
+    final last = points.last.date;
+    final labels = points.length < 3
+        ? [shortDate(first), shortDate(last)]
+        : [shortDate(first), shortDate(mid), shortDate(last)];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        for (final label in labels)
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10, color: NidColors.faint),
+          ),
+      ],
+    );
+  }
+}
+
+class _TrendLinePainter extends CustomPainter {
+  const _TrendLinePainter({required this.points});
+
+  final List<TrendPoint> points;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Three faint gridlines at 1/4, 1/2, 3/4 height (design `.07` opacity).
+    final grid = Paint()
+      ..color = NidColors.canopy.withValues(alpha: 0.07)
+      ..strokeWidth = 1;
+    for (final fraction in const [0.25, 0.5, 0.75]) {
+      final y = size.height * fraction;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), grid);
+    }
+
+    if (points.length < 2) {
+      return;
+    }
+
+    // Honest vertical scale: the series' own min..max with 8% padding, so the
+    // line reads its real shape (never renormalized to a fake 0-baseline).
+    final values = points.map((p) => p.value).toList();
+    var minV = values.reduce((a, b) => a < b ? a : b);
+    var maxV = values.reduce((a, b) => a > b ? a : b);
+    if (maxV == minV) {
+      minV -= 1;
+      maxV += 1;
+    }
+    final pad = (maxV - minV) * 0.08;
+    final lo = minV - pad;
+    final span = (maxV + pad) - lo;
+
+    Offset pointAt(int i) {
+      final x = points.length == 1
+          ? 0.0
+          : size.width * (i / (points.length - 1));
+      final t = ((points[i].value - lo) / span).clamp(0.0, 1.0);
+      final y = size.height - t * size.height;
+      return Offset(x, y);
+    }
+
+    final line = Path();
+    for (var i = 0; i < points.length; i++) {
+      final p = pointAt(i);
+      if (i == 0) {
+        line.moveTo(p.dx, p.dy);
+      } else {
+        line.lineTo(p.dx, p.dy);
+      }
+    }
+
+    // Area fill under the line (design `rgba(93,127,67,.12)` == moss @ 12%).
+    final area = Path.from(line)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      area,
+      Paint()..color = NidColors.moss.withValues(alpha: 0.12),
+    );
+
+    // The trend line itself.
+    canvas.drawPath(
+      line,
+      Paint()
+        ..color = NidColors.moss
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+
+    // End dot on the latest point.
+    canvas.drawCircle(
+      pointAt(points.length - 1),
+      4,
+      Paint()..color = NidColors.moss,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _TrendLinePainter oldDelegate) {
+    return oldDelegate.points != points;
+  }
+}
+
+/// The weekly-average bars (design `20-trends` `.bars`): up to four columns,
+/// each a value label over a bar whose height is an honest fraction of the
+/// axis max, colored on the sleep-hours ramp for sleep and on the state ramp
+/// for score/activity. A `W1..W4` day label sits beneath.
+class WeeklyAverageBars extends StatelessWidget {
+  const WeeklyAverageBars({
+    super.key,
+    required this.weekly,
+    required this.axisMax,
+    required this.signal,
+    this.height = 120,
+  });
+
+  final List<WeeklyAverage> weekly;
+  final double axisMax;
+  final TrendSignal signal;
+  final double height;
+
+  Color _barColor(double value) {
+    if (signal == TrendSignal.sleep) {
+      return NidStateColors.forSleepHours(value);
+    }
+    // Score/activity: color by fraction of the axis on the state ramp.
+    final fraction = axisMax == 0 ? 0.0 : (value / axisMax).clamp(0.0, 1.0);
+    return nidToneColor(nidReadinessTone(fraction));
+  }
+
+  String _valueLabel(double value) {
+    if (signal == TrendSignal.sleep) {
+      return value.toStringAsFixed(1);
+    }
+    if (signal == TrendSignal.activity) {
+      return value.round().toString();
+    }
+    return value.round().toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height + 22,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (final w in weekly)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: NidSpace.s),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      _valueLabel(w.value),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: NidColors.canopy,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    SizedBox(
+                      height: height * w.fraction.clamp(0.0, 1.0),
+                      width: double.infinity,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: _barColor(w.value),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8),
+                            bottom: Radius.circular(5),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      w.label,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: NidColors.faint,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The consistency heatmap (design `13-consistency-heatmap` / `20-trends`): a
+/// Monday-first 7-column calendar whose cells are colored by how close each day
+/// lands to target (l1..l4), with short/attention days flagged in ember and
+/// gaps left transparent. A weekday header and a less→more legend frame it.
+class ConsistencyHeatmap extends StatelessWidget {
+  const ConsistencyHeatmap({
+    super.key,
+    required this.cells,
+    this.flagLabel = 'short night',
+  });
+
+  final List<HeatLevel> cells;
+
+  /// The legend word for the flagged tone (e.g. "short night" for sleep,
+  /// "low readiness" for readiness).
+  final String flagLabel;
+
+  static Color _cellColor(HeatLevel level) {
+    switch (level) {
+      case HeatLevel.empty:
+        return NidStateColors.heatEmpty;
+      case HeatLevel.flag:
+        return NidStateColors.heatFlag;
+      case HeatLevel.l1:
+        return NidStateColors.heatL1;
+      case HeatLevel.l2:
+        return NidStateColors.heatL2;
+      case HeatLevel.l3:
+        return NidStateColors.heatL3;
+      case HeatLevel.l4:
+        return NidStateColors.heatL4;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const dow = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Weekday header.
+        Row(
+          children: [
+            for (final d in dow)
+              Expanded(
+                child: Text(
+                  d,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 10, color: NidColors.faint),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: cells.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
+            childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final level = cells[index];
+            return DecoratedBox(
+              decoration: BoxDecoration(
+                color: _cellColor(level),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: NidSpace.m),
+        // Legend: less → more, plus the flag swatch.
+        Row(
+          children: [
+            const Text(
+              'less',
+              style: TextStyle(fontSize: 11, color: NidColors.faint),
+            ),
+            const SizedBox(width: NidSpace.s),
+            for (final level in const [
+              HeatLevel.l1,
+              HeatLevel.l2,
+              HeatLevel.l3,
+              HeatLevel.l4,
+            ]) ...[
+              _LegendSwatch(color: _cellColor(level)),
+              const SizedBox(width: 4),
+            ],
+            const SizedBox(width: NidSpace.xs),
+            const Text(
+              'more',
+              style: TextStyle(fontSize: 11, color: NidColors.faint),
+            ),
+            const Spacer(),
+            _LegendSwatch(color: NidStateColors.heatFlag),
+            const SizedBox(width: NidSpace.xs),
+            Text(
+              flagLabel,
+              style: const TextStyle(fontSize: 11, color: NidColors.faint),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LegendSwatch extends StatelessWidget {
+  const _LegendSwatch({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 14,
+      height: 14,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(4),
+      ),
     );
   }
 }
