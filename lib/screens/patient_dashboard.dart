@@ -6,6 +6,7 @@ import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common_widgets.dart';
+import 'patient_first_run.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key, required this.state});
@@ -35,86 +36,95 @@ class PatientDashboard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: NidSpace.l),
-        Wrap(
-          spacing: NidSpace.m,
-          runSpacing: NidSpace.m,
-          children: [
-            _MetricTile(
-              label: 'last sleep',
-              value: latest == null
-                  ? '--'
-                  : hoursLabel(latest.sleepDurationHours),
-              caption: latest?.trendFlag ?? 'awaiting import',
-            ),
-            _MetricTile(
-              label: 'quality proxy',
-              value: latest == null ? '--' : '${latest.sleepQualityProxy}',
-              caption: 'not a diagnosis',
-            ),
-            _MetricTile(
-              label: 'clinician link',
-              value: state.currentUser.consentStatus == ConsentStatus.granted
-                  ? 'on'
-                  : 'off',
-              caption: state.currentUser.clinicCode ?? 'invite required',
-            ),
-          ],
-        ),
-        const SizedBox(height: NidSpace.l),
-        SectionCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        // ONB-04: while there is no sleep data yet, the guided first-run
+        // layer replaces both the '--' metric tiles and the empty trend
+        // card with one calm primary action (see patient_first_run.dart).
+        if (state.summaries.isEmpty)
+          PatientFirstRun(state: state)
+        else ...[
+          Wrap(
+            spacing: NidSpace.m,
+            runSpacing: NidSpace.m,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
-                  const SizedBox(width: NidSpace.s),
-                  Expanded(
-                    child: Text(
-                      'Sleep trend',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                  FilledButton.icon(
-                    onPressed:
-                        state.isBusy ||
-                            state.healthPermissionStatus ==
-                                HealthPermissionStatus.unavailable
-                        ? null
-                        : state.importMockSleep,
-                    icon: state.isBusy
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.download_outlined),
-                    label: const Text('Import'),
-                  ),
-                ],
+              _MetricTile(
+                label: 'last sleep',
+                value: latest == null
+                    ? '--'
+                    : hoursLabel(latest.sleepDurationHours),
+                caption: latest?.trendFlag ?? 'awaiting import',
               ),
-              const SizedBox(height: NidSpace.m),
-              Wrap(
-                spacing: NidSpace.s,
-                runSpacing: NidSpace.s,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  StatusPill(
-                    label: _healthPermissionLabel(state.healthPermissionStatus),
-                    tone: _healthPermissionTone(state.healthPermissionStatus),
-                    icon: _healthPermissionIcon(state.healthPermissionStatus),
-                  ),
-                  Text(
-                    _healthPermissionMessage(state.healthPermissionStatus),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
+              _MetricTile(
+                label: 'quality proxy',
+                value: latest == null ? '--' : '${latest.sleepQualityProxy}',
+                caption: 'not a diagnosis',
               ),
-              const SizedBox(height: NidSpace.l),
-              SleepTrendBars(summaries: state.summaries),
+              _MetricTile(
+                label: 'clinician link',
+                value: state.currentUser.consentStatus == ConsentStatus.granted
+                    ? 'on'
+                    : 'off',
+                caption: state.currentUser.clinicCode ?? 'invite required',
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: NidSpace.l),
+          SectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
+                    const SizedBox(width: NidSpace.s),
+                    Expanded(
+                      child: Text(
+                        'Sleep trend',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    FilledButton.icon(
+                      onPressed:
+                          state.isBusy ||
+                              state.healthPermissionStatus ==
+                                  HealthPermissionStatus.unavailable
+                          ? null
+                          : state.importMockSleep,
+                      icon: state.isBusy
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.download_outlined),
+                      label: const Text('Import'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: NidSpace.m),
+                Wrap(
+                  spacing: NidSpace.s,
+                  runSpacing: NidSpace.s,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    StatusPill(
+                      label: _healthPermissionLabel(
+                        state.healthPermissionStatus,
+                      ),
+                      tone: _healthPermissionTone(state.healthPermissionStatus),
+                      icon: _healthPermissionIcon(state.healthPermissionStatus),
+                    ),
+                    Text(
+                      _healthPermissionMessage(state.healthPermissionStatus),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: NidSpace.l),
+                SleepTrendBars(summaries: state.summaries),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: NidSpace.l),
         SectionCard(child: _ConsentLifecycleCard(state: state)),
       ],
