@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/app_models.dart';
 import '../services/trends.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
@@ -8,7 +9,9 @@ import 'common_widgets.dart';
 import 'data_displays.dart';
 import 'detail_screens.dart';
 import 'journal_screen.dart';
+import 'notifications_feed.dart';
 import 'resources_screen.dart';
+import 'settings_screens.dart';
 
 /// A calm uppercase section kicker — the design's `.k` idiom (11px, 700,
 /// letter-spacing, canopy). Reused across the new tab shells so section
@@ -587,16 +590,34 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final prefs = state.preferences;
     return ListView(
       padding: const EdgeInsets.all(NidSpace.xl),
       children: [
-        Text(
-          'Profile',
-          style: theme.textTheme.headlineMedium?.copyWith(
-            fontSize: 26,
-            color: NidColors.canopy,
-            letterSpacing: -0.52,
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                'Profile',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontSize: 26,
+                  color: NidColors.canopy,
+                  letterSpacing: -0.52,
+                ),
+              ),
+            ),
+            // The notifications feed (48) — a calm bell that opens the
+            // display-only Today / Yesterday / This week list.
+            IconButton(
+              tooltip: 'Notifications',
+              onPressed: () => openNotificationsFeed(context, state),
+              icon: const Icon(
+                Icons.notifications_none_outlined,
+                color: NidColors.canopy,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: NidSpace.l),
         // Identity header — canopy avatar with the display-name initial.
@@ -658,7 +679,8 @@ class ProfileScreen extends StatelessWidget {
             _ProfileRow(
               icon: Icons.flag_outlined,
               label: 'Goals & targets',
-              value: '8h sleep',
+              value: _sleepGoalLabel(prefs.sleepGoalMinutes),
+              onTap: () => openGoalsSettings(context, state),
             ),
           ],
         ),
@@ -692,7 +714,8 @@ class ProfileScreen extends StatelessWidget {
             _ProfileRow(
               icon: Icons.notifications_none_outlined,
               label: 'Notifications',
-              value: 'On',
+              value: _notificationsSummary(prefs),
+              onTap: () => openNotificationSettings(context, state),
             ),
             _ProfileRow(icon: Icons.lock_outline, label: 'Privacy & data'),
           ],
@@ -732,6 +755,31 @@ class ProfileScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+/// The Profile "Goals & targets" trailing value: a compact "8h sleep" style
+/// label from the persisted sleep goal.
+String _sleepGoalLabel(int minutes) {
+  final h = minutes ~/ 60;
+  final m = minutes % 60;
+  if (m == 0) {
+    return '${h}h sleep';
+  }
+  return '${h}h ${m}m sleep';
+}
+
+/// The Profile "Notifications" trailing summary: "On" when any daily/signal
+/// preference is enabled, otherwise "Off". A calm at-a-glance state, matching
+/// the mock's `On` value.
+String _notificationsSummary(UserPreferences prefs) {
+  final anyOn =
+      prefs.morningReading ||
+      prefs.eveningWindDown ||
+      prefs.weeklyReport ||
+      prefs.outOfRangeAlerts ||
+      prefs.goalMilestones ||
+      prefs.ringBatterySync;
+  return anyOn ? 'On' : 'Off';
 }
 
 /// A rounded white card wrapping a set of hairline-divided rows — the

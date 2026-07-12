@@ -21,6 +21,8 @@ class FirebaseAppRepository implements NidRepository {
       firestore.collection('dailySummaries');
   CollectionReference<Map<String, dynamic>> get _readiness =>
       firestore.collection('readinessSummaries');
+  CollectionReference<Map<String, dynamic>> get _preferences =>
+      firestore.collection('userPreferences');
   CollectionReference<Map<String, dynamic>> get _entries =>
       firestore.collection('journalEntries');
   CollectionReference<Map<String, dynamic>> get _resources =>
@@ -236,6 +238,46 @@ class FirebaseAppRepository implements NidRepository {
         .orderBy('date')
         .get();
     return snapshot.docs.map((doc) => _readinessFromDoc(doc)).toList();
+  }
+
+  @override
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+
+    final doc = await _preferences.doc(patientId).get();
+    final data = doc.data();
+    if (data == null) {
+      // Nothing saved yet — sensible defaults so the settings screens render.
+      return const UserPreferences();
+    }
+    return _preferencesFromMap(data);
+  }
+
+  @override
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+
+    await _preferences.doc(patientId).set({
+      'userId': patientId,
+      ..._preferencesToMap(preferences),
+    });
   }
 
   @override
@@ -709,6 +751,48 @@ ReadinessContributor _readinessContributorFromMap(Map<String, Object?> map) {
     fraction: (map['fraction'] as num).toDouble(),
     value: (map['value'] as num?)?.toDouble(),
     unit: map['unit'] as String?,
+  );
+}
+
+Map<String, Object?> _preferencesToMap(UserPreferences prefs) {
+  return {
+    'sleepGoalMinutes': prefs.sleepGoalMinutes,
+    'stepTarget': prefs.stepTarget,
+    'morningReading': prefs.morningReading,
+    'eveningWindDown': prefs.eveningWindDown,
+    'weeklyReport': prefs.weeklyReport,
+    'outOfRangeAlerts': prefs.outOfRangeAlerts,
+    'goalMilestones': prefs.goalMilestones,
+    'ringBatterySync': prefs.ringBatterySync,
+    'quietHoursEnabled': prefs.quietHoursEnabled,
+    'quietHoursFromMinutes': prefs.quietHoursFromMinutes,
+    'quietHoursUntilMinutes': prefs.quietHoursUntilMinutes,
+  };
+}
+
+UserPreferences _preferencesFromMap(Map<String, Object?> map) {
+  const defaults = UserPreferences();
+  return UserPreferences(
+    sleepGoalMinutes:
+        (map['sleepGoalMinutes'] as num?)?.toInt() ?? defaults.sleepGoalMinutes,
+    stepTarget: (map['stepTarget'] as num?)?.toInt() ?? defaults.stepTarget,
+    morningReading: map['morningReading'] as bool? ?? defaults.morningReading,
+    eveningWindDown:
+        map['eveningWindDown'] as bool? ?? defaults.eveningWindDown,
+    weeklyReport: map['weeklyReport'] as bool? ?? defaults.weeklyReport,
+    outOfRangeAlerts:
+        map['outOfRangeAlerts'] as bool? ?? defaults.outOfRangeAlerts,
+    goalMilestones: map['goalMilestones'] as bool? ?? defaults.goalMilestones,
+    ringBatterySync:
+        map['ringBatterySync'] as bool? ?? defaults.ringBatterySync,
+    quietHoursEnabled:
+        map['quietHoursEnabled'] as bool? ?? defaults.quietHoursEnabled,
+    quietHoursFromMinutes:
+        (map['quietHoursFromMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursFromMinutes,
+    quietHoursUntilMinutes:
+        (map['quietHoursUntilMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursUntilMinutes,
   );
 }
 

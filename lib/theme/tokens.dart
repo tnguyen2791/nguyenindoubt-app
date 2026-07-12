@@ -37,6 +37,9 @@ class NidRadius {
   /// Controls — buttons, inputs.
   static const double control = 14;
 
+  /// Medium control corner — stepper buttons, time pills (mock 12px).
+  static const double m12 = 12;
+
   /// Small tiles — bullet icon chips, mini indicators.
   static const double tile = 11;
 

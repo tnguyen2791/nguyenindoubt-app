@@ -422,6 +422,61 @@ class SleepTrendBars extends StatelessWidget {
   }
 }
 
+/// The design's `.sw` pill toggle: a 44x26 track — mint off, canopy on — with
+/// a shadowed white knob that slides across. Gentle ~200ms motion (the one
+/// place a shadow is allowed, per brand-readme). Used across the Settings
+/// screens for stored preferences.
+class NidToggle extends StatelessWidget {
+  const NidToggle({super.key, required this.value, required this.onChanged});
+
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      toggled: value,
+      button: true,
+      child: GestureDetector(
+        onTap: () => onChanged(!value),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          width: 44,
+          height: 26,
+          decoration: BoxDecoration(
+            color: value ? NidColors.canopy : NidColors.mint,
+            borderRadius: BorderRadius.circular(NidRadius.pill),
+          ),
+          child: AnimatedAlign(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: NidColors.ink.withValues(alpha: 0.25),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
