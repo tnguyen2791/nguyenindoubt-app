@@ -118,7 +118,7 @@ class _FlowScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: NidColors.fog, title: Text(title)),
+      appBar: AppBar(backgroundColor: context.nid.fog, title: Text(title)),
       body: child,
     );
   }
@@ -169,7 +169,7 @@ class _RequestSharingScreenState extends State<RequestSharingScreen> {
             'Choose who to share with',
             style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 26,
-              color: NidColors.canopy,
+              color: context.nid.canopy,
               letterSpacing: -0.52,
             ),
           ),
@@ -177,7 +177,9 @@ class _RequestSharingScreenState extends State<RequestSharingScreen> {
           Text(
             'Enter the invite code your provider gave you. You pick exactly '
             "what's shared — sleep only — and nothing leaves until you send.",
-            style: theme.textTheme.bodyMedium?.copyWith(color: NidColors.slate),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: context.nid.slate,
+            ),
           ),
           const SizedBox(height: NidSpace.l),
 
@@ -229,9 +231,13 @@ class _RequestSharingScreenState extends State<RequestSharingScreen> {
             'can accept or decline — and you can cancel anytime.',
           ),
           const SizedBox(height: NidSpace.s),
-          const Text(
+          Text(
             kSharingVisibilityDisclosure,
-            style: TextStyle(fontSize: 12, height: 1.5, color: NidColors.faint),
+            style: TextStyle(
+              fontSize: 12,
+              height: 1.5,
+              color: context.nid.faint,
+            ),
           ),
 
           const SizedBox(height: NidSpace.xl),
@@ -294,7 +300,7 @@ class _ProviderCard extends StatelessWidget {
     if (!canAccept || name == null) {
       return DecoratedBox(
         decoration: BoxDecoration(
-          border: Border.all(color: NidColors.ember.withValues(alpha: 0.35)),
+          border: Border.all(color: context.nid.ember.withValues(alpha: 0.35)),
           borderRadius: BorderRadius.circular(NidRadius.card),
         ),
         child: Padding(
@@ -318,14 +324,14 @@ class _ProviderCard extends StatelessWidget {
             width: 44,
             height: 44,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: NidColors.canopy,
+            decoration: BoxDecoration(
+              color: context.nid.canopy,
               shape: BoxShape.circle,
             ),
             child: Text(
               _initials(name),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.nid.onAccent,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -345,7 +351,7 @@ class _ProviderCard extends StatelessWidget {
                 Text(
                   'Accepting share requests',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: NidColors.slate,
+                    color: context.nid.slate,
                   ),
                 ),
               ],
@@ -381,9 +387,9 @@ class _ScopeGroup extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -393,7 +399,7 @@ class _ScopeGroup extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                color: NidColors.canopy.withValues(alpha: 0.14),
+                color: context.nid.canopy.withValues(alpha: 0.14),
               ),
             rows[i],
           ],
@@ -427,16 +433,16 @@ class _ScopeRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: offered ? NidColors.ink : NidColors.faint,
+                    color: offered ? context.nid.ink : context.nid.faint,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   scope.detail,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     height: 1.4,
-                    color: NidColors.slate,
+                    color: context.nid.slate,
                   ),
                 ),
               ],
@@ -444,14 +450,14 @@ class _ScopeRow extends StatelessWidget {
           ),
           const SizedBox(width: NidSpace.m),
           if (offered)
-            const Icon(Icons.check_circle, size: 22, color: NidColors.moss)
+            Icon(Icons.check_circle, size: 22, color: context.nid.moss)
           else
-            const Text(
+            Text(
               'Not offered',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: NidColors.faint,
+                color: context.nid.faint,
               ),
             ),
         ],
@@ -474,7 +480,7 @@ class RequestSentScreen extends StatelessWidget {
     final providerName = state.currentUser.clinicCode ?? 'your provider';
 
     return Scaffold(
-      backgroundColor: NidColors.fog,
+      backgroundColor: context.nid.fog,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(NidSpace.xl),
@@ -486,14 +492,14 @@ class RequestSentScreen extends StatelessWidget {
                 width: 88,
                 height: 88,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: NidColors.mint,
+                decoration: BoxDecoration(
+                  color: context.nid.mint,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_rounded,
                   size: 40,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
               const SizedBox(height: NidSpace.l),
@@ -502,7 +508,7 @@ class RequestSentScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 26,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                   letterSpacing: -0.52,
                 ),
               ),
@@ -515,7 +521,7 @@ class RequestSentScreen extends StatelessWidget {
                   'Pause anytime.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: NidColors.slate,
+                    color: context.nid.slate,
                     height: 1.5,
                   ),
                 ),
@@ -601,13 +607,13 @@ class ManageSharingScreen extends StatelessWidget {
                     width: 44,
                     height: 44,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: NidColors.canopy,
+                    decoration: BoxDecoration(
+                      color: context.nid.canopy,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.medical_information_outlined,
-                      color: Colors.white,
+                      color: context.nid.onAccent,
                     ),
                   ),
                   const SizedBox(width: NidSpace.m),
@@ -627,7 +633,7 @@ class ManageSharingScreen extends StatelessWidget {
                               ? 'Read-only, one provider'
                               : 'Invite $providerCode · read-only',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: NidColors.slate,
+                            color: context.nid.slate,
                           ),
                         ),
                       ],
@@ -651,12 +657,12 @@ class ManageSharingScreen extends StatelessWidget {
               "immediately, and you'll see everything they see.",
             ),
             const SizedBox(height: NidSpace.s),
-            const Text(
+            Text(
               kSharingVisibilityDisclosure,
               style: TextStyle(
                 fontSize: 12,
                 height: 1.5,
-                color: NidColors.faint,
+                color: context.nid.faint,
               ),
             ),
             const SizedBox(height: NidSpace.xl),
@@ -665,21 +671,21 @@ class ManageSharingScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: state.isBusy ? null : state.revokeConsent,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: NidColors.ember,
+                  foregroundColor: context.nid.ember,
                 ),
                 icon: const Icon(Icons.pause_circle_outline),
                 label: const Text('Pause sharing'),
               ),
             ),
             const SizedBox(height: NidSpace.s),
-            const Text(
+            Text(
               'Pausing hides everything at once — no notice goes to your '
               'provider, and you can resume anytime.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
                 height: 1.5,
-                color: NidColors.faint,
+                color: context.nid.faint,
               ),
             ),
           ],
@@ -700,19 +706,15 @@ class _ContractFine extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.verified_user_outlined,
-          size: 16,
-          color: NidColors.moss,
-        ),
+        Icon(Icons.verified_user_outlined, size: 16, color: context.nid.moss),
         const SizedBox(width: NidSpace.s),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               height: 1.5,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ),

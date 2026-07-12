@@ -34,11 +34,11 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const base = TextStyle(
+    final base = TextStyle(
       fontSize: 11,
       fontWeight: FontWeight.w700,
       letterSpacing: 0.99,
-      color: NidColors.canopy,
+      color: context.nid.canopy,
     );
     return Text.rich(
       TextSpan(
@@ -49,7 +49,7 @@ class _SectionLabel extends StatelessWidget {
             : [
                 TextSpan(
                   text: tail!.toUpperCase(),
-                  style: base.copyWith(color: NidColors.ember),
+                  style: base.copyWith(color: context.nid.ember),
                 ),
               ],
       ),
@@ -164,7 +164,7 @@ class _ProviderHeader extends StatelessWidget {
                 'Good morning, ${state.currentUser.displayName}',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 26,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                   letterSpacing: -0.39,
                 ),
               ),
@@ -174,10 +174,7 @@ class _ProviderHeader extends StatelessWidget {
             IconButton(
               tooltip: 'Provider settings',
               onPressed: () => _openProviderSettings(context, state),
-              icon: const Icon(
-                Icons.settings_outlined,
-                color: NidColors.canopy,
-              ),
+              icon: Icon(Icons.settings_outlined, color: context.nid.canopy),
             ),
           ],
         ),
@@ -186,23 +183,23 @@ class _ProviderHeader extends StatelessWidget {
           TextSpan(
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
             children: [
               TextSpan(
                 text:
                     '$sharingCount ${sharingCount == 1 ? 'person' : 'people'}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                 ),
               ),
               const TextSpan(text: ' currently share readings with you · '),
               TextSpan(
                 text: '$worthLook',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                 ),
               ),
               const TextSpan(text: ' worth a look this morning'),
@@ -212,9 +209,9 @@ class _ProviderHeader extends StatelessWidget {
         const SizedBox(height: NidSpace.s),
         // The sign-in promise, kept verbatim on the portal so the contract
         // reads up top (test-asserted, do not reword).
-        const Text(
+        Text(
           'Accepted invites only. Sleep summaries, never journals.',
-          style: TextStyle(fontSize: 12, height: 1.5, color: NidColors.faint),
+          style: TextStyle(fontSize: 12, height: 1.5, color: context.nid.faint),
         ),
       ],
     );
@@ -273,8 +270,8 @@ class _RequestCard extends StatelessWidget {
     final identity = Row(
       children: [
         CircleAvatar(
-          backgroundColor: NidColors.mint,
-          foregroundColor: NidColors.canopy,
+          backgroundColor: context.nid.mint,
+          foregroundColor: context.nid.canopy,
           child: Text((link.patientDisplayName ?? '?').characters.first),
         ),
         const SizedBox(width: NidSpace.m),
@@ -294,7 +291,7 @@ class _RequestCard extends StatelessWidget {
               Text(
                 'Asked to share scores & trends · sleep detail with you',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: NidColors.slate,
+                  color: context.nid.slate,
                 ),
               ),
             ],
@@ -425,8 +422,8 @@ class _WorthALookCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                backgroundColor: NidColors.mint,
-                foregroundColor: NidColors.canopy,
+                backgroundColor: context.nid.mint,
+                foregroundColor: context.nid.canopy,
                 child: Text(name.characters.first),
               ),
               const SizedBox(width: NidSpace.m),
@@ -445,7 +442,7 @@ class _WorthALookCard extends StatelessWidget {
                     Text(
                       why,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: NidColors.slate,
+                        color: context.nid.slate,
                         height: 1.5,
                       ),
                     ),
@@ -502,9 +499,9 @@ class _RosterSection extends StatelessWidget {
                     onTap: () => state.selectPatient(link.patientUserId),
                     child: _InviteRow(
                       link: link,
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right,
-                        color: NidColors.canopy,
+                        color: context.nid.canopy,
                       ),
                     ),
                   )
@@ -536,8 +533,8 @@ class _InviteRow extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: NidColors.mint,
-            foregroundColor: NidColors.canopy,
+            backgroundColor: context.nid.mint,
+            foregroundColor: context.nid.canopy,
             child: Text((link.patientDisplayName ?? '?').characters.first),
           ),
           const SizedBox(width: NidSpace.m),
@@ -559,9 +556,9 @@ class _InviteRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   // Sleep-only shares descriptor — journal is never in the
                   // provider's scope, so it never appears in a shares label.
-                  const Text(
+                  Text(
                     'shares: scores · sleep',
-                    style: TextStyle(fontSize: 12, color: NidColors.faint),
+                    style: TextStyle(fontSize: 12, color: context.nid.faint),
                   ),
                 ],
               ],
@@ -647,7 +644,7 @@ class _PatientDetail extends StatelessWidget {
                 'This is the same view they see at home, scoped to sleep only.',
                 style: Theme.of(
                   context,
-                ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
+                ).textTheme.bodySmall?.copyWith(color: context.nid.slate),
               ),
               const SizedBox(height: NidSpace.l),
               const _SectionLabel('This week', tail: ' · sleep summaries only'),
@@ -697,7 +694,7 @@ class _PatientDetail extends StatelessWidget {
                 'If something looks off for more than a few days, the most '
                 'useful next step is usually just asking about it.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: NidColors.slate,
+                  color: context.nid.slate,
                   height: 1.55,
                 ),
               ),
@@ -724,7 +721,7 @@ class _PatientDetail extends StatelessWidget {
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontSize: 12,
             height: 1.6,
-            color: NidColors.faint,
+            color: context.nid.faint,
           ),
         ),
       ],
@@ -795,7 +792,7 @@ Future<void> _openProviderSettings(
 ) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: NidColors.fog,
+    backgroundColor: context.nid.fog,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
@@ -833,7 +830,7 @@ class _ProviderSettingsSheet extends StatelessWidget {
                 width: 38,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: NidColors.canopy.withValues(alpha: 0.14),
+                  color: context.nid.canopy.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(NidRadius.pill),
                 ),
               ),
@@ -843,7 +840,7 @@ class _ProviderSettingsSheet extends StatelessWidget {
               'Provider settings',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontSize: 24,
-                color: NidColors.canopy,
+                color: context.nid.canopy,
                 letterSpacing: -0.39,
               ),
             ),
@@ -856,14 +853,14 @@ class _ProviderSettingsSheet extends StatelessWidget {
                     width: 52,
                     height: 52,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: NidColors.canopy,
+                    decoration: BoxDecoration(
+                      color: context.nid.canopy,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       state.currentUser.displayName.characters.first,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.nid.onAccent,
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                       ),
@@ -881,11 +878,11 @@ class _ProviderSettingsSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: NidSpace.xs),
-                        const Text(
+                        Text(
                           'Verified provider',
                           style: TextStyle(
                             fontSize: 12,
-                            color: NidColors.moss,
+                            color: context.nid.moss,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -902,13 +899,13 @@ class _ProviderSettingsSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'People opt in from their own app. Accept or decline on the '
                     'dashboard — and remove access anytime.',
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,
-                      color: NidColors.slate,
+                      color: context.nid.slate,
                     ),
                   ),
                   const SizedBox(height: NidSpace.m),
@@ -917,7 +914,7 @@ class _ProviderSettingsSheet extends StatelessWidget {
                     if (link != requests.last)
                       Divider(
                         height: NidSpace.l,
-                        color: NidColors.canopy.withValues(alpha: 0.14),
+                        color: context.nid.canopy.withValues(alpha: 0.14),
                       ),
                   ],
                 ],
@@ -961,7 +958,7 @@ class _ProviderSettingsSheet extends StatelessWidget {
                     'journal entries, drafts, and private reflections stay '
                     'theirs.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: NidColors.slate,
+                      color: context.nid.slate,
                       height: 1.55,
                     ),
                   ),
@@ -1005,7 +1002,7 @@ class _SettingsRequestRow extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 detail,
-                style: const TextStyle(fontSize: 12, color: NidColors.slate),
+                style: TextStyle(fontSize: 12, color: context.nid.slate),
               ),
             ],
           ),
@@ -1055,16 +1052,13 @@ class _SettingsInfoRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   detail,
-                  style: const TextStyle(fontSize: 12, color: NidColors.slate),
+                  style: TextStyle(fontSize: 12, color: context.nid.slate),
                 ),
               ],
             ),
           ),
           const SizedBox(width: NidSpace.s),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 13, color: NidColors.faint),
-          ),
+          Text(value, style: TextStyle(fontSize: 13, color: context.nid.faint)),
         ],
       ),
     );

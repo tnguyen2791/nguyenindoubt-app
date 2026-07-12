@@ -188,7 +188,7 @@ class _NidTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: context.nid.surface,
       elevation: 0,
       child: SafeArea(
         top: false,
@@ -253,7 +253,7 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? NidColors.canopy : NidColors.faint;
+    final color = selected ? context.nid.canopy : context.nid.faint;
     return Expanded(
       child: InkResponse(
         onTap: onTap,
@@ -292,15 +292,15 @@ class _AddButton extends StatelessWidget {
           button: true,
           label: 'Add to today',
           child: Material(
-            color: NidColors.canopy,
+            color: context.nid.canopy,
             shape: const CircleBorder(),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onTap,
-              child: const SizedBox(
+              child: SizedBox(
                 width: 44,
                 height: 44,
-                child: Icon(Icons.add, color: Colors.white, size: 22),
+                child: Icon(Icons.add, color: context.nid.onAccent, size: 22),
               ),
             ),
           ),
@@ -337,26 +337,30 @@ class _WideNavRail extends StatelessWidget {
               button: true,
               label: 'Add to today',
               child: Material(
-                color: NidColors.canopy,
+                color: context.nid.canopy,
                 shape: const CircleBorder(),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
                   onTap: onAdd,
-                  child: const SizedBox(
+                  child: SizedBox(
                     width: 44,
                     height: 44,
-                    child: Icon(Icons.add, color: Colors.white, size: 22),
+                    child: Icon(
+                      Icons.add,
+                      color: context.nid.onAccent,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: NidSpace.xs),
-            const Text(
+            Text(
               'Add',
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: NidColors.canopy,
+                color: context.nid.canopy,
               ),
             ),
           ],
@@ -382,7 +386,7 @@ class _DemoNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: NidColors.mint.withValues(alpha: 0.72),
+      color: context.nid.mint.withValues(alpha: 0.72),
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -395,7 +399,7 @@ class _DemoNotice extends StatelessWidget {
               final copy = Text(
                 'Demo mode: data stays on this device. It does not sync across browsers, phones, or the GitHub Pages demo, and it is not production storage.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                   fontWeight: FontWeight.w600,
                 ),
               );
@@ -446,7 +450,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
     final roleLabel = state.isClinician ? 'Clinician demo' : 'Patient demo';
 
     return AppBar(
-      backgroundColor: NidColors.fog,
+      backgroundColor: context.nid.fog,
       titleSpacing: NidSpace.xl,
       title: Row(
         children: [
@@ -560,7 +564,7 @@ class _HeroCopy extends StatelessWidget {
         Text(
           'NguyenInDoubt',
           style: Theme.of(context).textTheme.displaySmall?.copyWith(
-            color: NidColors.canopy,
+            color: context.nid.canopy,
             letterSpacing: -0.64,
           ),
         ),
@@ -587,14 +591,14 @@ class _HeroCopy extends StatelessWidget {
           'Demo auth is local to this device. Firebase sign-in is not live yet.',
           style: Theme.of(
             context,
-          ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
+          ).textTheme.bodySmall?.copyWith(color: context.nid.slate),
         ),
         const SizedBox(height: NidSpace.l),
         // Clinician entry stays reachable, just visually quiet (ONB-02).
         TextButton(
           onPressed: onClinician,
           style: TextButton.styleFrom(
-            foregroundColor: NidColors.slate,
+            foregroundColor: context.nid.slate,
             padding: EdgeInsets.zero,
           ),
           child: const Text("I'm a clinician"),
@@ -655,22 +659,22 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                     width: 32,
                     height: 32,
                     child: Material(
-                      color: Colors.white,
+                      color: context.nid.surface,
                       shape: CircleBorder(
                         side: BorderSide(
-                          color: NidColors.canopy.withValues(alpha: 0.14),
+                          color: context.nid.canopy.withValues(alpha: 0.14),
                         ),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: widget.onBack,
                         customBorder: const CircleBorder(),
-                        child: const Tooltip(
+                        child: Tooltip(
                           message: 'Back',
                           child: Icon(
                             Icons.arrow_back_outlined,
                             size: 18,
-                            color: NidColors.canopy,
+                            color: context.nid.canopy,
                           ),
                         ),
                       ),
@@ -683,7 +687,7 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                     'Patient onboarding',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontSize: 26,
-                      color: NidColors.canopy,
+                      color: context.nid.canopy,
                       letterSpacing: -0.52,
                     ),
                   ),
@@ -768,10 +772,10 @@ class _ExpectationBullet extends StatelessWidget {
           height: 38,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: NidColors.mint,
+            color: context.nid.mint,
             borderRadius: BorderRadius.circular(NidRadius.tile),
           ),
-          child: Icon(icon, size: 18, color: NidColors.canopy),
+          child: Icon(icon, size: 18, color: context.nid.canopy),
         ),
         const SizedBox(width: NidSpace.m),
         Expanded(
@@ -807,12 +811,12 @@ class _StagPanel extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(NidSpace.l),
-            color: NidColors.ink.withValues(alpha: 0.72),
+            color: context.nid.ink.withValues(alpha: 0.72),
             child: Text(
               'Just ask. Then protect what should stay private.',
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(color: Colors.white),
+              ).textTheme.titleMedium?.copyWith(color: context.nid.onAccent),
             ),
           ),
         ],

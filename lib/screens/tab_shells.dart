@@ -27,11 +27,11 @@ class SectionKicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label.toUpperCase(),
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.99, // 0.09em on an 11px kicker.
-        color: NidColors.canopy,
+        color: context.nid.canopy,
       ),
     );
   }
@@ -94,7 +94,7 @@ class _TrendsScreenState extends State<TrendsScreen> {
           'Trends',
           style: theme.textTheme.headlineMedium?.copyWith(
             fontSize: 26,
-            color: NidColors.ink,
+            color: context.nid.ink,
             letterSpacing: -0.52,
           ),
         ),
@@ -137,7 +137,7 @@ class _SignalSegmented extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: NidColors.mint,
+        color: context.nid.mint,
         borderRadius: BorderRadius.circular(NidRadius.pill),
       ),
       child: Row(
@@ -170,7 +170,7 @@ class _SegButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final button = Material(
-      color: selected ? Colors.white : Colors.transparent,
+      color: selected ? context.nid.surface : Colors.transparent,
       borderRadius: BorderRadius.circular(NidRadius.pill),
       child: InkWell(
         onTap: onTap,
@@ -183,7 +183,7 @@ class _SegButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: selected ? NidColors.canopy : NidColors.slate,
+              color: selected ? context.nid.canopy : context.nid.slate,
             ),
           ),
         ),
@@ -199,7 +199,7 @@ class _SegButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(NidRadius.pill),
                 boxShadow: [
                   BoxShadow(
-                    color: NidColors.canopy.withValues(alpha: 0.12),
+                    color: context.nid.canopy.withValues(alpha: 0.12),
                     blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
@@ -256,7 +256,7 @@ class _RangePill extends StatelessWidget {
       button: true,
       selected: selected,
       child: Material(
-        color: selected ? NidColors.canopy : Colors.white,
+        color: selected ? context.nid.canopy : context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.pill),
         child: InkWell(
           onTap: onTap,
@@ -266,8 +266,8 @@ class _RangePill extends StatelessWidget {
               borderRadius: BorderRadius.circular(NidRadius.pill),
               border: Border.all(
                 color: selected
-                    ? NidColors.canopy
-                    : NidColors.canopy.withValues(alpha: 0.14),
+                    ? context.nid.canopy
+                    : context.nid.canopy.withValues(alpha: 0.14),
               ),
             ),
             padding: const EdgeInsets.symmetric(
@@ -279,7 +279,7 @@ class _RangePill extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : NidColors.slate,
+                color: selected ? context.nid.onAccent : context.nid.slate,
               ),
             ),
           ),
@@ -338,10 +338,10 @@ class _TrendCard extends StatelessWidget {
               ),
               Text(
                 data.headnote,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.faint,
+                  color: context.nid.faint,
                 ),
               ),
             ],
@@ -403,29 +403,26 @@ class _TrendStat extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.22,
-                color: NidColors.ink,
+                color: context.nid.ink,
               ),
             ),
             if (unit != null)
               Text(
                 unit!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.slate,
+                  color: context.nid.slate,
                 ),
               ),
           ],
         ),
         const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: NidColors.faint),
-        ),
+        Text(label, style: TextStyle(fontSize: 11, color: context.nid.faint)),
       ],
     );
   }
@@ -462,10 +459,10 @@ class _WeeklyCard extends StatelessWidget {
               Expanded(child: SectionKicker(_kicker)),
               Text(
                 _note,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.faint,
+                  color: context.nid.faint,
                 ),
               ),
             ],
@@ -502,10 +499,10 @@ class _ConsistencyCard extends StatelessWidget {
               const Expanded(child: SectionKicker('Consistency')),
               Text(
                 data.consistencyLabel,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.faint,
+                  color: context.nid.faint,
                 ),
               ),
             ],
@@ -580,8 +577,8 @@ class ProfileScreen extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => Scaffold(
           appBar: AppBar(
-            backgroundColor: NidColors.fog,
-            title: const Text('Journal'),
+            backgroundColor: context.nid.fog,
+            title: Text('Journal'),
           ),
           // Rebuild on state changes (add/delete) — outside AppShell's
           // AnimatedBuilder, the pushed route must listen itself.
@@ -599,8 +596,8 @@ class ProfileScreen extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => Scaffold(
           appBar: AppBar(
-            backgroundColor: NidColors.fog,
-            title: const Text('Safety and limits'),
+            backgroundColor: context.nid.fog,
+            title: Text('Safety and limits'),
           ),
           body: const SafetyScreen(),
         ),
@@ -626,7 +623,7 @@ class ProfileScreen extends StatelessWidget {
                 'Profile',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 26,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                   letterSpacing: -0.52,
                 ),
               ),
@@ -636,9 +633,9 @@ class ProfileScreen extends StatelessWidget {
             IconButton(
               tooltip: 'Notifications',
               onPressed: () => openNotificationsFeed(context, state),
-              icon: const Icon(
+              icon: Icon(
                 Icons.notifications_none_outlined,
-                color: NidColors.canopy,
+                color: context.nid.canopy,
               ),
             ),
           ],
@@ -653,15 +650,15 @@ class ProfileScreen extends StatelessWidget {
                 width: 56,
                 height: 56,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: NidColors.canopy,
+                decoration: BoxDecoration(
+                  color: context.nid.canopy,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
                   _initial,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 22,
-                    color: Colors.white,
+                    color: context.nid.onAccent,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -684,7 +681,7 @@ class ProfileScreen extends StatelessWidget {
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 12,
                         height: 1.5,
-                        color: NidColors.moss,
+                        color: context.nid.moss,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -776,11 +773,11 @@ class ProfileScreen extends StatelessWidget {
         Center(
           child: TextButton.icon(
             onPressed: onSignOut,
-            icon: const Icon(Icons.logout_outlined, color: NidColors.ember),
-            label: const Text(
+            icon: Icon(Icons.logout_outlined, color: context.nid.ember),
+            label: Text(
               'Sign out',
               style: TextStyle(
-                color: NidColors.ember,
+                color: context.nid.ember,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -838,9 +835,9 @@ class _ProfileGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -850,7 +847,7 @@ class _ProfileGroup extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                color: NidColors.canopy.withValues(alpha: 0.14),
+                color: context.nid.canopy.withValues(alpha: 0.14),
               ),
             rows[i],
           ],
@@ -888,7 +885,7 @@ class _ProfileRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: NidColors.canopy),
+            Icon(icon, size: 20, color: context.nid.canopy),
             const SizedBox(width: NidSpace.m),
             Expanded(
               child: Text(
@@ -902,12 +899,12 @@ class _ProfileRow extends StatelessWidget {
               Text(
                 value!,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: NidColors.faint,
+                  color: context.nid.faint,
                 ),
               ),
               const SizedBox(width: NidSpace.s),
             ],
-            const Icon(Icons.chevron_right, size: 16, color: NidColors.faint),
+            Icon(Icons.chevron_right, size: 16, color: context.nid.faint),
           ],
         ),
       ),
@@ -921,7 +918,7 @@ class _ProfileRow extends StatelessWidget {
 Future<void> showAddSheet(BuildContext context, NguyenInDoubtState state) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: NidColors.fog,
+    backgroundColor: context.nid.fog,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
@@ -957,7 +954,7 @@ class _AddSheet extends StatelessWidget {
                 width: 38,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: NidColors.canopy.withValues(alpha: 0.14),
+                  color: context.nid.canopy.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(NidRadius.pill),
                 ),
               ),
@@ -976,7 +973,7 @@ class _AddSheet extends StatelessWidget {
                 IconButton(
                   tooltip: 'Close',
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: NidColors.canopy),
+                  icon: Icon(Icons.close, color: context.nid.canopy),
                 ),
               ],
             ),
@@ -1037,7 +1034,7 @@ class _AddAction extends StatelessWidget {
     return Opacity(
       opacity: enabled ? 1 : 0.55,
       child: Material(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -1051,10 +1048,10 @@ class _AddAction extends StatelessWidget {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: NidColors.mint,
+                    color: context.nid.mint,
                     borderRadius: BorderRadius.circular(NidRadius.tile),
                   ),
-                  child: Icon(icon, size: 20, color: NidColors.canopy),
+                  child: Icon(icon, size: 20, color: context.nid.canopy),
                 ),
                 const SizedBox(width: NidSpace.m),
                 Expanded(
@@ -1071,7 +1068,7 @@ class _AddAction extends StatelessWidget {
                       Text(
                         body,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: NidColors.slate,
+                          color: context.nid.slate,
                         ),
                       ),
                     ],

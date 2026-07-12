@@ -107,7 +107,7 @@ class PatientDashboard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
+                Icon(Icons.bedtime_outlined, color: context.nid.canopy),
                 const SizedBox(width: NidSpace.s),
                 Expanded(
                   child: Text(
@@ -370,7 +370,7 @@ class _InviteValidationMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = validation.canAccept ? NidColors.canopy : NidColors.ember;
+    final color = validation.canAccept ? context.nid.canopy : context.nid.ember;
     final clinicianName = validation.clinicianDisplayName;
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -428,8 +428,8 @@ class _ConsentHistoryList extends StatelessWidget {
                         : Icons.link_off_outlined,
                     size: 18,
                     color: event.action == ConsentEventAction.accepted
-                        ? NidColors.canopy
-                        : NidColors.ember,
+                        ? context.nid.canopy
+                        : context.nid.ember,
                   ),
                   const SizedBox(width: NidSpace.s),
                   Expanded(
@@ -516,8 +516,8 @@ class _GreetingBlock extends StatelessWidget {
             Container(
               width: 9,
               height: 9,
-              decoration: const BoxDecoration(
-                color: NidColors.moss,
+              decoration: BoxDecoration(
+                color: context.nid.moss,
                 shape: BoxShape.circle,
               ),
             ),
@@ -528,7 +528,7 @@ class _GreetingBlock extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: textTheme.headlineMedium?.copyWith(
                   fontSize: 30,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                   height: 1.12,
                   letterSpacing: -0.6,
                 ),
@@ -599,19 +599,19 @@ class _ScoreHeroCard extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.0,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
               const InfoTip(term: 'Sleep score', body: _scoreTipBody),
               const SizedBox(width: NidSpace.s),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'not a diagnosis',
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: NidColors.faint,
+                    color: context.nid.faint,
                   ),
                 ),
               ),
@@ -690,12 +690,12 @@ class _MiniMetricCard extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.99, // 0.09em × 11
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
             ),
             if (onTap != null)
-              const Icon(Icons.chevron_right, size: 18, color: NidColors.faint),
+              Icon(Icons.chevron_right, size: 18, color: context.nid.faint),
           ],
         ),
         const SizedBox(height: NidSpace.s),
@@ -772,16 +772,16 @@ class _ReadinessHeroCard extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.0,
-                      color: NidColors.canopy,
+                      color: context.nid.canopy,
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'not a diagnosis',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: NidColors.faint,
+                      color: context.nid.faint,
                     ),
                   ),
                 ],

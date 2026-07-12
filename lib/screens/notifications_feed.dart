@@ -255,7 +255,7 @@ class NotificationsFeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Notifications'),
       ),
       body: ListView(
@@ -278,7 +278,7 @@ class NotificationsFeedScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontSize: 12,
               height: 1.6,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ],
@@ -298,9 +298,9 @@ class _NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -310,7 +310,7 @@ class _NotificationCard extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                color: NidColors.canopy.withValues(alpha: 0.14),
+                color: context.nid.canopy.withValues(alpha: 0.14),
               ),
             _NotificationRow(item: items[i], onOpen: onOpen),
           ],
@@ -332,9 +332,9 @@ class _NotificationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final tappable = item.target != NotificationTarget.none;
     final tileColor = item.warm
-        ? NidColors.ember.withValues(alpha: 0.14)
-        : NidColors.mint;
-    final iconColor = item.warm ? NidColors.ember : NidColors.canopy;
+        ? context.nid.ember.withValues(alpha: 0.14)
+        : context.nid.mint;
+    final iconColor = item.warm ? context.nid.ember : context.nid.canopy;
 
     final row = Padding(
       padding: const EdgeInsets.symmetric(
@@ -353,8 +353,8 @@ class _NotificationRow extends StatelessWidget {
                     child: Container(
                       width: 6,
                       height: 6,
-                      decoration: const BoxDecoration(
-                        color: NidColors.ember,
+                      decoration: BoxDecoration(
+                        color: context.nid.ember,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -382,20 +382,20 @@ class _NotificationRow extends StatelessWidget {
                     Expanded(
                       child: Text(
                         item.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: NidColors.ink,
+                          color: context.nid.ink,
                         ),
                       ),
                     ),
                     const SizedBox(width: NidSpace.s),
                     Text(
                       item.when,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: NidColors.faint,
+                        color: context.nid.faint,
                       ),
                     ),
                   ],
@@ -403,10 +403,10 @@ class _NotificationRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   item.body,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     height: 1.45,
-                    color: NidColors.slate,
+                    color: context.nid.slate,
                   ),
                 ),
               ],

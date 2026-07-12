@@ -73,7 +73,7 @@ class _ResourceCard extends StatelessWidget {
                 card.crisisFlag
                     ? Icons.emergency_outlined
                     : Icons.local_florist_outlined,
-                color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
+                color: card.crisisFlag ? context.nid.ember : context.nid.canopy,
               ),
               const SizedBox(width: NidSpace.s),
               StatusPill(
@@ -90,7 +90,7 @@ class _ResourceCard extends StatelessWidget {
           Text(
             card.disclaimer,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: card.crisisFlag ? NidColors.ember : NidColors.canopy,
+              color: card.crisisFlag ? context.nid.ember : context.nid.canopy,
             ),
           ),
         ],
@@ -166,7 +166,7 @@ class _SafetyScreenState extends State<SafetyScreen> {
                     icon: const Icon(Icons.local_hospital_outlined),
                     label: const Text('Call 911'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: NidColors.ember,
+                      backgroundColor: context.nid.ember,
                     ),
                   ),
                 ],

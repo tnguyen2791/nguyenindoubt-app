@@ -115,7 +115,7 @@ class _JournalScreenState extends State<JournalScreen> {
                           onPressed: () => _confirmDelete(entry.id),
                           icon: const Icon(Icons.delete_outline),
                           tooltip: 'Delete entry',
-                          color: NidColors.slate,
+                          color: context.nid.slate,
                         ),
                       ],
                     ),
@@ -124,9 +124,9 @@ class _JournalScreenState extends State<JournalScreen> {
                     const SizedBox(height: NidSpace.m),
                     Text(
                       '${shortDate(entry.createdAt)} - private by default',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: context.nid.canopy,
+                      ),
                     ),
                   ],
                 ),
