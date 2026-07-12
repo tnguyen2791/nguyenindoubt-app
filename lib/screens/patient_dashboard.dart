@@ -18,13 +18,13 @@ class PatientDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(NidSpace.xl),
+      padding: const EdgeInsets.symmetric(
+        horizontal: NidSpace.l,
+        vertical: NidSpace.l,
+      ),
       children: [
-        const BrandHeader(
-          title: 'Morning check-in',
-          subtitle: 'Start with the facts, then leave room for the story.',
-        ),
-        const SizedBox(height: NidSpace.l),
+        // The greeting block leads the screen — the BrandHeader banner is
+        // gone (SPEC surprise #3); the greeting/status hierarchy is the top.
         // ONB-04: while there is no sleep data yet, the guided first-run
         // layer replaces both the '--' metric tiles and the empty trend
         // card with one calm primary action (see patient_first_run.dart).
@@ -32,7 +32,7 @@ class PatientDashboard extends StatelessWidget {
           PatientFirstRun(state: state)
         else
           ..._withDataSections(context),
-        const SizedBox(height: NidSpace.l),
+        const SizedBox(height: NidSpace.cardGap),
         SectionCard(child: _ConsentLifecycleCard(state: state)),
       ],
     );
@@ -61,9 +61,9 @@ class PatientDashboard extends StatelessWidget {
         tone: score.tone,
         insight: insightLine(state.summaries),
       ),
-      const SizedBox(height: NidSpace.l),
+      const SizedBox(height: NidSpace.cardGap),
       _ScoreHeroCard(score: score),
-      const SizedBox(height: NidSpace.l),
+      const SizedBox(height: NidSpace.cardGap),
       IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,7 +75,7 @@ class PatientDashboard extends StatelessWidget {
                 caption: latest.trendFlag,
               ),
             ),
-            const SizedBox(width: NidSpace.m),
+            const SizedBox(width: NidSpace.cardGap),
             Expanded(
               child: _MiniMetricCard(
                 label: '7-night average',
@@ -86,7 +86,7 @@ class PatientDashboard extends StatelessWidget {
           ],
         ),
       ),
-      const SizedBox(height: NidSpace.l),
+      const SizedBox(height: NidSpace.cardGap),
       SectionCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -481,7 +481,7 @@ class _GreetingBlock extends StatelessWidget {
           textAlign: TextAlign.center,
           style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: NidSpace.s),
+        const SizedBox(height: 10),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -509,13 +509,13 @@ class _GreetingBlock extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NidSpace.s),
+        const SizedBox(height: NidSpace.m),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
           child: Text(
             insight,
             textAlign: TextAlign.center,
-            style: textTheme.bodySmall,
+            style: textTheme.bodySmall?.copyWith(height: 1.45),
           ),
         ),
       ],
@@ -652,9 +652,12 @@ class _MiniMetricCard extends StatelessWidget {
         children: [
           Text(
             label.toUpperCase(),
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.99, // 0.09em × 11
+              color: NidColors.canopy,
+            ),
           ),
           const SizedBox(height: NidSpace.s),
           Text(value, style: Theme.of(context).textTheme.displaySmall),

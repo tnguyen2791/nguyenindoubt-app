@@ -31,7 +31,9 @@ void main() {
 
     await _completePatientOnboarding(tester, displayName: 'Taylor Nguyen');
 
-    expect(find.text('Morning check-in'), findsOneWidget);
+    // The BrandHeader "Morning check-in" banner is gone; the guided
+    // first-run layer leads the dashboard until sleep data is imported.
+    expect(find.text('Morning check-in'), findsNothing);
     expect(find.text("Start with last night's sleep"), findsOneWidget);
     expect(find.textContaining('never your journal'), findsOneWidget);
     expect(state.currentUser.displayName, 'Taylor Nguyen');
@@ -256,7 +258,10 @@ void main() {
     await tester.tap(skip);
     await tester.pumpAndSettle();
 
-    expect(find.text('Morning check-in'), findsOneWidget);
+    // Banner removed — the guided first-run layer confirms the patient
+    // dashboard was reached via the skip fallback.
+    expect(find.text('Morning check-in'), findsNothing);
+    expect(find.text("Start with last night's sleep"), findsOneWidget);
     expect(state.currentUser.displayName, demoPatient.displayName);
   });
 
@@ -303,7 +308,14 @@ void main() {
     await tester.pumpAndSettle();
     await _completePatientOnboarding(tester);
 
-    await tester.scrollUntilVisible(find.text('Sleep sharing consent'), 200);
+    // The dashboard ListView is the first Scrollable; the consent card's
+    // invite TextField adds a second, so target the dashboard explicitly.
+    final dashboardScrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(
+      find.text('Sleep sharing consent'),
+      200,
+      scrollable: dashboardScrollable,
+    );
     await tester.pumpAndSettle();
     expect(find.text('Sleep sharing consent'), findsOneWidget);
     expect(find.text('No consent events yet.'), findsOneWidget);
@@ -436,7 +448,9 @@ void main() {
 
     expect(restoredState.sessionStage, SessionStage.patient);
     expect(restoredState.currentUser.displayName, 'Taylor Nguyen');
-    expect(find.text('Morning check-in'), findsOneWidget);
+    // Banner removed — restored patient session lands on the first-run layer.
+    expect(find.text('Morning check-in'), findsNothing);
+    expect(find.text("Start with last night's sleep"), findsOneWidget);
     expect(find.text('Get started'), findsNothing);
   });
 
