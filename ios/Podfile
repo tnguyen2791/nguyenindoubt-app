@@ -30,6 +30,12 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
 
+  # Durable pin for the GoogleSignIn (~> 3.3) ↔ Firebase (>= 3.4, < 6.0)
+  # GTMSessionFetcher/Core overlap. Without it the resolver can drift back to
+  # 5.x on a fresh `pod install`/`pod update` and re-break the build (see
+  # .planning/IOS-BUILD-NOTE.md). 3.5.x satisfies both.
+  pod 'GTMSessionFetcher/Core', '~> 3.5'
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths

@@ -1,6 +1,20 @@
-# iOS build blocker (2026-07-12)
+# iOS build blocker (2026-07-12) — ✅ RESOLVED
 
-`pod install --repo-update` fails with a transitive version conflict:
+**Status:** Fixed in commit `01bcb96`. Option 1 (clean regen) worked: removing
+`ios/Podfile.lock` + `ios/Pods` and re-running `pod install --repo-update` let
+the resolver downgrade **GTMSessionFetcher/Core to 3.5.0** — the overlap of
+GoogleSignIn 9.2 (`~> 3.3`) and Firebase 12.15 (`>= 3.4, < 6.0`). The old
+lockfile had been pinned at 5.3.0, which sits outside GoogleSignIn's range.
+CocoaPods added a `[CP] Copy Pods Resources` phase for GoogleSignIn's bundle.
+Release build compiles and runs on device + simulator. No pubspec downgrade or
+Podfile pin was needed. The original diagnosis + options are kept below for the
+record.
+
+---
+
+## Original diagnosis
+
+`pod install --repo-update` failed with a transitive version conflict:
 
 ```
 [!] CocoaPods could not find compatible versions for pod "GTMSessionFetcher/Core":
