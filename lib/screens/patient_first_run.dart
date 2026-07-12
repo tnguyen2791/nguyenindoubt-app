@@ -38,26 +38,34 @@ class PatientFirstRun extends StatelessWidget {
           Text(
             "Start with last night's sleep",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontSize: 24,
+              letterSpacing: -0.48,
+            ),
           ),
           const SizedBox(height: NidSpace.s),
           Text(
             'Import requests sleep-only access before anything is read — '
             'we only ever look at your sleep, never your journal.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
           ),
           const SizedBox(height: NidSpace.l),
-          FilledButton.icon(
-            onPressed: importDisabled ? null : state.importMockSleep,
-            icon: state.isBusy
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.download_outlined),
-            label: const Text('Import sleep'),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: importDisabled ? null : state.importMockSleep,
+              icon: state.isBusy
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.download_outlined),
+              label: const Text('Import sleep'),
+            ),
           ),
         ],
       ),

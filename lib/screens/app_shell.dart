@@ -378,18 +378,28 @@ class _HeroCopy extends StatelessWidget {
       children: [
         const BrandMark(size: 82),
         const SizedBox(height: NidSpace.l),
-        Text('NguyenInDoubt', style: Theme.of(context).textTheme.displaySmall),
+        Text(
+          'NguyenInDoubt',
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            color: NidColors.canopy,
+            letterSpacing: -0.64,
+          ),
+        ),
         const SizedBox(height: NidSpace.m),
         Text(
           'Sleep data, private reflection, and mental-health guides with enough humility to leave room for doubt.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: NidSpace.xl),
-        // Single patient-first primary action (ONB-02).
-        FilledButton.icon(
-          onPressed: onPatient,
-          icon: const Icon(Icons.person_add_alt_outlined),
-          label: const Text('Get started'),
+        // Single patient-first primary action (ONB-02), full-width; the
+        // radius/pad/weight come from the pass-1 filledButton theme.
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: onPatient,
+            icon: const Icon(Icons.person_add_alt_outlined),
+            label: const Text('Get started'),
+          ),
         ),
         const SizedBox(height: NidSpace.m),
         // Required local-only disclosure, kept but lowered to calm
@@ -460,17 +470,43 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    tooltip: 'Back',
-                    onPressed: widget.onBack,
-                    icon: const Icon(Icons.arrow_back_outlined),
+                  // Back affordance in a calm 32x32 circle — white fill, a
+                  // 1px canopy@14% hairline, canopy chevron.
+                  SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: Material(
+                      color: Colors.white,
+                      shape: CircleBorder(
+                        side: BorderSide(
+                          color: NidColors.canopy.withValues(alpha: 0.14),
+                        ),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: widget.onBack,
+                        customBorder: const CircleBorder(),
+                        child: const Tooltip(
+                          message: 'Back',
+                          child: Icon(
+                            Icons.arrow_back_outlined,
+                            size: 18,
+                            color: NidColors.canopy,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: NidSpace.l),
                   const BrandMark(size: 64),
                   const SizedBox(height: NidSpace.l),
                   Text(
                     'Patient onboarding',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontSize: 26,
+                      color: NidColors.canopy,
+                      letterSpacing: -0.52,
+                    ),
                   ),
                   const SizedBox(height: NidSpace.m),
                   Text(
@@ -509,13 +545,16 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
                     },
                   ),
                   const SizedBox(height: NidSpace.xl),
-                  FilledButton.icon(
-                    // An empty or whitespace-only name cannot submit (ONB-03).
-                    onPressed: trimmed.isEmpty
-                        ? null
-                        : () => widget.onComplete(_nameController.text),
-                    icon: const Icon(Icons.check_outlined),
-                    label: const Text('Continue'),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      // An empty/whitespace-only name cannot submit (ONB-03).
+                      onPressed: trimmed.isEmpty
+                          ? null
+                          : () => widget.onComplete(_nameController.text),
+                      icon: const Icon(Icons.check_outlined),
+                      label: const Text('Continue'),
+                    ),
                   ),
                   const SizedBox(height: NidSpace.s),
                   TextButton(
@@ -545,10 +584,24 @@ class _ExpectationBullet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: NidColors.slate),
-        const SizedBox(width: NidSpace.s),
+        Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: NidColors.mint,
+            borderRadius: BorderRadius.circular(NidRadius.tile),
+          ),
+          child: Icon(icon, size: 18, color: NidColors.canopy),
+        ),
+        const SizedBox(width: NidSpace.m),
         Expanded(
-          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+          child: Text(
+            label,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
         ),
       ],
     );

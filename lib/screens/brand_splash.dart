@@ -101,7 +101,6 @@ class _BrandSplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final markFade = CurvedAnimation(
       parent: controller,
       curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
@@ -141,31 +140,48 @@ class _BrandSplashView extends StatelessWidget {
               opacity: wordmarkFade,
               child: SlideTransition(
                 position: wordmarkRise,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'NguyenInDoubt',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: NidColors.canopy,
-                      ),
-                    ),
-                    const SizedBox(height: NidSpace.m),
-                    Container(
-                      width: 32,
-                      height: 2,
-                      decoration: BoxDecoration(
-                        color: NidColors.ember,
-                        borderRadius: BorderRadius.circular(NidRadius.pill),
-                      ),
-                    ),
-                  ],
-                ),
+                // Wordmark with the ember "In" carrying meaning (doubt), not
+                // decoration — so the old ember divider bar is dropped.
+                child: const _BrandWordmark(),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The brand wordmark: `Nguyen` + ember `In` (the doubt) + `Doubt`, all Inter
+/// w700 with -0.03em tracking (letterSpacing -0.84 @28). The ember span is
+/// meaning, not decoration.
+class _BrandWordmark extends StatelessWidget {
+  const _BrandWordmark();
+
+  /// Marker so tests can assert the wordmark after the RichText change.
+  static const Key wordmarkKey = Key('brand-wordmark');
+
+  @override
+  Widget build(BuildContext context) {
+    const base = TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.84,
+      color: NidColors.canopy,
+    );
+    return Text.rich(
+      const TextSpan(
+        style: base,
+        children: [
+          TextSpan(text: 'Nguyen'),
+          TextSpan(
+            text: 'In',
+            style: TextStyle(color: NidColors.ember),
+          ),
+          TextSpan(text: 'Doubt'),
+        ],
+      ),
+      key: wordmarkKey,
     );
   }
 }
