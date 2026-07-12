@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../models/app_models.dart';
+import '../services/sleep_insights.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common_widgets.dart';
+import 'data_displays.dart';
 
 class ClinicianDashboard extends StatelessWidget {
   const ClinicianDashboard({super.key, required this.state});
@@ -185,15 +187,7 @@ class _PatientDetail extends StatelessWidget {
     }
 
     final summaries = bundle!.summaries;
-    final average = summaries.isEmpty
-        ? 0.0
-        : summaries
-                  .map((summary) => summary.sleepDurationHours)
-                  .reduce((a, b) => a + b) /
-              summaries.length;
-    final shortNights = summaries
-        .where((summary) => summary.sleepDurationHours < 6)
-        .length;
+    final week = clinicianWeekSummary(summaries);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,21 +211,30 @@ class _PatientDetail extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: NidSpace.l),
-              Wrap(
-                spacing: NidSpace.m,
-                runSpacing: NidSpace.m,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _ClinicianMetric(
-                    label: '7-day avg',
-                    value: average == 0 ? '--' : hoursLabel(average),
+                  StatDeltaRow(
+                    name: 'Avg sleep',
+                    sub: 'last 7 nights',
+                    value: week.avgLabel,
+                    delta: week.deltaLabel,
+                    flagged: week.deltaFlagged,
                   ),
-                  _ClinicianMetric(
-                    label: 'short nights',
-                    value: '$shortNights',
+                  const SizedBox(height: NidSpace.m),
+                  StatDeltaRow(
+                    name: 'Night-to-night',
+                    sub: 'variability',
+                    value: week.variabilityValue,
+                    delta: week.variabilityWord,
+                    flagged: week.variabilityFlagged,
                   ),
-                  _ClinicianMetric(
-                    label: 'samples',
-                    value: '${bundle!.samples.length}',
+                  const SizedBox(height: NidSpace.m),
+                  StatDeltaRow(
+                    name: 'Nights with data',
+                    sub: 'past week',
+                    value: week.nightsLabel,
+                    delta: 'sleep summaries only',
                   ),
                 ],
               ),
@@ -257,42 +260,6 @@ class _PatientDetail extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _ClinicianMetric extends StatelessWidget {
-  const _ClinicianMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 140,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: NidColors.mint,
-          borderRadius: BorderRadius.circular(NidRadius.card),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(NidSpace.m),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label.toUpperCase(),
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
-              ),
-              const SizedBox(height: NidSpace.s),
-              Text(value, style: Theme.of(context).textTheme.headlineSmall),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
