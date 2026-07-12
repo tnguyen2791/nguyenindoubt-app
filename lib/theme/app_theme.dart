@@ -17,6 +17,10 @@ class NidColors {
 
   /// Faintest caption tone — axis labels, day letters, quiet sub-text.
   static const faint = Color(0xFF7A887F);
+
+  /// Contributor-bar name label — softer than ink so the name recedes
+  /// behind the state word (== design contributor-name tone).
+  static const contributorName = Color(0xFF33413A);
 }
 
 /// State colors for metric readouts — the design's `--state-*` ramp.

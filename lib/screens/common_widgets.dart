@@ -346,7 +346,7 @@ class SleepTrendBars extends StatelessWidget {
                           Positioned(
                             left: 0,
                             right: 0,
-                            bottom: _chartHeight * heightFactor + NidSpace.xs,
+                            bottom: _chartHeight * heightFactor + 6,
                             child: Text(
                               hoursLabel(summary.sleepDurationHours),
                               textAlign: TextAlign.center,
@@ -373,7 +373,7 @@ class SleepTrendBars extends StatelessWidget {
               child: Text(
                 dayLetter(summary.date),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 10, color: NidColors.faint),
+                style: const TextStyle(fontSize: 11, color: NidColors.faint),
               ),
             );
           }).toList(),
@@ -396,7 +396,7 @@ class SleepTrendBars extends StatelessWidget {
             const SizedBox(width: NidSpace.s),
             Expanded(
               child: Container(
-                height: 6,
+                height: 8,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(NidRadius.pill),
                   gradient: const LinearGradient(

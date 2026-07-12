@@ -72,13 +72,16 @@ class ScoreRing extends StatelessWidget {
             children: [
               Text(
                 '$score',
-                style: const TextStyle(
-                  fontSize: 34,
+                style: TextStyle(
+                  // Proportional to the ring so the number reads right at any
+                  // size (34 @120). letterSpacing stays -0.02em @34.
+                  fontSize: (size * 0.28).round().toDouble(),
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.68,
                   color: NidColors.ink,
                 ),
               ),
+              const SizedBox(height: 3),
               Text(
                 word,
                 style: const TextStyle(
@@ -111,7 +114,8 @@ class _ScoreRingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
-    final radius = (size.shortestSide - strokeWidth) / 2;
+    // Design -3 inset so the ring sits a hair inside its box (51 @120).
+    final radius = ((size.shortestSide - strokeWidth) / 2) - 3;
 
     final track = Paint()
       ..color = trackColor
@@ -172,7 +176,7 @@ class ContributorBar extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: NidColors.ink,
+                color: NidColors.contributorName,
               ),
             ),
             ?infoTip,
@@ -188,7 +192,7 @@ class ContributorBar extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NidSpace.s),
+        const SizedBox(height: 5),
         Container(
           height: 7,
           decoration: BoxDecoration(
