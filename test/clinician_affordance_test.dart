@@ -128,6 +128,31 @@ void main() {
     // The third row's delta slot carries the positive scope framing.
     expect(find.text('sleep summaries only'), findsOneWidget);
 
+    // The "worth a look" section label frames the stats as patterns, not
+    // alerts — asserted via its RichText spans (uppercased, ember tail).
+    final worthALook = find.byWidgetPredicate((widget) {
+      if (widget is! RichText) return false;
+      final text = widget.text.toPlainText();
+      return text.contains('WORTH A LOOK') &&
+          text.contains('NOT ALERTS, JUST PATTERNS');
+    });
+    expect(worthALook, findsOneWidget);
+
+    // The closing humility note keeps the clinician framing honest: patient
+    // control + educational-context (never a diagnosis).
+    final humility = find.textContaining(
+      'People control exactly what you see and can pause sharing anytime.',
+    );
+    await tester.scrollUntilVisible(humility, 200);
+    await tester.pumpAndSettle();
+    expect(humility, findsOneWidget);
+    expect(
+      find.textContaining(
+        'Readings are educational context for conversations — never a diagnosis.',
+      ),
+      findsOneWidget,
+    );
+
     // The consent disclosure stays verbatim on the clinician surface — it is
     // disclosure, not a metric, and survives the stat rework unchanged.
     final disclosure = find.textContaining(

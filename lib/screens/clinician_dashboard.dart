@@ -8,6 +8,41 @@ import '../theme/tokens.dart';
 import 'common_widgets.dart';
 import 'data_displays.dart';
 
+/// The design's `.k` section-label idiom — uppercase 11px/w700 canopy with
+/// +0.09em tracking (0.09 × 11 ≈ 0.99). Used for clinician section headers so
+/// they read as quiet kickers, not sentence-case titles. An optional [tail]
+/// renders in ember for the "not alerts, just patterns" reassurance.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.label, {this.tail});
+
+  final String label;
+  final String? tail;
+
+  @override
+  Widget build(BuildContext context) {
+    const base = TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.99,
+      color: NidColors.canopy,
+    );
+    return Text.rich(
+      TextSpan(
+        text: label.toUpperCase(),
+        style: base,
+        children: tail == null
+            ? null
+            : [
+                TextSpan(
+                  text: tail!.toUpperCase(),
+                  style: base.copyWith(color: NidColors.ember),
+                ),
+              ],
+      ),
+    );
+  }
+}
+
 class ClinicianDashboard extends StatelessWidget {
   const ClinicianDashboard({super.key, required this.state});
 
@@ -76,7 +111,7 @@ class _PatientList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Invite status', style: Theme.of(context).textTheme.titleLarge),
+        const _SectionLabel('Invite status'),
         const SizedBox(height: NidSpace.s),
         for (final link in state.clinicianLinkStatuses)
           Padding(
@@ -201,7 +236,11 @@ class _PatientDetail extends StatelessWidget {
                   Expanded(
                     child: Text(
                       bundle!.patient.displayName,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.39,
+                      ),
                     ),
                   ),
                   const StatusPill(
@@ -211,6 +250,11 @@ class _PatientDetail extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: NidSpace.l),
+              const _SectionLabel(
+                'Worth a look',
+                tail: ' · not alerts, just patterns',
+              ),
+              const SizedBox(height: NidSpace.m),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -248,15 +292,25 @@ class _PatientDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Clinician visibility',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              const _SectionLabel('Clinician visibility'),
               const SizedBox(height: NidSpace.s),
               const Text(
                 'Visible: sleep samples, daily summaries, trend flags. Hidden: journal entries, drafts, private reflections.',
               ),
             ],
+          ),
+        ),
+        const SizedBox(height: NidSpace.l),
+        // Closing humility note — clinician readings are context, never a
+        // verdict, and the patient stays in control of what is shared.
+        Text(
+          'People control exactly what you see and can pause sharing anytime.\n'
+          'Readings are educational context for conversations — never a diagnosis.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontSize: 12,
+            height: 1.6,
+            color: NidColors.faint,
           ),
         ),
       ],

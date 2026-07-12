@@ -398,7 +398,16 @@ void main() {
     await tester.tap(find.text("I'm a clinician"));
     await tester.pumpAndSettle();
 
-    expect(find.text('Invite status'), findsOneWidget);
+    // "Invite status" now renders through the `.k` section-label idiom
+    // (uppercase canopy kicker), so it is a RichText span, not plain Text.
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains('INVITE STATUS'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('NID-8274 - accepted'), findsOneWidget);
     expect(find.text('NID-1138 - pending'), findsOneWidget);
     expect(find.text('NID-4455 - expired'), findsOneWidget);
