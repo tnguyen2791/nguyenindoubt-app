@@ -576,13 +576,16 @@ class _ScoreHeroCard extends StatelessWidget {
                 ),
               ),
               const InfoTip(term: 'Sleep score', body: _scoreTipBody),
-              const Spacer(),
-              const Text(
-                'not a diagnosis',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: NidColors.faint,
+              const SizedBox(width: NidSpace.s),
+              const Expanded(
+                child: Text(
+                  'not a diagnosis',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: NidColors.faint,
+                  ),
                 ),
               ),
             ],

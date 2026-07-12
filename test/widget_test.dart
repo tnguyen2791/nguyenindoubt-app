@@ -4,6 +4,7 @@ import 'package:nguyenindoubt_app/data/seed_data.dart';
 import 'package:nguyenindoubt_app/main.dart';
 import 'package:nguyenindoubt_app/models/app_models.dart';
 import 'package:nguyenindoubt_app/repositories/app_repository.dart';
+import 'package:nguyenindoubt_app/screens/data_displays.dart';
 import 'package:nguyenindoubt_app/services/health_data_provider.dart';
 import 'package:nguyenindoubt_app/state/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,7 +44,75 @@ void main() {
     expect(state.summaries, isNotEmpty);
     expect(find.text('sleep access ready'), findsOneWidget);
     expect(find.text("Start with last night's sleep"), findsNothing);
+
+    // Phase 11 hierarchy: the non-diagnostic score hero replaces the old
+    // metric tiles, and the greeting block leads the with-data dashboard.
+    expect(find.text('not a diagnosis'), findsOneWidget);
+    expect(find.text('SLEEP SCORE'), findsOneWidget);
+    expect(find.byType(ScoreRing), findsOneWidget);
+    expect(find.textContaining('Good '), findsOneWidget);
+    expect(find.text('QUALITY PROXY'), findsNothing);
+    expect(find.text('CLINICIAN LINK'), findsNothing);
   });
+
+  testWidgets(
+    'dashboard hierarchy shows score hero, honest trend, and one insight '
+    'line at phone width',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final state = NguyenInDoubtState(
+        repository: InMemoryAppRepository(),
+        healthDataProvider: MockHealthDataProvider(),
+      );
+
+      await tester.pumpWidget(
+        NguyenInDoubtApp(state: state, showSplash: false),
+      );
+      await tester.pumpAndSettle();
+      await _completePatientOnboarding(tester);
+
+      await state.importMockSleep();
+      await tester.pumpAndSettle();
+
+      // No overflow at phone width, and the hero leads the hierarchy.
+      expect(tester.takeException(), isNull);
+      expect(find.byType(ScoreRing), findsOneWidget);
+      expect(find.text('not a diagnosis'), findsOneWidget);
+      expect(find.text('SLEEP SCORE'), findsOneWidget);
+
+      // Exactly one gentle observational insight line (the greeting
+      // sub-line): the fixed mock durations put last night over baseline.
+      expect(find.textContaining('vs your recent average'), findsOneWidget);
+
+      // The dashboard ListView is the first Scrollable; the consent card's
+      // invite TextField contributes another once it is built.
+      final dashboardScrollable = find.byType(Scrollable).first;
+
+      // The honest trend scale: ramp legend ends plus the 8h hairline label.
+      await tester.scrollUntilVisible(
+        find.text('5h short'),
+        200,
+        scrollable: dashboardScrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('5h short'), findsOneWidget);
+      expect(find.text('8h+ optimal'), findsOneWidget);
+      expect(find.text('8h'), findsOneWidget);
+
+      // The consent card is demoted to last but still reachable.
+      await tester.scrollUntilVisible(
+        find.text('Sleep sharing consent'),
+        200,
+        scrollable: dashboardScrollable,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Sleep sharing consent'), findsOneWidget);
+    },
+  );
 
   testWidgets('patient can reset local demo data', (tester) async {
     SharedPreferences.setMockInitialValues({});
