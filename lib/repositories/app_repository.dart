@@ -86,6 +86,13 @@ abstract class ConsentRepository {
   });
 }
 
+/// The full repository surface the app talks to: patient data, clinician
+/// reads, and consent writes. Both [InMemoryAppRepository] (demo/tests) and
+/// [FirebaseAppRepository] (live) satisfy it, so [NguyenInDoubtState] can hold
+/// one field and swap backends behind auth without changing call sites.
+abstract class NidRepository
+    implements AppRepository, ClinicianRepository, ConsentRepository {}
+
 class PrivacyException implements Exception {
   const PrivacyException(this.message);
 
@@ -95,8 +102,7 @@ class PrivacyException implements Exception {
   String toString() => message;
 }
 
-class InMemoryAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+class InMemoryAppRepository implements NidRepository {
   InMemoryAppRepository({
     this.preferences,
     this.storageKey = _defaultStorageKey,

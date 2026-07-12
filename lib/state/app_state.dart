@@ -2,21 +2,88 @@ import 'package:flutter/foundation.dart';
 
 import '../models/app_models.dart';
 import '../repositories/app_repository.dart';
+import '../services/auth_service.dart';
 import '../services/health_data_provider.dart';
 
 class NguyenInDoubtState extends ChangeNotifier {
   NguyenInDoubtState({
     required this.repository,
     required this.healthDataProvider,
+    this.authService = const DemoAuthService(),
   }) {
-    _session = repository.currentSession;
-    _currentUser = _userForSession(_session);
     _healthPermissionStatus = healthDataProvider.permissionStatus;
-    refresh();
+
+    final uid = authService.currentUid;
+    if (uid == null) {
+      // Demo / in-memory path — unchanged from before real auth. Tests and the
+      // public demo land here (DemoAuthService always reports a null uid), so
+      // the seeded session, demo users, and every behavior stay byte-identical.
+      final demo = _demoRepository;
+      _session = demo.currentSession;
+      _currentUser = _userForSession(_session);
+      refresh();
+    } else {
+      // Signed-in path — a real Firebase uid backs the app. Seed a calm
+      // signed-out placeholder synchronously, then bootstrap the real profile
+      // (ensureUser) and load their data. A freshly signed-up account has an
+      // empty Firestore; the existing empty states render calmly (correct, not
+      // a bug — no seeding happens here).
+      _session = const AppSession.signedOut();
+      _currentUser = AppUser(
+        id: uid,
+        displayName: 'You',
+        role: UserRole.patient,
+        consentStatus: ConsentStatus.notAsked,
+      );
+      _bootstrapSignedInUser(uid);
+    }
   }
 
-  final InMemoryAppRepository repository;
+  final NidRepository repository;
   final HealthDataProvider healthDataProvider;
+  final AuthService authService;
+
+  /// True once a real signed-in uid backs this state. When false the app runs
+  /// the in-memory demo exactly as before real auth existed.
+  bool get isSignedInMode => authService.currentUid != null;
+
+  /// The demo-only repository surface (seeded session, demo users, local
+  /// persistence). Only valid on the demo path; the signed-in path never
+  /// touches it. Guarded by [isSignedInMode] so a misuse fails loudly in
+  /// debug rather than silently reading demo state under a real account.
+  InMemoryAppRepository get _demoRepository {
+    final repo = repository;
+    assert(
+      repo is InMemoryAppRepository,
+      'Demo-only repository access requires an InMemoryAppRepository.',
+    );
+    return repo as InMemoryAppRepository;
+  }
+
+  /// Bootstraps a signed-in user: ensures their profile exists, then enters the
+  /// patient experience backed by the real repository. Any failure degrades to
+  /// a calm signed-out state rather than surfacing a raw error (project rule).
+  Future<void> _bootstrapSignedInUser(String uid) async {
+    _setBusy(true);
+    try {
+      final user = await repository.ensureUser(
+        uid: uid,
+        displayName: _currentUser.displayName,
+        role: UserRole.patient,
+      );
+      _currentUser = user;
+      _session = AppSession(stage: SessionStage.patient, userId: user.id);
+      await refresh();
+    } catch (error, stackTrace) {
+      // Never surface a raw exception. Log for debugging; leave the user on a
+      // calm signed-out screen so they can retry.
+      debugPrint('[state] signed-in bootstrap failed: $error');
+      debugPrintStack(stackTrace: stackTrace, label: 'signed-in bootstrap');
+      _session = const AppSession.signedOut();
+    } finally {
+      _setBusy(false);
+    }
+  }
 
   late AppUser _currentUser;
   late AppSession _session;
@@ -109,28 +176,31 @@ class NguyenInDoubtState extends ChangeNotifier {
   }
 
   Future<void> startPatientOnboarding() async {
+    final demo = _demoRepository;
     _session = const AppSession(stage: SessionStage.onboarding);
-    _currentUser = repository.patientDemo;
-    await repository.saveSession(_session);
+    _currentUser = demo.patientDemo;
+    await demo.saveSession(_session);
     await refresh();
   }
 
   Future<void> completePatientOnboarding({required String displayName}) async {
+    final demo = _demoRepository;
     final normalizedName = displayName.trim().isEmpty
-        ? repository.patientDemo.displayName
+        ? demo.patientDemo.displayName
         : displayName.trim();
-    _currentUser = await repository.updateDemoPatientProfile(
+    _currentUser = await demo.updateDemoPatientProfile(
       displayName: normalizedName,
     );
     _session = AppSession(stage: SessionStage.patient, userId: _currentUser.id);
-    await repository.saveSession(_session);
+    await demo.saveSession(_session);
     await refresh();
   }
 
   Future<void> continueAsPatient() async {
-    _currentUser = repository.patientDemo;
+    final demo = _demoRepository;
+    _currentUser = demo.patientDemo;
     _session = AppSession(stage: SessionStage.patient, userId: _currentUser.id);
-    await repository.saveSession(_session);
+    await demo.saveSession(_session);
     await refresh();
   }
 
@@ -139,18 +209,28 @@ class NguyenInDoubtState extends ChangeNotifier {
   }
 
   Future<void> continueAsClinicianDemo() async {
-    _currentUser = repository.clinicianDemo;
+    final demo = _demoRepository;
+    _currentUser = demo.clinicianDemo;
     _session = AppSession(
       stage: SessionStage.clinician,
       userId: _currentUser.id,
     );
-    await repository.saveSession(_session);
+    await demo.saveSession(_session);
     await refresh();
   }
 
   Future<void> signOut() async {
+    // Signed-in mode: sign out through the provider. main.dart's AuthGate
+    // listens to uidChanges and fades back to the LoginScreen — this state is
+    // discarded and rebuilt fresh, so there is no demo session to restore.
+    if (isSignedInMode) {
+      await authService.signOut();
+      return;
+    }
+
+    final demo = _demoRepository;
     _session = const AppSession.signedOut();
-    _currentUser = repository.patientDemo;
+    _currentUser = demo.patientDemo;
     _summaries = [];
     _journalEntries = [];
     _consentHistory = [];
@@ -159,7 +239,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     _selectedPatientBundle = null;
     _inviteValidation = null;
     _healthPermissionStatus = HealthPermissionStatus.notRequested;
-    await repository.saveSession(_session);
+    await demo.saveSession(_session);
     await refresh();
   }
 
@@ -235,11 +315,12 @@ class NguyenInDoubtState extends ChangeNotifier {
   }
 
   Future<void> resetDemoData() async {
+    final demo = _demoRepository;
     _setBusy(true);
     try {
-      await repository.resetDemoData();
+      await demo.resetDemoData();
       _session = const AppSession.signedOut();
-      _currentUser = repository.patientDemo;
+      _currentUser = demo.patientDemo;
       _summaries = [];
       _journalEntries = [];
       _consentHistory = [];
@@ -302,11 +383,14 @@ class NguyenInDoubtState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Demo-only: resolves the seeded user for a restored local session. Only
+  // reached on the demo constructor path (currentUid == null).
   AppUser _userForSession(AppSession session) {
+    final demo = _demoRepository;
     if (session.stage == SessionStage.clinician) {
-      return repository.clinicianDemo;
+      return demo.clinicianDemo;
     }
 
-    return repository.patientDemo;
+    return demo.patientDemo;
   }
 }

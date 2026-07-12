@@ -246,6 +246,10 @@ class FirebaseAuthService implements AuthService {
 /// No-op auth for tests and the local demo: always signed out, every provider
 /// call is a safe no-op that never touches Firebase or a provider SDK.
 class DemoAuthService implements AuthService {
+  /// Const so it can be the default [AuthService] on [NguyenInDoubtState],
+  /// keeping every existing demo/test constructor call unchanged.
+  const DemoAuthService();
+
   @override
   Stream<String?> get uidChanges => Stream<String?>.value(null);
 

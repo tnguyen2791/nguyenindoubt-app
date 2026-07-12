@@ -5,8 +5,7 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 import 'app_repository.dart';
 
-class FirebaseAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+class FirebaseAppRepository implements NidRepository {
   FirebaseAppRepository({required this.firestore, required this.auth});
 
   final FirebaseFirestore firestore;
