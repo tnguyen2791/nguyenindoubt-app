@@ -13,6 +13,7 @@ import 'notifications_feed.dart';
 import 'resources_screen.dart';
 import 'settings_screens.dart';
 import 'sharing_flow.dart';
+import 'weekly_report_screen.dart';
 
 /// A calm uppercase section kicker — the design's `.k` idiom (11px, 700,
 /// letter-spacing, canopy). Reused across the new tab shells so section
@@ -714,6 +715,12 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.edit_note_outlined,
               label: 'Journal',
               onTap: () => _openJournal(context),
+            ),
+            // The weekly report (94) — a calm read on the patient's own week.
+            _ProfileRow(
+              icon: Icons.calendar_today_outlined,
+              label: 'Weekly report',
+              onTap: () => openWeeklyReport(context, state),
             ),
             _ProfileRow(
               icon: Icons.notifications_none_outlined,

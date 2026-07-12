@@ -3,8 +3,9 @@
 /// A calm, display-only list of Today / Yesterday / This week notification
 /// items. These are seeded/static for now — there is no real delivery, no
 /// scheduling, and no analytics. Items that reference an in-app screen open it
-/// by a gentle fade route (readiness/sleep detail, trends, sharing placeholder);
-/// the rest are read-only. Voice is observational and non-diagnostic per the
+/// by a gentle fade route (readiness/sleep detail, weekly report, trends,
+/// sharing placeholder); the rest are read-only. Voice is observational and
+/// non-diagnostic per the
 /// brand: "worth watching, not worrying", "never streaks, never guilt".
 library;
 
@@ -15,11 +16,19 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'detail_screens.dart';
 import 'tab_shells.dart';
+import 'weekly_report_screen.dart';
 
 /// Where a notification item leads when tapped. Kept as a small enum so the
 /// seed data stays plain and the screen owns the (context-dependent)
 /// navigation. `none` items are read-only.
-enum NotificationTarget { none, readiness, sleep, trends, sharing }
+enum NotificationTarget {
+  none,
+  readiness,
+  sleep,
+  trends,
+  sharing,
+  weeklyReport,
+}
 
 /// One calm notification item (seeded/static). Display-only — no real delivery.
 class NotificationItem {
@@ -139,7 +148,7 @@ const List<NotificationSection> seedNotificationSections = [
             'A steadier week — bedtimes tightened up and readiness climbed. '
             'One takeaway inside.',
         when: 'Sun',
-        target: NotificationTarget.trends,
+        target: NotificationTarget.weeklyReport,
       ),
       NotificationItem(
         icon: Icons.check_circle_outline,
@@ -196,6 +205,10 @@ class NotificationsFeedScreen extends StatelessWidget {
         openReadinessDetail(context, state);
       case NotificationTarget.sleep:
         openSleepDetail(context, state);
+      case NotificationTarget.weeklyReport:
+        // The weekly report reads the patient's own week — a real pushed
+        // screen now (P19), no longer a placeholder.
+        openWeeklyReport(context, state);
       case NotificationTarget.trends:
         // Trends is a top-level tab, not a pushed route; a calm sheet keeps the
         // item honest without faking a second Trends surface here.
