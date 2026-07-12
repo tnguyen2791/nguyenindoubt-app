@@ -89,4 +89,52 @@ void main() {
     expect(state.selectedPatientBundle, isNotNull);
     expect(state.selectedPatientBundle, isNot(same(bundleBeforeInertTap)));
   });
+
+  testWidgets('clinician summary is directional, never a raw sample count', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("I'm a clinician"));
+    await tester.pumpAndSettle();
+
+    // Clinician mode auto-selects the first linked patient, so the detail
+    // renders the seeded 7-night data (6.2/6.5/7.0/7.2/5.9/6.8/7.6 hours).
+    expect(state.selectedPatientBundle, isNotNull);
+
+    // The old raw-count tile (uppercase 'SAMPLES' label) must not render.
+    expect(find.text('SAMPLES'), findsNothing);
+
+    // The directional stat-delta summary renders deterministically from the
+    // seeded nights: mean 6.74h -> '6.7h'; exactly 7 nights means no prior
+    // week; sd ~0.55h -> steady; all 7 nights carry data.
+    expect(find.text('Avg sleep'), findsOneWidget);
+    expect(find.text('6.7h'), findsOneWidget);
+    expect(find.text('no prior week yet'), findsOneWidget);
+    expect(find.text('±0.5h'), findsOneWidget);
+    expect(find.text('steady nights'), findsOneWidget);
+    expect(find.text('7 of 7 nights'), findsOneWidget);
+
+    // The third row's delta slot carries the positive scope framing.
+    expect(find.text('sleep summaries only'), findsOneWidget);
+
+    // The consent disclosure stays verbatim on the clinician surface — it is
+    // disclosure, not a metric, and survives the stat rework unchanged.
+    final disclosure = find.textContaining(
+      'Visible: sleep samples, daily summaries, trend flags.',
+    );
+    await tester.scrollUntilVisible(disclosure, 200);
+    await tester.pumpAndSettle();
+    expect(disclosure, findsOneWidget);
+  });
 }
