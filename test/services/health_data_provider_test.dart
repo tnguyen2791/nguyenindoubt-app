@@ -48,6 +48,98 @@ void main() {
     );
   });
 
+  test(
+    'available metrics widen to the full readiness set once ready',
+    () async {
+      final provider = MockHealthDataProvider();
+      final range = HealthRange(
+        start: DateTime.now().subtract(const Duration(days: 8)),
+        end: DateTime.now().add(const Duration(days: 1)),
+      );
+
+      // Before permission: sleep-only, matching the pre-Phase-13 behavior.
+      expect(await provider.fetchAvailableMetrics(range), [MetricType.sleep]);
+
+      await provider.requestPermissions();
+      final available = await provider.fetchAvailableMetrics(range);
+      expect(available.first, MetricType.sleep);
+      expect(
+        available,
+        containsAll(<MetricType>[
+          MetricType.hrv,
+          MetricType.restingHeartRate,
+          MetricType.respiratoryRate,
+          MetricType.temperature,
+          MetricType.bloodOxygen,
+          MetricType.activeEnergy,
+          MetricType.steps,
+        ]),
+      );
+    },
+  );
+
+  test('fetchSamples emits deterministic multi-signal readings', () async {
+    final provider = MockHealthDataProvider();
+    final range = HealthRange(
+      start: DateTime.now().subtract(const Duration(days: 8)),
+      end: DateTime.now().add(const Duration(days: 1)),
+    );
+
+    // No permission yet -> empty, no throw.
+    expect(
+      await provider.fetchSamples(metrics: kReadinessMetricTypes, range: range),
+      isEmpty,
+    );
+
+    await provider.requestPermissions();
+    final samples = await provider.fetchSamples(
+      metrics: kReadinessMetricTypes,
+      range: range,
+    );
+
+    expect(samples, isNotEmpty);
+    // Sleep is never emitted through the generic path (it has its own read).
+    expect(samples.any((s) => s.metricType == MetricType.sleep), isFalse);
+    // Deterministic: the same call twice yields identical values.
+    final again = await provider.fetchSamples(
+      metrics: kReadinessMetricTypes,
+      range: range,
+    );
+    expect(
+      samples.map((s) => s.value).toList(),
+      again.map((s) => s.value).toList(),
+    );
+
+    // Latest HRV reading is the window's last value (52 ms) in realistic units.
+    final hrv = samples.where((s) => s.metricType == MetricType.hrv).toList()
+      ..sort((a, b) => a.end.compareTo(b.end));
+    expect(hrv.last.value, 52);
+    expect(hrv.last.unit, 'ms');
+
+    final rhr =
+        samples
+            .where((s) => s.metricType == MetricType.restingHeartRate)
+            .toList()
+          ..sort((a, b) => a.end.compareTo(b.end));
+    expect(rhr.last.value, 51);
+    expect(rhr.last.unit, 'bpm');
+  });
+
+  test('fetchSamples honors the requested metric subset', () async {
+    final provider = MockHealthDataProvider();
+    await provider.requestPermissions();
+    final samples = await provider.fetchSamples(
+      metrics: const [MetricType.hrv],
+      range: HealthRange(
+        start: DateTime.now().subtract(const Duration(days: 8)),
+        end: DateTime.now().add(const Duration(days: 1)),
+      ),
+    );
+
+    expect(samples, isNotEmpty);
+    expect(samples.every((s) => s.metricType == MetricType.hrv), isTrue);
+  });
+
   test('unavailable mock provider refuses permission requests', () async {
     final provider = MockHealthDataProvider(
       initialStatus: HealthPermissionStatus.unavailable,
