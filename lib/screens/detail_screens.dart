@@ -140,12 +140,14 @@ class _ReadinessDetailBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Hero ring — centered, 120px, with the observational caption.
+        // Hero ring — centered, 150px hero size, with the observational caption.
         Center(
           child: ScoreRing(
             score: readiness.readinessScore,
             word: readiness.state,
             color: toneColor,
+            size: 150,
+            strokeWidth: 14,
           ),
         ),
         const SizedBox(height: NidSpace.m),
@@ -318,6 +320,8 @@ class _SleepDetailBody extends StatelessWidget {
             score: score.value,
             word: 'quality',
             color: toneColor,
+            size: 150,
+            strokeWidth: 14,
           ),
         ),
         const SizedBox(height: NidSpace.m),
