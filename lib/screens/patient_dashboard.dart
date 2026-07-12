@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
+import '../services/sleep_insights.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common_widgets.dart';
+import 'data_displays.dart';
 import 'patient_first_run.dart';
 
 class PatientDashboard extends StatelessWidget {
@@ -15,25 +17,12 @@ class PatientDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final latest = state.summaries.isEmpty ? null : state.summaries.last;
-
     return ListView(
       padding: const EdgeInsets.all(NidSpace.xl),
       children: [
-        BrandHeader(
+        const BrandHeader(
           title: 'Morning check-in',
           subtitle: 'Start with the facts, then leave room for the story.',
-          trailing: StatusPill(
-            label: state.currentUser.consentStatus == ConsentStatus.granted
-                ? 'shared sleep'
-                : 'private',
-            tone: state.currentUser.consentStatus == ConsentStatus.granted
-                ? PillTone.good
-                : PillTone.private,
-            icon: state.currentUser.consentStatus == ConsentStatus.granted
-                ? Icons.verified_user_outlined
-                : Icons.lock_outline,
-          ),
         ),
         const SizedBox(height: NidSpace.l),
         // ONB-04: while there is no sleep data yet, the guided first-run
@@ -41,95 +30,135 @@ class PatientDashboard extends StatelessWidget {
         // card with one calm primary action (see patient_first_run.dart).
         if (state.summaries.isEmpty)
           PatientFirstRun(state: state)
-        else ...[
-          Wrap(
-            spacing: NidSpace.m,
-            runSpacing: NidSpace.m,
-            children: [
-              _MetricTile(
-                label: 'last sleep',
-                value: latest == null
-                    ? '--'
-                    : hoursLabel(latest.sleepDurationHours),
-                caption: latest?.trendFlag ?? 'awaiting import',
-              ),
-              _MetricTile(
-                label: 'quality proxy',
-                value: latest == null ? '--' : '${latest.sleepQualityProxy}',
-                caption: 'not a diagnosis',
-              ),
-              _MetricTile(
-                label: 'clinician link',
-                value: state.currentUser.consentStatus == ConsentStatus.granted
-                    ? 'on'
-                    : 'off',
-                caption: state.currentUser.clinicCode ?? 'invite required',
-              ),
-            ],
-          ),
-          const SizedBox(height: NidSpace.l),
-          SectionCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
-                    const SizedBox(width: NidSpace.s),
-                    Expanded(
-                      child: Text(
-                        'Sleep trend',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    FilledButton.icon(
-                      onPressed:
-                          state.isBusy ||
-                              state.healthPermissionStatus ==
-                                  HealthPermissionStatus.unavailable
-                          ? null
-                          : state.importMockSleep,
-                      icon: state.isBusy
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.download_outlined),
-                      label: const Text('Import'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: NidSpace.m),
-                Wrap(
-                  spacing: NidSpace.s,
-                  runSpacing: NidSpace.s,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    StatusPill(
-                      label: _healthPermissionLabel(
-                        state.healthPermissionStatus,
-                      ),
-                      tone: _healthPermissionTone(state.healthPermissionStatus),
-                      icon: _healthPermissionIcon(state.healthPermissionStatus),
-                    ),
-                    Text(
-                      _healthPermissionMessage(state.healthPermissionStatus),
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: NidSpace.l),
-                SleepTrendBars(summaries: state.summaries),
-              ],
-            ),
-          ),
-        ],
+        else
+          ..._withDataSections(context),
         const SizedBox(height: NidSpace.l),
         SectionCard(child: _ConsentLifecycleCard(state: state)),
       ],
     );
   }
+
+  /// The with-data hierarchy (INS-01), top to bottom: greeting/status block
+  /// with the one observational insight line -> score hero card -> two-up
+  /// secondary mini-cards -> honest trend card with a consistency
+  /// micro-insight. The consent card renders after everything in [build].
+  List<Widget> _withDataSections(BuildContext context) {
+    final score = computeSleepScore(state.summaries);
+    final latest = state.summaries.last;
+    final recent = state.summaries.length <= 7
+        ? state.summaries
+        : state.summaries.sublist(state.summaries.length - 7);
+    final weekAverage =
+        recent.fold<double>(
+          0,
+          (sum, summary) => sum + summary.sleepDurationHours,
+        ) /
+        recent.length;
+
+    return [
+      _GreetingBlock(
+        firstName: _firstName(state.currentUser.displayName),
+        tone: score.tone,
+        insight: insightLine(state.summaries),
+      ),
+      const SizedBox(height: NidSpace.l),
+      _ScoreHeroCard(score: score),
+      const SizedBox(height: NidSpace.l),
+      IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _MiniMetricCard(
+                label: 'last night',
+                value: hoursLabel(latest.sleepDurationHours),
+                caption: latest.trendFlag,
+              ),
+            ),
+            const SizedBox(width: NidSpace.m),
+            Expanded(
+              child: _MiniMetricCard(
+                label: '7-night average',
+                value: hoursLabel(weekAverage),
+                caption: weekDeltaLabel(state.summaries),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: NidSpace.l),
+      SectionCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.bedtime_outlined, color: NidColors.canopy),
+                const SizedBox(width: NidSpace.s),
+                Expanded(
+                  child: Text(
+                    'Sleep trend · 7 nights',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                FilledButton.icon(
+                  onPressed:
+                      state.isBusy ||
+                          state.healthPermissionStatus ==
+                              HealthPermissionStatus.unavailable
+                      ? null
+                      : state.importMockSleep,
+                  icon: state.isBusy
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.download_outlined),
+                  label: const Text('Import'),
+                ),
+              ],
+            ),
+            const SizedBox(height: NidSpace.m),
+            Wrap(
+              spacing: NidSpace.s,
+              runSpacing: NidSpace.s,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                StatusPill(
+                  label: _healthPermissionLabel(state.healthPermissionStatus),
+                  tone: _healthPermissionTone(state.healthPermissionStatus),
+                  icon: _healthPermissionIcon(state.healthPermissionStatus),
+                ),
+                Text(
+                  _healthPermissionMessage(state.healthPermissionStatus),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: NidSpace.l),
+            SleepTrendBars(summaries: state.summaries),
+            const SizedBox(height: NidSpace.m),
+            // INS-05: a consistency micro-insight instead of raw-count
+            // framing — a balance observation about the week's rhythm.
+            Text(
+              consistencyCaption(state.summaries),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+}
+
+/// First whitespace-separated token of [displayName], for the greeting.
+String _firstName(String displayName) {
+  final trimmed = displayName.trim();
+  if (trimmed.isEmpty) {
+    return trimmed;
+  }
+  return trimmed.split(RegExp(r'\s+')).first;
 }
 
 String _healthPermissionLabel(HealthPermissionStatus status) {
@@ -408,8 +437,201 @@ String _shortDate(DateTime date) {
   return '${date.year}-$mm-$dd';
 }
 
-class _MetricTile extends StatelessWidget {
-  const _MetricTile({
+/// The greeting/status block at the top of the with-data dashboard — not a
+/// card. Carries THE one observational insight line (INS-04); headlines
+/// describe the night, never the person.
+class _GreetingBlock extends StatelessWidget {
+  const _GreetingBlock({
+    required this.firstName,
+    required this.tone,
+    required this.insight,
+  });
+
+  final String firstName;
+  final StateTone tone;
+  final String insight;
+
+  static String _daypart() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'morning';
+    }
+    if (hour < 17) {
+      return 'afternoon';
+    }
+    return 'evening';
+  }
+
+  static String _headline(StateTone tone) {
+    return switch (tone) {
+      StateTone.optimal => 'A protective night',
+      StateTone.good => 'A steady night',
+      StateTone.fair => 'A lighter night',
+      StateTone.attention => 'A short night',
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      children: [
+        Text(
+          'Good ${_daypart()}, $firstName',
+          textAlign: TextAlign.center,
+          style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: NidSpace.s),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 9,
+              height: 9,
+              decoration: const BoxDecoration(
+                color: NidColors.moss,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: NidSpace.s),
+            Flexible(
+              child: Text(
+                _headline(tone),
+                textAlign: TextAlign.center,
+                style: textTheme.headlineMedium?.copyWith(
+                  fontSize: 30,
+                  color: NidColors.canopy,
+                  height: 1.12,
+                  letterSpacing: -0.6,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: NidSpace.s),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 300),
+          child: Text(
+            insight,
+            textAlign: TextAlign.center,
+            style: textTheme.bodySmall,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The hero readout (INS-02): score ring + the three explainable
+/// contributors, headlined by the verbatim non-diagnostic humility note.
+class _ScoreHeroCard extends StatelessWidget {
+  const _ScoreHeroCard({required this.score});
+
+  final SleepScore score;
+
+  static const String _scoreTipBody =
+      'A 0-100 summary of your recent sleep, combining duration, rhythm, '
+      "and the week's direction. It compares only to your own recent "
+      'nights, so one rough night barely moves it.';
+
+  static const String _consistencyTipBody =
+      'How similar your recent nights have been. Rhythm drifts during '
+      'travel or busy weeks and settles again on its own.';
+
+  @override
+  Widget build(BuildContext context) {
+    final toneColor = nidToneColor(score.tone);
+    final contributors = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < score.contributors.length; i++) ...[
+          if (i > 0) const SizedBox(height: NidSpace.m),
+          ContributorBar(
+            name: score.contributors[i].name,
+            word: score.contributors[i].word,
+            tone: score.contributors[i].tone,
+            fraction: score.contributors[i].fraction,
+            infoTip: score.contributors[i].name == 'Consistency'
+                ? const InfoTip(term: 'Consistency', body: _consistencyTipBody)
+                : null,
+          ),
+        ],
+      ],
+    );
+
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'SLEEP SCORE',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.0,
+                  color: NidColors.canopy,
+                ),
+              ),
+              const InfoTip(term: 'Sleep score', body: _scoreTipBody),
+              const Spacer(),
+              const Text(
+                'not a diagnosis',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: NidColors.faint,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: NidSpace.l),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final ring = ScoreRing(
+                score: score.value,
+                word: score.word,
+                color: toneColor,
+              );
+              if (constraints.maxWidth < 340) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(child: ring),
+                    const SizedBox(height: NidSpace.l),
+                    contributors,
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  ring,
+                  const SizedBox(width: NidSpace.l),
+                  Expanded(child: contributors),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: NidSpace.l),
+          Text(
+            score.caption,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: toneColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A calm secondary metric mini-card for the two-up row under the hero.
+class _MiniMetricCard extends StatelessWidget {
+  const _MiniMetricCard({
     required this.label,
     required this.value,
     required this.caption,
@@ -421,24 +643,21 @@ class _MetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 172,
-      child: SectionCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label.toUpperCase(),
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
-            ),
-            const SizedBox(height: NidSpace.s),
-            Text(value, style: Theme.of(context).textTheme.displaySmall),
-            const SizedBox(height: NidSpace.xs),
-            Text(caption, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toUpperCase(),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: NidColors.canopy),
+          ),
+          const SizedBox(height: NidSpace.s),
+          Text(value, style: Theme.of(context).textTheme.displaySmall),
+          const SizedBox(height: NidSpace.xs),
+          Text(caption, style: Theme.of(context).textTheme.bodySmall),
+        ],
       ),
     );
   }
