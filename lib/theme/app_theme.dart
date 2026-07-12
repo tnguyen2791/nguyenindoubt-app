@@ -12,6 +12,49 @@ class NidColors {
 
   /// Muted caption / legend tone — was a one-off literal outside the palette.
   static const slate = Color(0xFF54635A);
+
+  /// Faintest caption tone — axis labels, day letters, quiet sub-text.
+  static const faint = Color(0xFF7A887F);
+}
+
+/// State colors for metric readouts — the design's `--state-*` ramp.
+///
+/// Every state color a data-display widget shows resolves here, never as a
+/// hex literal in widget code. States describe the metric, never the person.
+class NidStateColors {
+  const NidStateColors._();
+
+  static const optimal = Color(0xFF4F7A3C);
+  static const good = Color(0xFF6E8544);
+  static const fair = Color(0xFFA08B48);
+  static const attention = Color(0xFFC4633E);
+
+  /// Gradient stops for the continuous short-to-optimal sleep-hours ramp.
+  static const rampStops = <double>[0.0, 0.22, 0.42, 0.60, 0.80, 1.0];
+
+  /// Colors paired 1:1 with [rampStops].
+  static const rampColors = <Color>[
+    Color(0xFFC25A3A),
+    Color(0xFFC0784A),
+    Color(0xFFB58F47),
+    Color(0xFF94904A),
+    Color(0xFF6E8544),
+    Color(0xFF4F7A3C),
+  ];
+
+  /// Continuous hours-to-color ramp: 5h and below reads short (ember-red),
+  /// 8h and above reads optimal (deep green), piecewise-linear between.
+  static Color forSleepHours(double hours) {
+    final t = ((hours - 5) / 3).clamp(0.0, 1.0);
+    for (var i = 0; i < rampStops.length - 1; i++) {
+      if (t <= rampStops[i + 1]) {
+        final span = rampStops[i + 1] - rampStops[i];
+        final segment = span == 0 ? 0.0 : (t - rampStops[i]) / span;
+        return Color.lerp(rampColors[i], rampColors[i + 1], segment)!;
+      }
+    }
+    return rampColors.last;
+  }
 }
 
 ThemeData buildNidTheme() {
