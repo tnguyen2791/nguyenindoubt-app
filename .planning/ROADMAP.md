@@ -223,10 +223,11 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. A gentle, strictly-observational insight line (week-over-week / last-night-vs-baseline) is present and never labels the person.
   5. Consistency/balance micro-insights and a directional clinician summary replace raw counts like "samples".
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 11-01-PLAN.md — State-color tokens, pure on-device score/insight computation (unit-tested), honest fixed-axis SleepTrendBars with 8h hairline + ramp legend, ScoreRing/ContributorBar/InfoTip/StatDeltaRow widget kit (wave 1)
+
+- [x] 11-01-PLAN.md — State-color tokens, pure on-device score/insight computation (unit-tested), honest fixed-axis SleepTrendBars with 8h hairline + ramp legend, ScoreRing/ContributorBar/InfoTip/StatDeltaRow widget kit (wave 1)
 - [ ] 11-02-PLAN.md — Patient dashboard hierarchy rebuild: greeting/status + insight line, score ring hero with contributors + "not a diagnosis", two-up mini-cards, trend micro-insight, consent card last; coupled widget_test migration (wave 2)
 - [ ] 11-03-PLAN.md — Clinician directional stat-delta summary (avg + delta vs prior week, variability, nights-with-data) replacing raw counts; clinician_affordance_test coverage + full phase verification bar (wave 3)
 
@@ -283,6 +284,6 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
 | 9. Safety & Affordance Integrity | 3/3 | Complete | 2026-07-06 |
 | 10. Brand Arrival & Guided Onboarding | 3/3 | Complete   | 2026-07-12 |
-| 11. Insightful Data Displays | 0/0 | Not started | - |
+| 11. Insightful Data Displays | 1/3 | In Progress|  |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
 | 13. Motion & Feedback Choreography | 0/0 | Not started | - |

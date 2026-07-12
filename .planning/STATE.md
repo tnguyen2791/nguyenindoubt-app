@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Experience and Insight
-current_phase: 10
-current_phase_name: brand-arrival-and-guided-onboarding
+current_phase: 11
+current_phase_name: insightful-data-displays
 status: executing
 stopped_at: v1.1 roadmap defined from 5-lens design critique; Phase 8 ready to plan
-last_updated: "2026-07-12T02:06:18.909Z"
+last_updated: "2026-07-12T03:41:22.651Z"
 last_activity: 2026-07-12
-last_activity_desc: Phase 10 execution started
+last_activity_desc: Phase 11 execution started
 progress:
   total_phases: 13
-  completed_phases: 9
-  total_plans: 16
-  completed_plans: 13
-  percent: 69
+  completed_phases: 10
+  total_plans: 19
+  completed_plans: 16
+  percent: 77
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** Patients can explore sleep context and private reflection while clinicians see only consented sleep summaries, never journal content.
-**Current focus:** Phase 10 — brand-arrival-and-guided-onboarding
+**Current focus:** Phase 11 — insightful-data-displays
 
 ## Current Position
 
-Phase: 10 (brand-arrival-and-guided-onboarding) — EXECUTING
+Phase: 11 (insightful-data-displays) — EXECUTING
 Plan: 1 of 3
-Status: Executing Phase 10
-Last activity: 2026-07-12 — Phase 10 execution started
+Status: Executing Phase 11
+Last activity: 2026-07-12 — Phase 11 execution started
 
 Progress: [#####-----] 54% (7/13 phases)
 
