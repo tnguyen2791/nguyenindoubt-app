@@ -110,10 +110,11 @@ void main() {
       again.map((s) => s.value).toList(),
     );
 
-    // Latest HRV reading is the window's last value (52 ms) in realistic units.
+    // Latest reading is last night's deterministic value (the mock now emits a
+    // rolling quarter; last-night HRV lands at 50 ms) in realistic units.
     final hrv = samples.where((s) => s.metricType == MetricType.hrv).toList()
       ..sort((a, b) => a.end.compareTo(b.end));
-    expect(hrv.last.value, 52);
+    expect(hrv.last.value, 50);
     expect(hrv.last.unit, 'ms');
 
     final rhr =
@@ -164,9 +165,11 @@ void main() {
   test('sleep samples summarize into daily trend rows', () async {
     final provider = MockHealthDataProvider();
     await provider.requestPermissions();
+    // The mock now emits a rolling quarter; over the full window the
+    // deterministic durations include a handful of short nights.
     final samples = await provider.fetchSleepSamples(
       HealthRange(
-        start: DateTime.now().subtract(const Duration(days: 8)),
+        start: DateTime.now().subtract(const Duration(days: 91)),
         end: DateTime.now().add(const Duration(days: 1)),
       ),
     );
@@ -174,6 +177,7 @@ void main() {
     final summaries = summarizeSleepSamples(samples);
 
     expect(summaries.length, samples.length);
+    expect(summaries.length, greaterThan(80));
     expect(
       summaries.any((summary) => summary.trendFlag == 'short night'),
       isTrue,

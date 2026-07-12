@@ -74,7 +74,7 @@ class _AppShellState extends State<AppShell> {
         // action, not a tab — it opens the Add-sheet and never selects.
         final screens = [
           PatientDashboard(state: widget.state), // Today
-          const TrendsScreen(), // Trends
+          TrendsScreen(state: widget.state), // Trends
           ExploreScreen(state: widget.state), // Explore
           ProfileScreen(state: widget.state, onSignOut: _signOut), // Profile
         ];

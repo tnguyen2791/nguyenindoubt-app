@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../services/trends.dart';
 import '../state/app_state.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common_widgets.dart';
+import 'data_displays.dart';
+import 'detail_screens.dart';
 import 'journal_screen.dart';
 import 'resources_screen.dart';
 
@@ -29,53 +32,500 @@ class SectionKicker extends StatelessWidget {
   }
 }
 
-/// The Trends tab — a calm shell for P12. Real 30-day trend, weekly averages
-/// and consistency heatmap arrive in P14; until then this states the page's
-/// intent with the design's title + section labels and a single honest
-/// "coming soon" empty state. No fake data (roadmap scope call).
-class TrendsScreen extends StatelessWidget {
-  const TrendsScreen({super.key});
+/// The Trends tab (screens 20/24): a Sleep · Readiness · Activity segmented
+/// control and a Week · Month · Quarter range toggle over the real signals,
+/// with a score/metric trend line, weekly averages, and a consistency heatmap.
+///
+/// All three signals derive from persisted, patient-owned data (sleep from the
+/// daily summaries, readiness + activity from the readiness series). Ranges
+/// beyond available history show the available window calmly; a signal with no
+/// data yet shows a calm empty state. Observational, never a diagnosis.
+class TrendsScreen extends StatefulWidget {
+  const TrendsScreen({super.key, required this.state});
+
+  final NguyenInDoubtState state;
+
+  @override
+  State<TrendsScreen> createState() => _TrendsScreenState();
+}
+
+class _TrendsScreenState extends State<TrendsScreen> {
+  TrendSignal _signal = TrendSignal.sleep;
+  TrendRange _range = TrendRange.month;
+
+  NguyenInDoubtState get _state => widget.state;
+
+  /// The signal's uppercase-noun kicker word ("Sleep score" / "Readiness" /
+  /// "Activity") for the trend card, matching the mock's `.k` labels.
+  String get _signalNoun => switch (_signal) {
+    TrendSignal.sleep => 'Sleep score',
+    TrendSignal.readiness => 'Readiness',
+    TrendSignal.activity => 'Activity',
+  };
+
+  String get _flagLabel => switch (_signal) {
+    TrendSignal.sleep => 'short night',
+    TrendSignal.readiness => 'low readiness',
+    TrendSignal.activity => 'off balance',
+  };
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final data = computeTrendData(
+      signal: _signal,
+      range: _range,
+      summaries: _state.summaries,
+      readiness: _state.readinessHistory,
+    );
+
     return ListView(
       padding: const EdgeInsets.all(NidSpace.xl),
       children: [
         Text(
           'Trends',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          style: theme.textTheme.headlineMedium?.copyWith(
             fontSize: 26,
             color: NidColors.canopy,
             letterSpacing: -0.52,
           ),
         ),
         const SizedBox(height: NidSpace.l),
-        const SectionKicker('Sleep score · 30 days'),
+        _SignalSegmented(
+          value: _signal,
+          onChanged: (s) => setState(() => _signal = s),
+        ),
         const SizedBox(height: NidSpace.m),
-        const EmptyState(
-          icon: Icons.show_chart_outlined,
-          title: 'Your sleep trend is coming soon',
-          body:
-              'Once a few nights are imported, this becomes a 30-day score '
-              'trend — honest, sleep-only, never a diagnosis.',
+        _RangeToggle(
+          value: _range,
+          onChanged: (r) => setState(() => _range = r),
         ),
         const SizedBox(height: NidSpace.l),
-        const SectionKicker('Weekly sleep average'),
-        const SizedBox(height: NidSpace.m),
-        const EmptyState(
-          icon: Icons.calendar_view_week_outlined,
-          title: 'Weekly averages',
-          body: 'Week-over-week sleep hours will settle in here.',
+
+        if (data.isEmpty)
+          _TrendsEmpty(signal: _signal)
+        else ...[
+          _TrendCard(data: data, signalNoun: _signalNoun, state: _state),
+          const SizedBox(height: NidSpace.l),
+          _WeeklyCard(data: data),
+          const SizedBox(height: NidSpace.l),
+          _ConsistencyCard(data: data, flagLabel: _flagLabel),
+        ],
+      ],
+    );
+  }
+}
+
+/// The Sleep · Readiness · Activity segmented control — canopy-active pill on a
+/// mint track (design `.seg`).
+class _SignalSegmented extends StatelessWidget {
+  const _SignalSegmented({required this.value, required this.onChanged});
+
+  final TrendSignal value;
+  final ValueChanged<TrendSignal> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: NidColors.mint,
+        borderRadius: BorderRadius.circular(NidRadius.pill),
+      ),
+      child: Row(
+        children: [
+          for (final signal in TrendSignal.values)
+            Expanded(
+              child: _SegButton(
+                label: signal.label,
+                selected: signal == value,
+                onTap: () => onChanged(signal),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SegButton extends StatelessWidget {
+  const _SegButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: selected ? Colors.white : Colors.transparent,
+        borderRadius: BorderRadius.circular(NidRadius.pill),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(NidRadius.pill),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: NidSpace.s),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: selected ? NidColors.canopy : NidColors.slate,
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: NidSpace.l),
-        const SectionKicker('Consistency'),
-        const SizedBox(height: NidSpace.m),
-        const EmptyState(
-          icon: Icons.grid_view_outlined,
-          title: 'Consistency heatmap',
-          body: 'A calendar of how close each night lands to your target.',
+      ),
+    );
+  }
+}
+
+/// The Week · Month · Quarter range toggle — outlined pills, canopy-filled when
+/// active (design `.range`).
+class _RangeToggle extends StatelessWidget {
+  const _RangeToggle({required this.value, required this.onChanged});
+
+  final TrendRange value;
+  final ValueChanged<TrendRange> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    // Wrap so the three pills never overflow at the narrowest phone width;
+    // they still read as a left-aligned row on any real device.
+    return Wrap(
+      spacing: NidSpace.s,
+      runSpacing: NidSpace.s,
+      children: [
+        for (final range in TrendRange.values)
+          _RangePill(
+            label: range.label,
+            selected: range == value,
+            onTap: () => onChanged(range),
+          ),
+      ],
+    );
+  }
+}
+
+class _RangePill extends StatelessWidget {
+  const _RangePill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: Material(
+        color: selected ? NidColors.canopy : Colors.white,
+        borderRadius: BorderRadius.circular(NidRadius.pill),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(NidRadius.pill),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(NidRadius.pill),
+              border: Border.all(
+                color: selected
+                    ? NidColors.canopy
+                    : NidColors.canopy.withValues(alpha: 0.14),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: NidSpace.l,
+              vertical: NidSpace.s - 2,
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: selected ? Colors.white : NidColors.slate,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The score/metric trend card: a `.k` header + headnote, a three-stat readout
+/// (avg / best / avg sleep), and the [TrendLine]. Tapping the Sleep card opens
+/// the Sleep detail (21); the Readiness card opens the Readiness detail (28).
+class _TrendCard extends StatelessWidget {
+  const _TrendCard({
+    required this.data,
+    required this.signalNoun,
+    required this.state,
+  });
+
+  final TrendData data;
+  final String signalNoun;
+  final NguyenInDoubtState state;
+
+  String _fmt(double value) {
+    if (data.signal == TrendSignal.activity) {
+      return value.round().toString();
+    }
+    return value.round().toString();
+  }
+
+  VoidCallback? _onTap(BuildContext context) {
+    switch (data.signal) {
+      case TrendSignal.sleep:
+        return () => openSleepDetail(context, state);
+      case TrendSignal.readiness:
+        return () => openReadinessDetail(context, state);
+      case TrendSignal.activity:
+        return null; // no dedicated detail route yet (P14b/later)
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final onTap = _onTap(context);
+    final card = SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: SectionKicker(
+                  '$signalNoun · ${data.points.length} days',
+                ),
+              ),
+              Text(
+                data.headnote,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: NidColors.faint,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: NidSpace.m),
+          Row(
+            children: [
+              Expanded(
+                child: _TrendStat(value: _fmt(data.average), label: 'average'),
+              ),
+              Expanded(
+                child: _TrendStat(value: _fmt(data.best), label: 'best'),
+              ),
+              Expanded(
+                child: data.avgSleepHours != null
+                    ? _TrendStat(
+                        value: data.avgSleepHours!.toStringAsFixed(1),
+                        unit: 'h',
+                        label: 'avg sleep',
+                      )
+                    : data.signal == TrendSignal.activity
+                    ? _TrendStat(value: data.unit, label: 'active energy')
+                    : const _TrendStat(value: 'you', label: 'vs baseline'),
+              ),
+            ],
+          ),
+          const SizedBox(height: NidSpace.l),
+          TrendLine(points: data.points),
+        ],
+      ),
+    );
+
+    if (onTap == null) {
+      return card;
+    }
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(NidRadius.card),
+      child: card,
+    );
+  }
+}
+
+class _TrendStat extends StatelessWidget {
+  const _TrendStat({required this.value, required this.label, this.unit});
+
+  final String value;
+  final String label;
+  final String? unit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.22,
+                color: NidColors.ink,
+              ),
+            ),
+            if (unit != null)
+              Text(
+                unit!,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: NidColors.slate,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, color: NidColors.faint),
         ),
       ],
+    );
+  }
+}
+
+/// The weekly-averages card: a `.k` header + `hours`/`avg` note and the
+/// [WeeklyAverageBars].
+class _WeeklyCard extends StatelessWidget {
+  const _WeeklyCard({required this.data});
+
+  final TrendData data;
+
+  String get _note => switch (data.signal) {
+    TrendSignal.sleep => 'hours',
+    TrendSignal.readiness => 'avg score',
+    TrendSignal.activity => 'kcal',
+  };
+
+  String get _kicker => switch (data.signal) {
+    TrendSignal.sleep => 'Weekly sleep avg',
+    TrendSignal.readiness => 'Weekly readiness avg',
+    TrendSignal.activity => 'Weekly activity avg',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(child: SectionKicker(_kicker)),
+              Text(
+                _note,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: NidColors.faint,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: NidSpace.m),
+          WeeklyAverageBars(
+            weekly: data.weekly,
+            axisMax: data.weeklyAxisMax,
+            signal: data.signal,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The consistency card: a `.k` header + the "24 / 30 on target" note and the
+/// [ConsistencyHeatmap].
+class _ConsistencyCard extends StatelessWidget {
+  const _ConsistencyCard({required this.data, required this.flagLabel});
+
+  final TrendData data;
+  final String flagLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Expanded(child: SectionKicker('Consistency')),
+              Text(
+                data.consistencyLabel,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: NidColors.faint,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: NidSpace.m),
+          ConsistencyHeatmap(cells: data.cells, flagLabel: flagLabel),
+        ],
+      ),
+    );
+  }
+}
+
+/// A calm empty state for a signal with no data yet in the selected range —
+/// honest, never fabricated. Sleep points users to the import; readiness /
+/// activity explain the wearable read.
+class _TrendsEmpty extends StatelessWidget {
+  const _TrendsEmpty({required this.signal});
+
+  final TrendSignal signal;
+
+  @override
+  Widget build(BuildContext context) {
+    final (title, body) = switch (signal) {
+      TrendSignal.sleep => (
+        'Your sleep trend appears after a few nights',
+        'Import from the Today screen, and this becomes an honest score '
+            'trend — sleep-only, never a diagnosis.',
+      ),
+      TrendSignal.readiness => (
+        'Readiness trends after a wearable read',
+        'Import from the Today screen to read your overnight signals — '
+            'readiness compares each day to your own baseline, never a '
+            'diagnosis.',
+      ),
+      TrendSignal.activity => (
+        'Activity trends after a wearable read',
+        'Once your prior-day activity is read, this shows how movement '
+            'settled across the range — observational, never a diagnosis.',
+      ),
+    };
+    return EmptyState(
+      icon: Icons.show_chart_outlined,
+      title: title,
+      body: body,
     );
   }
 }

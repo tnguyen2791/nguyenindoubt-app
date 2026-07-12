@@ -383,11 +383,7 @@ class StatDeltaRow extends StatelessWidget {
 /// axes — the vertical scale spans the series' own min..max with a little
 /// padding, so the line reads its real shape without fake normalization.
 class TrendLine extends StatelessWidget {
-  const TrendLine({
-    super.key,
-    required this.points,
-    this.height = 130,
-  });
+  const TrendLine({super.key, required this.points, this.height = 130});
 
   final List<TrendPoint> points;
   final double height;
@@ -567,8 +563,12 @@ class WeeklyAverageBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Chrome above/below the bar: the value label (~16), two gaps (5 + 6), and
+    // the W-label (~14). Reserve it so a full-height bar never overflows the
+    // column at the tallest week.
+    const chrome = 44.0;
     return SizedBox(
-      height: height + 22,
+      height: height + chrome,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -694,34 +694,47 @@ class ConsistencyHeatmap extends StatelessWidget {
           },
         ),
         const SizedBox(height: NidSpace.m),
-        // Legend: less → more, plus the flag swatch.
-        Row(
+        // Legend: less → more, plus the flag swatch. Wraps so the two groups
+        // never overflow at the narrowest phone width.
+        Wrap(
+          spacing: NidSpace.m,
+          runSpacing: NidSpace.s,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            const Text(
-              'less',
-              style: TextStyle(fontSize: 11, color: NidColors.faint),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'less',
+                  style: TextStyle(fontSize: 11, color: NidColors.faint),
+                ),
+                const SizedBox(width: NidSpace.s),
+                for (final level in const [
+                  HeatLevel.l1,
+                  HeatLevel.l2,
+                  HeatLevel.l3,
+                  HeatLevel.l4,
+                ]) ...[
+                  _LegendSwatch(color: _cellColor(level)),
+                  const SizedBox(width: 4),
+                ],
+                const SizedBox(width: NidSpace.xs),
+                const Text(
+                  'more',
+                  style: TextStyle(fontSize: 11, color: NidColors.faint),
+                ),
+              ],
             ),
-            const SizedBox(width: NidSpace.s),
-            for (final level in const [
-              HeatLevel.l1,
-              HeatLevel.l2,
-              HeatLevel.l3,
-              HeatLevel.l4,
-            ]) ...[
-              _LegendSwatch(color: _cellColor(level)),
-              const SizedBox(width: 4),
-            ],
-            const SizedBox(width: NidSpace.xs),
-            const Text(
-              'more',
-              style: TextStyle(fontSize: 11, color: NidColors.faint),
-            ),
-            const Spacer(),
-            _LegendSwatch(color: NidStateColors.heatFlag),
-            const SizedBox(width: NidSpace.xs),
-            Text(
-              flagLabel,
-              style: const TextStyle(fontSize: 11, color: NidColors.faint),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _LegendSwatch(color: NidStateColors.heatFlag),
+                const SizedBox(width: NidSpace.xs),
+                Text(
+                  flagLabel,
+                  style: const TextStyle(fontSize: 11, color: NidColors.faint),
+                ),
+              ],
             ),
           ],
         ),

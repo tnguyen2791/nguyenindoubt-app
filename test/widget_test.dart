@@ -339,10 +339,16 @@ void main() {
     expect(find.text('Journal'), findsNothing);
     expect(find.text('Guides'), findsNothing);
 
-    // Trends is a calm shell — a coming-soon empty state, no fake data.
+    // Trends is now built out: with no import yet, it shows a calm empty
+    // state (honest, never fabricated), plus the segmented + range controls.
     await tester.tap(find.byIcon(Icons.bar_chart_outlined).first);
     await tester.pumpAndSettle();
-    expect(find.text('Your sleep trend is coming soon'), findsOneWidget);
+    expect(find.text('Sleep'), findsOneWidget); // segment label
+    expect(find.text('Week'), findsOneWidget); // range toggle
+    expect(
+      find.text('Your sleep trend appears after a few nights'),
+      findsOneWidget,
+    );
 
     // Explore re-homes the resources content under the Explore title.
     await tester.tap(find.byIcon(Icons.explore_outlined).first);
