@@ -4,6 +4,7 @@ import '../models/app_models.dart';
 import '../repositories/app_repository.dart';
 import '../services/auth_service.dart';
 import '../services/health_data_provider.dart';
+import '../services/readiness.dart';
 
 class NguyenInDoubtState extends ChangeNotifier {
   NguyenInDoubtState({
@@ -88,6 +89,7 @@ class NguyenInDoubtState extends ChangeNotifier {
   late AppUser _currentUser;
   late AppSession _session;
   List<DailySummary> _summaries = [];
+  ReadinessSummary? _readiness;
   List<JournalEntry> _journalEntries = [];
   List<ResourceCard> _resources = [];
   List<AppUser> _linkedPatients = [];
@@ -114,6 +116,11 @@ class NguyenInDoubtState extends ChangeNotifier {
   SessionStage get sessionStage => _session.stage;
   AppUser get currentUser => _currentUser;
   List<DailySummary> get summaries => _summaries;
+
+  /// The patient's current multi-signal readiness (Phase 14 Today hero).
+  /// Null until wearable signals have been read at least once. Patient-only —
+  /// the clinician surface never exposes readiness (sleep-only contract).
+  ReadinessSummary? get readiness => _readiness;
   List<JournalEntry> get journalEntries => _journalEntries;
   List<ResourceCard> get resources => _resources;
   List<AppUser> get linkedPatients => _linkedPatients;
@@ -135,6 +142,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     _resources = await repository.getResourceCards();
     if (isClinician) {
       _summaries = [];
+      _readiness = null;
       _journalEntries = [];
       _consentHistory = [];
       _clinicianLinkStatuses = await repository.getClinicianLinkStatuses(
@@ -164,8 +172,17 @@ class NguyenInDoubtState extends ChangeNotifier {
       _consentHistory = await repository.getConsentHistory(
         patientId: _currentUser.id,
       );
+      // Load any persisted readiness; the most recent day is the Today hero.
+      // Absent (no wearable read yet) leaves the hero on the sleep-score
+      // fallback — an honest empty rather than a fabricated score.
+      final readiness = await repository.getReadinessSummariesForPatient(
+        requesterUserId: _currentUser.id,
+        patientId: _currentUser.id,
+      );
+      _readiness = readiness.isEmpty ? null : readiness.last;
     } else {
       _summaries = [];
+      _readiness = null;
       _journalEntries = [];
       _consentHistory = [];
       _linkedPatients = [];
@@ -232,6 +249,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     _session = const AppSession.signedOut();
     _currentUser = demo.patientDemo;
     _summaries = [];
+    _readiness = null;
     _journalEntries = [];
     _consentHistory = [];
     _linkedPatients = [];
@@ -323,21 +341,80 @@ class NguyenInDoubtState extends ChangeNotifier {
         _healthPermissionStatus = await healthDataProvider
             .checkPermissionStatus();
       }
-      final samples = await healthDataProvider.fetchSleepSamples(
-        HealthRange(
-          start: DateTime.now().subtract(const Duration(days: 8)),
-          end: DateTime.now().add(const Duration(days: 1)),
-        ),
+      final range = HealthRange(
+        start: DateTime.now().subtract(const Duration(days: 8)),
+        end: DateTime.now().add(const Duration(days: 1)),
       );
+      final samples = await healthDataProvider.fetchSleepSamples(range);
       await repository.saveImportedSleep(
         requesterUserId: currentUser.id,
         patientId: currentUser.id,
         samples: samples,
       );
+
+      // Wearable-core (Phase 14): read the full multi-signal set and compute a
+      // real readiness for the most recent day. Best-effort — a wearable gap
+      // (partial permission, unsupported signal) simply yields a neutral
+      // contributor via the scoring's null fallback, never a failed import.
+      await _computeAndSaveReadiness(range);
+
       await refresh();
     } finally {
       _setBusy(false);
     }
+  }
+
+  /// Reads the multi-signal readiness samples for [range], reduces the most
+  /// recent day into [ReadinessInputs], scores it against the recent-sleep
+  /// window, and persists the resulting [ReadinessSummary]. Pure scoring lives
+  /// in readiness.dart; this only orchestrates the read + persist. The sleep
+  /// window uses the summaries just imported so the sleep-balance contributor
+  /// reflects a window, not one night.
+  Future<void> _computeAndSaveReadiness(HealthRange range) async {
+    final samples = await healthDataProvider.fetchSamples(
+      metrics: kReadinessMetricTypes,
+      range: range,
+    );
+    if (samples.isEmpty) {
+      return;
+    }
+
+    // The most recent sample day drives Today's readiness.
+    DateTime dayOf(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+    final latestDay = samples
+        .map((s) => dayOf(s.end))
+        .reduce((a, b) => a.isAfter(b) ? a : b);
+    final daySamples = samples
+        .where((s) => dayOf(s.end) == latestDay)
+        .toList();
+
+    final recentSummaries = await repository.getDailySummariesForPatient(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+    );
+    final recentSleepHours = recentSummaries
+        .map((summary) => summary.sleepDurationHours)
+        .toList();
+    final latestSleepHours = recentSummaries.isEmpty
+        ? null
+        : recentSummaries.last.sleepDurationHours;
+
+    final inputs = readinessInputsFromSamples(
+      userId: currentUser.id,
+      date: latestDay,
+      samples: daySamples,
+      sleepHours: latestSleepHours,
+    );
+    final summary = computeReadiness(
+      inputs: inputs,
+      recentSleepHours: recentSleepHours,
+    );
+
+    await repository.saveReadinessSummaries(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+      summaries: [summary],
+    );
   }
 
   Future<void> resetDemoData() async {
@@ -348,6 +425,7 @@ class NguyenInDoubtState extends ChangeNotifier {
       _session = const AppSession.signedOut();
       _currentUser = demo.patientDemo;
       _summaries = [];
+      _readiness = null;
       _journalEntries = [];
       _consentHistory = [];
       _linkedPatients = [];
