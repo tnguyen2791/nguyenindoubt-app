@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "6173983291",
+    "project_id": "nguyenindoubt-app",
+    "storage_bucket": "nguyenindoubt-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6173983291:android:6b3849f3af9c1af23e921e",
+        "android_client_info": {
+          "package_name": "com.nguyenindoubt.nguyenindoubt_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEM9ABH1UedhiGhWWEOgigFvTdfytCqt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

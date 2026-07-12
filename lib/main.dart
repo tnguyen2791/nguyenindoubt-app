@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'firebase_options.dart';
 import 'repositories/app_repository.dart';
 import 'screens/brand_splash.dart';
 import 'services/health_data_provider.dart';
@@ -9,6 +11,19 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Connect Firebase for account-backed storage. Guarded so a transient init
+  // failure (offline, misconfig) degrades to the local demo instead of a black
+  // boot screen — the repository swap is staged separately behind real auth.
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (error, stackTrace) {
+    debugPrint('Firebase initialization failed; continuing on local demo.');
+    debugPrintStack(stackTrace: stackTrace, label: '$error');
+  }
+
   final preferences = await SharedPreferences.getInstance();
   final repository = InMemoryAppRepository(preferences: preferences);
   final state = NguyenInDoubtState(
