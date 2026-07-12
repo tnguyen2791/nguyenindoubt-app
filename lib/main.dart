@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'repositories/app_repository.dart';
-import 'screens/app_shell.dart';
+import 'screens/brand_splash.dart';
 import 'services/health_data_provider.dart';
 import 'state/app_state.dart';
 import 'theme/app_theme.dart';
@@ -21,9 +21,18 @@ Future<void> main() async {
 }
 
 class NguyenInDoubtApp extends StatelessWidget {
-  const NguyenInDoubtApp({super.key, required this.state});
+  const NguyenInDoubtApp({
+    super.key,
+    required this.state,
+    this.showSplash = true,
+  });
 
   final NguyenInDoubtState state;
+
+  /// Test seam (ONB-01): production boots keep the default `true` and get the
+  /// one-shot brand-intro splash. Widget tests pass `false` so the gate
+  /// builds [AppShell] directly and `pumpAndSettle` from boot never hangs.
+  final bool showSplash;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +40,7 @@ class NguyenInDoubtApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NguyenInDoubt',
       theme: buildNidTheme(),
-      home: AppShell(state: state),
+      home: BrandSplashGate(state: state, enabled: showSplash),
     );
   }
 }

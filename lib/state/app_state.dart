@@ -32,6 +32,17 @@ class NguyenInDoubtState extends ChangeNotifier {
       HealthPermissionStatus.notRequested;
   bool _isBusy = false;
 
+  /// Whether the brand-intro splash has already played this cold launch.
+  /// Deliberately a plain in-memory bool — never persisted, never a counter,
+  /// no analytics (ONB-01). Resets naturally on every cold start.
+  bool splashHasPlayed = false;
+
+  /// Marks the one-shot splash as played for this launch. No listeners need
+  /// notifying — the splash gate drives its own rebuild.
+  void markSplashPlayed() {
+    splashHasPlayed = true;
+  }
+
   AppSession get session => _session;
   SessionStage get sessionStage => _session.stage;
   AppUser get currentUser => _currentUser;
