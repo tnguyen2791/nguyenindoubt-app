@@ -492,6 +492,14 @@ void main() {
   testWidgets('clinician dashboard shows invite lifecycle statuses', (
     tester,
   ) async {
+    // A tall viewport so the provider portal's stacked sections (Requests,
+    // Worth a look, Everyone roster) all lay out — the roster sits well below
+    // the fold at the default test size.
+    tester.view.physicalSize = const Size(1000, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final state = NguyenInDoubtState(
       repository: InMemoryAppRepository(),
       healthDataProvider: MockHealthDataProvider(),
@@ -502,13 +510,14 @@ void main() {
     await tester.tap(find.text("I'm a clinician"));
     await tester.pumpAndSettle();
 
-    // "Invite status" now renders through the `.k` section-label idiom
-    // (uppercase canopy kicker), so it is a RichText span, not plain Text.
+    // The provider portal's roster renders under the "Everyone" `.k`
+    // section-label idiom (uppercase canopy kicker), so it is a RichText span,
+    // not plain Text.
     expect(
       find.byWidgetPredicate(
         (widget) =>
             widget is RichText &&
-            widget.text.toPlainText().contains('INVITE STATUS'),
+            widget.text.toPlainText().contains('EVERYONE'),
       ),
       findsOneWidget,
     );
