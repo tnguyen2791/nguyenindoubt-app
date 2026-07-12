@@ -53,6 +53,21 @@ abstract class AppRepository {
     required String requesterUserId,
     required String patientId,
   });
+
+  /// Persists the patient's multi-signal readiness summaries (Phase 13).
+  /// Patient-owned only — the clinician surface never reads readiness, keeping
+  /// the sleep-summaries-only contract intact. Idempotent per (patient, date).
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  });
+
+  /// Reads the patient's readiness summaries, date ascending. Patient-owned.
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  });
 }
 
 abstract class ClinicianRepository {
@@ -125,6 +140,7 @@ class InMemoryAppRepository implements NidRepository {
   final List<ClinicianLink> _links = [];
   final List<HealthSample> _samples = [];
   final List<DailySummary> _summaries = [];
+  final List<ReadinessSummary> _readiness = [];
   final List<JournalEntry> _entries = [];
   final List<ResourceCard> _resources = [];
   final List<ConsentHistoryEvent> _consentEvents = [];
@@ -148,6 +164,7 @@ class InMemoryAppRepository implements NidRepository {
     _summaries
       ..clear()
       ..addAll(summarizeSleepSamples(_samples));
+    _readiness.clear();
     _entries
       ..clear()
       ..addAll(seedJournalEntries());
@@ -185,6 +202,13 @@ class InMemoryAppRepository implements NidRepository {
       _summaries
         ..clear()
         ..addAll(summarizeSleepSamples(_samples));
+      _readiness
+        ..clear()
+        ..addAll(
+          ((decoded['readiness'] as List<dynamic>?) ?? []).map(
+            (json) => _readinessFromJson(json as Map<String, Object?>),
+          ),
+        );
       _entries
         ..clear()
         ..addAll(
@@ -206,6 +230,7 @@ class InMemoryAppRepository implements NidRepository {
       _links.clear();
       _samples.clear();
       _summaries.clear();
+      _readiness.clear();
       _entries.clear();
       _consentEvents.clear();
       _session = const AppSession.signedOut();
@@ -222,10 +247,11 @@ class InMemoryAppRepository implements NidRepository {
     await localPreferences.setString(
       storageKey,
       jsonEncode({
-        'schemaVersion': 2,
+        'schemaVersion': 3,
         'users': _users.map(_userToJson).toList(),
         'links': _links.map(_linkToJson).toList(),
         'samples': _samples.map(_sampleToJson).toList(),
+        'readiness': _readiness.map(_readinessToJson).toList(),
         'entries': _entries.map(_entryToJson).toList(),
         'consentEvents': _consentEvents.map(_consentEventToJson).toList(),
         'session': _sessionToJson(_session),
@@ -505,6 +531,48 @@ class InMemoryAppRepository implements NidRepository {
   }
 
   @override
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    if (summaries.any((summary) => summary.userId != patientId)) {
+      throw const PrivacyException(
+        'Readiness summaries must belong to the patient.',
+      );
+    }
+    // Upsert per (patient, date): drop any existing rows for the patient's
+    // affected days, then insert the new ones.
+    final affectedDays = summaries
+        .map((summary) => _dayKey(summary.userId, summary.date))
+        .toSet();
+    _readiness.removeWhere(
+      (summary) => affectedDays.contains(_dayKey(summary.userId, summary.date)),
+    );
+    _readiness.addAll(summaries);
+    await _persist();
+  }
+
+  @override
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    return _readiness.where((summary) => summary.userId == patientId).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  @override
   Future<List<JournalEntry>> getJournalEntriesForPatient({
     required String requesterUserId,
     required String patientId,
@@ -701,6 +769,11 @@ class InMemoryAppRepository implements NidRepository {
       ..sort((a, b) => a.date.compareTo(b.date));
   }
 
+  String _dayKey(String userId, DateTime date) {
+    final day = DateTime(date.year, date.month, date.day);
+    return '$userId|${day.toIso8601String()}';
+  }
+
   List<JournalEntry> _journalEntriesFor(String patientId) {
     return _entries.where((entry) => entry.userId == patientId).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -811,6 +884,52 @@ HealthSample _sampleFromJson(Map<String, Object?> json) {
     value: (json['value'] as num).toDouble(),
     unit: json['unit'] as String,
     createdAt: DateTime.parse(json['createdAt'] as String),
+  );
+}
+
+Map<String, Object?> _readinessToJson(ReadinessSummary summary) {
+  return {
+    'userId': summary.userId,
+    'date': summary.date.toIso8601String(),
+    'readinessScore': summary.readinessScore,
+    'state': summary.state,
+    'contributors': summary.contributors
+        .map(_readinessContributorToJson)
+        .toList(),
+  };
+}
+
+ReadinessSummary _readinessFromJson(Map<String, Object?> json) {
+  return ReadinessSummary(
+    userId: json['userId'] as String,
+    date: DateTime.parse(json['date'] as String),
+    readinessScore: json['readinessScore'] as int,
+    state: json['state'] as String,
+    contributors: ((json['contributors'] as List<dynamic>?) ?? [])
+        .map((c) => _readinessContributorFromJson(c as Map<String, Object?>))
+        .toList(),
+  );
+}
+
+Map<String, Object?> _readinessContributorToJson(ReadinessContributor c) {
+  return {
+    'metric': c.metric.name,
+    'name': c.name,
+    'word': c.word,
+    'fraction': c.fraction,
+    'value': c.value,
+    'unit': c.unit,
+  };
+}
+
+ReadinessContributor _readinessContributorFromJson(Map<String, Object?> json) {
+  return ReadinessContributor(
+    metric: MetricType.values.byName(json['metric'] as String),
+    name: json['name'] as String,
+    word: json['word'] as String,
+    fraction: (json['fraction'] as num).toDouble(),
+    value: (json['value'] as num?)?.toDouble(),
+    unit: json['unit'] as String?,
   );
 }
 

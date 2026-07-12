@@ -19,6 +19,8 @@ class FirebaseAppRepository implements NidRepository {
       firestore.collection('healthSamples');
   CollectionReference<Map<String, dynamic>> get _summaries =>
       firestore.collection('dailySummaries');
+  CollectionReference<Map<String, dynamic>> get _readiness =>
+      firestore.collection('readinessSummaries');
   CollectionReference<Map<String, dynamic>> get _entries =>
       firestore.collection('journalEntries');
   CollectionReference<Map<String, dynamic>> get _resources =>
@@ -187,6 +189,53 @@ class FirebaseAppRepository implements NidRepository {
         .orderBy('date')
         .get();
     return snapshot.docs.map((doc) => _summaryFromDoc(doc)).toList();
+  }
+
+  @override
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    if (summaries.any((summary) => summary.userId != patientId)) {
+      throw const PrivacyException(
+        'Readiness summaries must belong to the patient.',
+      );
+    }
+
+    final batch = firestore.batch();
+    for (final summary in summaries) {
+      batch.set(
+        _readiness.doc(_readinessId(summary)),
+        _readinessToFirestore(summary),
+      );
+    }
+    await batch.commit();
+  }
+
+  @override
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+
+    final snapshot = await _readiness
+        .where('userId', isEqualTo: patientId)
+        .orderBy('date')
+        .get();
+    return snapshot.docs.map((doc) => _readinessFromDoc(doc)).toList();
   }
 
   @override
@@ -488,11 +537,18 @@ String _docSafe(String value) {
 }
 
 String _summaryId(DailySummary summary) {
-  final date = summary.date;
+  return _dayDocId(summary.userId, summary.date);
+}
+
+String _readinessId(ReadinessSummary summary) {
+  return _dayDocId(summary.userId, summary.date);
+}
+
+String _dayDocId(String userId, DateTime date) {
   final yyyy = date.year.toString().padLeft(4, '0');
   final mm = date.month.toString().padLeft(2, '0');
   final dd = date.day.toString().padLeft(2, '0');
-  return '${summary.userId}_$yyyy$mm$dd';
+  return '${userId}_$yyyy$mm$dd';
 }
 
 final _invitePattern = RegExp(r'^NID-\d{4}$');
@@ -603,6 +659,57 @@ Map<String, Object?> _summaryToFirestore(DailySummary summary) {
     'sleepQualityProxy': summary.sleepQualityProxy,
     'trendFlag': summary.trendFlag,
   };
+}
+
+ReadinessSummary _readinessFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  final data = doc.data()!;
+  final rawContributors = (data['contributors'] as List<dynamic>?) ?? [];
+  return ReadinessSummary(
+    userId: data['userId'] as String,
+    date: _dateTime(data['date']),
+    readinessScore: (data['readinessScore'] as num).toInt(),
+    state: data['state'] as String,
+    contributors: rawContributors
+        .map(
+          (c) =>
+              _readinessContributorFromMap((c as Map).cast<String, Object?>()),
+        )
+        .toList(),
+  );
+}
+
+Map<String, Object?> _readinessToFirestore(ReadinessSummary summary) {
+  return {
+    'userId': summary.userId,
+    'date': Timestamp.fromDate(summary.date),
+    'readinessScore': summary.readinessScore,
+    'state': summary.state,
+    'contributors': summary.contributors
+        .map(_readinessContributorToMap)
+        .toList(),
+  };
+}
+
+Map<String, Object?> _readinessContributorToMap(ReadinessContributor c) {
+  return {
+    'metric': c.metric.name,
+    'name': c.name,
+    'word': c.word,
+    'fraction': c.fraction,
+    'value': c.value,
+    'unit': c.unit,
+  };
+}
+
+ReadinessContributor _readinessContributorFromMap(Map<String, Object?> map) {
+  return ReadinessContributor(
+    metric: MetricType.values.byName(map['metric'] as String),
+    name: map['name'] as String,
+    word: map['word'] as String,
+    fraction: (map['fraction'] as num).toDouble(),
+    value: (map['value'] as num?)?.toDouble(),
+    unit: map['unit'] as String?,
+  );
 }
 
 ResourceCard _resourceFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
