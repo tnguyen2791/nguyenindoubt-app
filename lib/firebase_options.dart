@@ -62,13 +62,14 @@ class DefaultFirebaseOptions {
     projectId: 'nguyenindoubt-app',
     storageBucket: 'nguyenindoubt-app.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDoIXzyl_N7e3GFNpz1Dtli11ShlzObEDQ',
     appId: '1:6173983291:ios:c0810af3fc3e291f3e921e',
     messagingSenderId: '6173983291',
     projectId: 'nguyenindoubt-app',
     storageBucket: 'nguyenindoubt-app.firebasestorage.app',
+    iosClientId:
+        '6173983291-kndcs876odq1cgcbaq8u6jgqhj9rv3dc.apps.googleusercontent.com',
     iosBundleId: 'com.nguyenindoubt.nguyenindoubtApp',
   );
 }
