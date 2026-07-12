@@ -12,6 +12,7 @@ import 'journal_screen.dart';
 import 'notifications_feed.dart';
 import 'resources_screen.dart';
 import 'settings_screens.dart';
+import 'sharing_flow.dart';
 
 /// A calm uppercase section kicker — the design's `.k` idiom (11px, 700,
 /// letter-spacing, canopy). Reused across the new tab shells so section
@@ -693,10 +694,13 @@ class ProfileScreen extends StatelessWidget {
             _ProfileRow(
               icon: Icons.medical_information_outlined,
               label: 'Share with your provider',
+              value: _sharingStatusLabel(state.currentUser.consentStatus),
+              onTap: () => openSharingFlow(context, state),
             ),
             _ProfileRow(
               icon: Icons.qr_code_2_outlined,
               label: 'Request to share',
+              onTap: () => openSharingFlow(context, state),
             ),
           ],
         ),
@@ -766,6 +770,17 @@ String _sleepGoalLabel(int minutes) {
     return '${h}h sleep';
   }
   return '${h}h ${m}m sleep';
+}
+
+/// The Profile "Share with your provider" trailing value: a calm at-a-glance
+/// sharing state ("Active" / "Paused" / "Off") from the patient's consent
+/// status, so the row tells the truth before it is opened.
+String _sharingStatusLabel(ConsentStatus status) {
+  return switch (status) {
+    ConsentStatus.granted => 'Active',
+    ConsentStatus.revoked => 'Paused',
+    ConsentStatus.notAsked => 'Off',
+  };
 }
 
 /// The Profile "Notifications" trailing summary: "On" when any daily/signal

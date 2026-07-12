@@ -10,6 +10,7 @@ import 'common_widgets.dart';
 import 'data_displays.dart';
 import 'detail_screens.dart';
 import 'patient_first_run.dart';
+import 'sharing_flow.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key, required this.state});
@@ -343,6 +344,19 @@ class _ConsentLifecycleCardState extends State<_ConsentLifecycleCard> {
           ],
         ],
         const SizedBox(height: NidSpace.l),
+        // The full-screen sharing flow (design 82/84/86/102/78) — the same
+        // consent journey the Profile "Sharing" row opens, reachable here too.
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () => openSharingFlow(context, state),
+            icon: const Icon(Icons.tune_outlined),
+            label: Text(
+              hasActiveSharing ? 'Manage sharing' : 'Open sharing flow',
+            ),
+          ),
+        ),
+        const SizedBox(height: NidSpace.s),
         _ConsentHistoryList(events: state.consentHistory),
       ],
     );
