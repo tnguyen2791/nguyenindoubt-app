@@ -161,9 +161,11 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   5. A single `BrandMark` widget with min-size/clearspace rules is used everywhere the logo appears.
 
 **Plans:** 3/3 plans complete
+
 - [x] 08-01-PLAN.md — Theme foundation: type ladder, NidSpace/NidRadius tokens, seed-leak neutralization, PillTone + BrandMark primitives (wave 1)
 - [x] 08-02-PLAN.md — Patient + clinician dashboard sweep: pill tones, stock-red fix, de-weight caps labels, tokens (wave 2)
 - [x] 08-03-PLAN.md — Journal + resources + app shell sweep: pill tones, single BrandMark, de-weight, tokens (wave 2)
+
 **UI hint**: yes
 
 ### Phase 9: Safety and Affordance Integrity
@@ -179,9 +181,11 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   3. The journal shows an empty state and supports per-entry delete with confirmation.
 
 **Plans:** 3/3 plans complete
+
 - [x] 09-01-PLAN.md — Crisis actions dial/text directly: url_launcher + injectable CrisisLauncher seam, SafetyScreen rewire, graceful web fallback (wave 1)
 - [x] 09-02-PLAN.md — Affordance truth: clinician invite rows tappable+chevron vs muted/no-ripple inert rows (wave 1)
 - [x] 09-03-PLAN.md — Journal EmptyState + per-entry delete with confirm, deleteJournalEntry through state + both repositories + Firestore rules test (wave 1)
+
 **UI hint**: yes
 
 ### Phase 10: Brand Arrival and Guided Onboarding
@@ -197,10 +201,12 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   3. Onboarding communicates what the app does (sleep/journal/privacy) and rejects empty/invalid names.
   4. The empty first-run dashboard presents one clear primary action with sleep-only permission priming before any OS prompt.
 
-**Plans:** 3 plans
-- [ ] 10-01-PLAN.md — Native web loader + animated brand-intro splash gate + splash-skip test seam (wave 1)
+**Plans:** 1/3 plans executed
+
+- [x] 10-01-PLAN.md — Native web loader + animated brand-intro splash gate + splash-skip test seam (wave 1)
 - [ ] 10-02-PLAN.md — Patient-first welcome reframe + onboarding expectations & name guard (wave 2)
 - [ ] 10-03-PLAN.md — Guided empty-dashboard first-run (modular, sleep-only priming) (wave 3)
+
 **UI hint**: yes
 
 ### Phase 11: Insightful Data Displays
@@ -270,7 +276,7 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
 | 9. Safety & Affordance Integrity | 3/3 | Complete | 2026-07-06 |
-| 10. Brand Arrival & Guided Onboarding | 0/0 | Not started | - |
+| 10. Brand Arrival & Guided Onboarding | 1/3 | In Progress|  |
 | 11. Insightful Data Displays | 0/0 | Not started | - |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
 | 13. Motion & Feedback Choreography | 0/0 | Not started | - |
