@@ -47,14 +47,20 @@ void main() {
     expect(find.text('sleep access ready'), findsOneWidget);
     expect(find.text("Start with last night's sleep"), findsNothing);
 
-    // Phase 11 hierarchy: the non-diagnostic score hero replaces the old
-    // metric tiles, and the greeting block leads the with-data dashboard.
+    // Phase 14 hierarchy: the Today hero is now the REAL multi-signal
+    // readiness ring (the retired sleep proxy is gone from the hero), still
+    // non-diagnostic, and the greeting block leads the with-data dashboard.
     expect(find.text('not a diagnosis'), findsOneWidget);
-    expect(find.text('SLEEP SCORE'), findsOneWidget);
+    expect(find.text('READINESS'), findsOneWidget);
+    // The retired 'SLEEP SCORE' hero label no longer heads the Today screen.
+    expect(find.text('SLEEP SCORE'), findsNothing);
     expect(find.byType(ScoreRing), findsOneWidget);
     expect(find.textContaining('Good '), findsOneWidget);
     expect(find.text('QUALITY PROXY'), findsNothing);
     expect(find.text('CLINICIAN LINK'), findsNothing);
+    // Readiness computed from the deterministic mock — a real score is shown.
+    expect(state.readiness, isNotNull);
+    expect(find.text('${state.readiness!.readinessScore}'), findsOneWidget);
   });
 
   testWidgets(
@@ -80,11 +86,11 @@ void main() {
       await state.importMockSleep();
       await tester.pumpAndSettle();
 
-      // No overflow at phone width, and the hero leads the hierarchy.
+      // No overflow at phone width, and the readiness hero leads (P14).
       expect(tester.takeException(), isNull);
       expect(find.byType(ScoreRing), findsOneWidget);
       expect(find.text('not a diagnosis'), findsOneWidget);
-      expect(find.text('SLEEP SCORE'), findsOneWidget);
+      expect(find.text('READINESS'), findsOneWidget);
 
       // Exactly one gentle observational insight line (the greeting
       // sub-line): the fixed mock durations put last night over baseline.

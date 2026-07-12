@@ -14,6 +14,23 @@ import '../services/sleep_insights.dart';
 import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 
+/// Maps a readiness subscore [fraction] (0.0-1.0) to a [StateTone] using the
+/// same bands the readiness scoring uses (>=.85 optimal, >=.70 good, >=.50
+/// fair, else attention). Keeps the contributor bar's color aligned to the
+/// model's own value, so the evidence always matches the label.
+StateTone nidReadinessTone(double fraction) {
+  if (fraction >= 0.85) {
+    return StateTone.optimal;
+  }
+  if (fraction >= 0.70) {
+    return StateTone.good;
+  }
+  if (fraction >= 0.50) {
+    return StateTone.fair;
+  }
+  return StateTone.attention;
+}
+
 /// Maps a [StateTone] to its blessed theme color.
 Color nidToneColor(StateTone tone) {
   switch (tone) {

@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common_widgets.dart';
 import 'data_displays.dart';
+import 'detail_screens.dart';
 import 'patient_first_run.dart';
 
 class PatientDashboard extends StatelessWidget {
@@ -55,6 +56,8 @@ class PatientDashboard extends StatelessWidget {
         ) /
         recent.length;
 
+    final readiness = state.readiness;
+
     return [
       _GreetingBlock(
         firstName: _firstName(state.currentUser.displayName),
@@ -62,7 +65,16 @@ class PatientDashboard extends StatelessWidget {
         insight: insightLine(state.summaries),
       ),
       const SizedBox(height: NidSpace.cardGap),
-      _ScoreHeroCard(score: score),
+      // The Today hero is now the REAL multi-signal readiness (18/28). Falls
+      // back to the sleep score only if a wearable read has not happened yet
+      // (readiness == null) — an honest degrade, never a fabricated score.
+      if (readiness != null)
+        _ReadinessHeroCard(
+          readiness: readiness,
+          onOpen: () => openReadinessDetail(context, state),
+        )
+      else
+        _ScoreHeroCard(score: score),
       const SizedBox(height: NidSpace.cardGap),
       IntrinsicHeight(
         child: Row(
@@ -73,6 +85,7 @@ class PatientDashboard extends StatelessWidget {
                 label: 'last night',
                 value: hoursLabel(latest.sleepDurationHours),
                 caption: latest.trendFlag,
+                onTap: () => openSleepDetail(context, state),
               ),
             ),
             const SizedBox(width: NidSpace.cardGap),
@@ -638,32 +651,157 @@ class _MiniMetricCard extends StatelessWidget {
     required this.label,
     required this.value,
     required this.caption,
+    this.onTap,
   });
 
   final String label;
   final String value;
   final String caption;
 
+  /// When set, the card becomes tappable (opens a detail drill-down). A
+  /// chevron affordance is shown so the row reads as navigable.
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return SectionCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.99, // 0.09em × 11
-              color: NidColors.canopy,
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                label.toUpperCase(),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.99, // 0.09em × 11
+                  color: NidColors.canopy,
+                ),
+              ),
             ),
+            if (onTap != null)
+              const Icon(Icons.chevron_right, size: 18, color: NidColors.faint),
+          ],
+        ),
+        const SizedBox(height: NidSpace.s),
+        Text(value, style: Theme.of(context).textTheme.displaySmall),
+        const SizedBox(height: NidSpace.xs),
+        Text(caption, style: Theme.of(context).textTheme.bodySmall),
+      ],
+    );
+
+    if (onTap == null) {
+      return SectionCard(child: content);
+    }
+    return SectionCard(
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(NidRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.all(NidSpace.cardPad),
+          child: content,
+        ),
+      ),
+    );
+  }
+}
+
+/// The Today readiness hero (18): the "Readiness" kicker with the verbatim
+/// "not a diagnosis" headnote, the real 120px multi-signal ring, and the top
+/// contributors from [ReadinessSummary]. Tapping opens the readiness detail
+/// (28). Replaces the retired sleep-proxy hero.
+class _ReadinessHeroCard extends StatelessWidget {
+  const _ReadinessHeroCard({required this.readiness, required this.onOpen});
+
+  final ReadinessSummary readiness;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = nidReadinessTone(readiness.readinessScore / 100);
+    final toneColor = nidToneColor(tone);
+    // The Today hero shows the first three contributors (matching 18's compact
+    // three-row readout); the full list lives on the detail screen (28).
+    final shown = readiness.contributors.take(3).toList();
+    final contributors = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < shown.length; i++) ...[
+          if (i > 0) const SizedBox(height: NidSpace.m),
+          ContributorBar(
+            name: shown[i].name,
+            word: shown[i].word,
+            tone: nidReadinessTone(shown[i].fraction),
+            fraction: shown[i].fraction,
           ),
-          const SizedBox(height: NidSpace.s),
-          Text(value, style: Theme.of(context).textTheme.displaySmall),
-          const SizedBox(height: NidSpace.xs),
-          Text(caption, style: Theme.of(context).textTheme.bodySmall),
         ],
+      ],
+    );
+
+    return SectionCard(
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onOpen,
+        borderRadius: BorderRadius.circular(NidRadius.card),
+        child: Padding(
+          padding: const EdgeInsets.all(NidSpace.cardPad),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'READINESS',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.0,
+                      color: NidColors.canopy,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Text(
+                    'not a diagnosis',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: NidColors.faint,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: NidSpace.l),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final ring = ScoreRing(
+                    score: readiness.readinessScore,
+                    word: readiness.state,
+                    color: toneColor,
+                  );
+                  if (constraints.maxWidth < 340) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Center(child: ring),
+                        const SizedBox(height: NidSpace.l),
+                        contributors,
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      ring,
+                      const SizedBox(width: NidSpace.l),
+                      Expanded(child: contributors),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
