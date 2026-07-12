@@ -91,6 +91,7 @@ class NguyenInDoubtState extends ChangeNotifier {
   List<DailySummary> _summaries = [];
   ReadinessSummary? _readiness;
   List<ReadinessSummary> _readinessHistory = [];
+  UserPreferences _preferences = const UserPreferences();
   List<JournalEntry> _journalEntries = [];
   List<ResourceCard> _resources = [];
   List<AppUser> _linkedPatients = [];
@@ -127,6 +128,49 @@ class NguyenInDoubtState extends ChangeNotifier {
   /// feeding the Trends tab's Readiness and Activity signals. Patient-only —
   /// the clinician surface never exposes readiness (sleep-only contract).
   List<ReadinessSummary> get readinessHistory => _readinessHistory;
+
+  /// The patient's goals + notification preferences (Phase 17). Patient-owned,
+  /// on-device only; never exposed to a clinician. Defaults until saved.
+  UserPreferences get preferences => _preferences;
+
+  /// The patient's own recent sleep average (hours) across up to the last 30
+  /// nights, or null before any import. Feeds the Goals screen's data-informed
+  /// hint — observational, never shaming.
+  double? get recentSleepAverageHours {
+    if (_summaries.isEmpty) {
+      return null;
+    }
+    final recent = _summaries.length <= 30
+        ? _summaries
+        : _summaries.sublist(_summaries.length - 30);
+    final total = recent.fold<double>(
+      0,
+      (sum, s) => sum + s.sleepDurationHours,
+    );
+    return total / recent.length;
+  }
+
+  /// The patient's own recent prior-day activity average (kcal) across the
+  /// readiness series, or null before any wearable read. Feeds the Goals
+  /// screen's activity hint. Observational, never shaming.
+  double? get recentActivityAverageKcal {
+    final values = <double>[];
+    for (final summary in _readinessHistory) {
+      for (final c in summary.contributors) {
+        if (c.metric == MetricType.activeEnergy && c.value != null) {
+          values.add(c.value!);
+        }
+      }
+    }
+    if (values.isEmpty) {
+      return null;
+    }
+    final recent = values.length <= 7
+        ? values
+        : values.sublist(values.length - 7);
+    return recent.fold<double>(0, (sum, v) => sum + v) / recent.length;
+  }
+
   List<JournalEntry> get journalEntries => _journalEntries;
   List<ResourceCard> get resources => _resources;
   List<AppUser> get linkedPatients => _linkedPatients;
@@ -150,6 +194,7 @@ class NguyenInDoubtState extends ChangeNotifier {
       _summaries = [];
       _readiness = null;
       _readinessHistory = [];
+      _preferences = const UserPreferences();
       _journalEntries = [];
       _consentHistory = [];
       _clinicianLinkStatuses = await repository.getClinicianLinkStatuses(
@@ -188,10 +233,15 @@ class NguyenInDoubtState extends ChangeNotifier {
       );
       _readinessHistory = readiness;
       _readiness = readiness.isEmpty ? null : readiness.last;
+      _preferences = await repository.getUserPreferences(
+        requesterUserId: _currentUser.id,
+        patientId: _currentUser.id,
+      );
     } else {
       _summaries = [];
       _readiness = null;
       _readinessHistory = [];
+      _preferences = const UserPreferences();
       _journalEntries = [];
       _consentHistory = [];
       _linkedPatients = [];
@@ -501,6 +551,19 @@ class NguyenInDoubtState extends ChangeNotifier {
       requesterUserId: currentUser.id,
       patientId: currentUser.id,
     );
+    notifyListeners();
+  }
+
+  /// Persists an updated set of goals + notification preferences for the
+  /// current patient and notifies listeners so the settings screens reflect
+  /// the change immediately. On-device only; never scheduled, never analytics.
+  Future<void> updatePreferences(UserPreferences preferences) async {
+    await repository.saveUserPreferences(
+      requesterUserId: currentUser.id,
+      patientId: currentUser.id,
+      preferences: preferences,
+    );
+    _preferences = preferences;
     notifyListeners();
   }
 

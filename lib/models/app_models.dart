@@ -284,6 +284,97 @@ class ReadinessSummary {
   final List<ReadinessContributor> contributors;
 }
 
+/// A patient-owned, on-device set of goals and notification preferences.
+///
+/// Plain data (no Flutter dependency) so it serializes cleanly to local
+/// storage and round-trips through the in-memory store. These shape *guidance*
+/// only — they never change scores, and none of it is ever visible to a
+/// clinician (the sleep-summaries-only privacy contract is unaffected).
+///
+/// Notification toggles record a stored *preference* only. This app does not
+/// yet schedule real OS notifications or run any analytics — nothing here
+/// wakes a background job. The toggles simply remember what the patient would
+/// want, so a future delivery layer can honor them.
+@immutable
+class UserPreferences {
+  const UserPreferences({
+    this.sleepGoalMinutes = 480,
+    this.stepTarget = 9000,
+    this.morningReading = true,
+    this.eveningWindDown = true,
+    this.weeklyReport = true,
+    this.outOfRangeAlerts = true,
+    this.goalMilestones = false,
+    this.ringBatterySync = true,
+    this.quietHoursEnabled = true,
+    this.quietHoursFromMinutes = 22 * 60, // 10:00p
+    this.quietHoursUntilMinutes = 7 * 60, // 7:00a
+  });
+
+  /// Nightly sleep goal, in minutes. Steppers move it in 15-minute steps.
+  final int sleepGoalMinutes;
+
+  /// Daily step target. Steppers move it in 500-step steps.
+  final int stepTarget;
+
+  /// "Morning reading" — a note when the day's scores are ready.
+  final bool morningReading;
+
+  /// "Evening wind-down" — a reminder ahead of the bedtime window.
+  final bool eveningWindDown;
+
+  /// "Weekly report" — a Sunday summary of the week's trends.
+  final bool weeklyReport;
+
+  /// "Out-of-range alerts" — heart rate or temperature outside the range.
+  final bool outOfRangeAlerts;
+
+  /// "Goal milestones" — when a target is reached early.
+  final bool goalMilestones;
+
+  /// "Ring battery & sync" — low charge or a missed sync.
+  final bool ringBatterySync;
+
+  /// Whether Do Not Disturb quiet hours are on.
+  final bool quietHoursEnabled;
+
+  /// Quiet-hours start, minutes since midnight.
+  final int quietHoursFromMinutes;
+
+  /// Quiet-hours end, minutes since midnight.
+  final int quietHoursUntilMinutes;
+
+  UserPreferences copyWith({
+    int? sleepGoalMinutes,
+    int? stepTarget,
+    bool? morningReading,
+    bool? eveningWindDown,
+    bool? weeklyReport,
+    bool? outOfRangeAlerts,
+    bool? goalMilestones,
+    bool? ringBatterySync,
+    bool? quietHoursEnabled,
+    int? quietHoursFromMinutes,
+    int? quietHoursUntilMinutes,
+  }) {
+    return UserPreferences(
+      sleepGoalMinutes: sleepGoalMinutes ?? this.sleepGoalMinutes,
+      stepTarget: stepTarget ?? this.stepTarget,
+      morningReading: morningReading ?? this.morningReading,
+      eveningWindDown: eveningWindDown ?? this.eveningWindDown,
+      weeklyReport: weeklyReport ?? this.weeklyReport,
+      outOfRangeAlerts: outOfRangeAlerts ?? this.outOfRangeAlerts,
+      goalMilestones: goalMilestones ?? this.goalMilestones,
+      ringBatterySync: ringBatterySync ?? this.ringBatterySync,
+      quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
+      quietHoursFromMinutes:
+          quietHoursFromMinutes ?? this.quietHoursFromMinutes,
+      quietHoursUntilMinutes:
+          quietHoursUntilMinutes ?? this.quietHoursUntilMinutes,
+    );
+  }
+}
+
 @immutable
 class JournalEntry {
   const JournalEntry({

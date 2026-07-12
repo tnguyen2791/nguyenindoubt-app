@@ -68,6 +68,23 @@ abstract class AppRepository {
     required String requesterUserId,
     required String patientId,
   });
+
+  /// Reads the patient's goals + notification preferences (Phase 17).
+  /// Patient-owned; never exposed to a clinician. Returns sensible defaults
+  /// when nothing has been saved yet, so the settings screens always render.
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  });
+
+  /// Persists the patient's goals + notification preferences (Phase 17).
+  /// Local-only, patient-owned. These shape guidance and remember toggle
+  /// state; they never schedule OS notifications or run analytics.
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
+  });
 }
 
 abstract class ClinicianRepository {
@@ -141,6 +158,7 @@ class InMemoryAppRepository implements NidRepository {
   final List<HealthSample> _samples = [];
   final List<DailySummary> _summaries = [];
   final List<ReadinessSummary> _readiness = [];
+  final Map<String, UserPreferences> _preferences = {};
   final List<JournalEntry> _entries = [];
   final List<ResourceCard> _resources = [];
   final List<ConsentHistoryEvent> _consentEvents = [];
@@ -165,6 +183,7 @@ class InMemoryAppRepository implements NidRepository {
       ..clear()
       ..addAll(summarizeSleepSamples(_samples));
     _readiness.clear();
+    _preferences.clear();
     _entries
       ..clear()
       ..addAll(seedJournalEntries());
@@ -209,6 +228,16 @@ class InMemoryAppRepository implements NidRepository {
             (json) => _readinessFromJson(json as Map<String, Object?>),
           ),
         );
+      _preferences
+        ..clear()
+        ..addAll(
+          ((decoded['preferences'] as Map<String, dynamic>?) ?? {}).map(
+            (userId, json) => MapEntry(
+              userId,
+              _preferencesFromJson(json as Map<String, Object?>),
+            ),
+          ),
+        );
       _entries
         ..clear()
         ..addAll(
@@ -231,6 +260,7 @@ class InMemoryAppRepository implements NidRepository {
       _samples.clear();
       _summaries.clear();
       _readiness.clear();
+      _preferences.clear();
       _entries.clear();
       _consentEvents.clear();
       _session = const AppSession.signedOut();
@@ -247,11 +277,14 @@ class InMemoryAppRepository implements NidRepository {
     await localPreferences.setString(
       storageKey,
       jsonEncode({
-        'schemaVersion': 3,
+        'schemaVersion': 4,
         'users': _users.map(_userToJson).toList(),
         'links': _links.map(_linkToJson).toList(),
         'samples': _samples.map(_sampleToJson).toList(),
         'readiness': _readiness.map(_readinessToJson).toList(),
+        'preferences': _preferences.map(
+          (userId, prefs) => MapEntry(userId, _preferencesToJson(prefs)),
+        ),
         'entries': _entries.map(_entryToJson).toList(),
         'consentEvents': _consentEvents.map(_consentEventToJson).toList(),
         'session': _sessionToJson(_session),
@@ -570,6 +603,35 @@ class InMemoryAppRepository implements NidRepository {
     );
     return _readiness.where((summary) => summary.userId == patientId).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  @override
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+    // Defaults when nothing saved yet — the settings screens always render.
+    return _preferences[patientId] ?? const UserPreferences();
+  }
+
+  @override
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+    _preferences[patientId] = preferences;
+    await _persist();
   }
 
   @override
@@ -930,6 +992,49 @@ ReadinessContributor _readinessContributorFromJson(Map<String, Object?> json) {
     fraction: (json['fraction'] as num).toDouble(),
     value: (json['value'] as num?)?.toDouble(),
     unit: json['unit'] as String?,
+  );
+}
+
+Map<String, Object?> _preferencesToJson(UserPreferences prefs) {
+  return {
+    'sleepGoalMinutes': prefs.sleepGoalMinutes,
+    'stepTarget': prefs.stepTarget,
+    'morningReading': prefs.morningReading,
+    'eveningWindDown': prefs.eveningWindDown,
+    'weeklyReport': prefs.weeklyReport,
+    'outOfRangeAlerts': prefs.outOfRangeAlerts,
+    'goalMilestones': prefs.goalMilestones,
+    'ringBatterySync': prefs.ringBatterySync,
+    'quietHoursEnabled': prefs.quietHoursEnabled,
+    'quietHoursFromMinutes': prefs.quietHoursFromMinutes,
+    'quietHoursUntilMinutes': prefs.quietHoursUntilMinutes,
+  };
+}
+
+UserPreferences _preferencesFromJson(Map<String, Object?> json) {
+  const defaults = UserPreferences();
+  return UserPreferences(
+    sleepGoalMinutes:
+        (json['sleepGoalMinutes'] as num?)?.toInt() ??
+        defaults.sleepGoalMinutes,
+    stepTarget: (json['stepTarget'] as num?)?.toInt() ?? defaults.stepTarget,
+    morningReading: json['morningReading'] as bool? ?? defaults.morningReading,
+    eveningWindDown:
+        json['eveningWindDown'] as bool? ?? defaults.eveningWindDown,
+    weeklyReport: json['weeklyReport'] as bool? ?? defaults.weeklyReport,
+    outOfRangeAlerts:
+        json['outOfRangeAlerts'] as bool? ?? defaults.outOfRangeAlerts,
+    goalMilestones: json['goalMilestones'] as bool? ?? defaults.goalMilestones,
+    ringBatterySync:
+        json['ringBatterySync'] as bool? ?? defaults.ringBatterySync,
+    quietHoursEnabled:
+        json['quietHoursEnabled'] as bool? ?? defaults.quietHoursEnabled,
+    quietHoursFromMinutes:
+        (json['quietHoursFromMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursFromMinutes,
+    quietHoursUntilMinutes:
+        (json['quietHoursUntilMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursUntilMinutes,
   );
 }
 
