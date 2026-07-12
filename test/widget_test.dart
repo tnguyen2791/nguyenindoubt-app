@@ -277,7 +277,14 @@ void main() {
     await tester.pumpAndSettle();
 
     await _completePatientOnboarding(tester);
-    await tester.tap(find.text('Safety'));
+    // Safety no longer has its own tab — it stays reachable from the Profile
+    // tab's Support group (standing project rule: Safety must remain reachable).
+    await tester.tap(find.byIcon(Icons.person_outline).last);
+    await tester.pumpAndSettle();
+    final safetyRow = find.text('Safety and limits');
+    await tester.scrollUntilVisible(safetyRow, 200);
+    await tester.pumpAndSettle();
+    await tester.tap(safetyRow);
     await tester.pumpAndSettle();
 
     // Crisis controls are honestly labeled for direct action (SAFE-01). We do
@@ -294,6 +301,91 @@ void main() {
     await tester.scrollUntilVisible(disclosure, 200);
     await tester.pumpAndSettle();
     expect(disclosure, findsOneWidget);
+  });
+
+  testWidgets('bottom nav exposes the Today/Trends/[+]/Explore/Profile IA', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
+    await tester.pumpAndSettle();
+    await _completePatientOnboarding(tester);
+
+    // All five design slots are present: four labelled tabs plus the center
+    // canopy [+] Add action.
+    expect(find.text('Today'), findsOneWidget);
+    expect(find.text('Trends'), findsOneWidget);
+    expect(find.text('Explore'), findsOneWidget);
+    expect(find.text('Profile'), findsOneWidget);
+    expect(find.byIcon(Icons.add), findsOneWidget);
+
+    // The old IA labels are gone from the tab bar.
+    expect(find.text('Sleep'), findsNothing);
+    expect(find.text('Journal'), findsNothing);
+    expect(find.text('Guides'), findsNothing);
+
+    // Trends is a calm shell — a coming-soon empty state, no fake data.
+    await tester.tap(find.byIcon(Icons.bar_chart_outlined).first);
+    await tester.pumpAndSettle();
+    expect(find.text('Your sleep trend is coming soon'), findsOneWidget);
+
+    // Explore re-homes the resources content under the Explore title.
+    await tester.tap(find.byIcon(Icons.explore_outlined).first);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('learn what your body is telling you'),
+      findsOneWidget,
+    );
+
+    // Profile shows the identity header and the settings groups (the section
+    // kickers render uppercase, matching the design's `.k` idiom).
+    await tester.tap(find.byIcon(Icons.person_outline).first);
+    await tester.pumpAndSettle();
+    expect(find.text('Personal info'), findsOneWidget);
+    expect(find.text('ACCOUNT'), findsOneWidget);
+    expect(find.text('SHARING'), findsOneWidget);
+
+    final profileScrollable = find.byType(Scrollable).first;
+    // PREFERENCES + SUPPORT groups sit below the fold at phone width.
+    await tester.scrollUntilVisible(
+      find.text('SUPPORT'),
+      200,
+      scrollable: profileScrollable,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('PREFERENCES'), findsOneWidget);
+    expect(find.text('SUPPORT'), findsOneWidget);
+
+    // Journal stays reachable from Profile (no tab of its own now).
+    final journalRow = find.text('Journal');
+    await tester.ensureVisible(journalRow);
+    await tester.pumpAndSettle();
+    await tester.tap(journalRow);
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(AppBar, 'Journal'), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // Sign out sits at the foot of the Profile list.
+    final signOut = find.text('Sign out');
+    await tester.scrollUntilVisible(signOut, 200);
+    await tester.pumpAndSettle();
+    expect(signOut, findsOneWidget);
+
+    // The center [+] opens the Add-sheet stub with the wired Import action.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+    expect(find.text('Add to today'), findsOneWidget);
+    expect(find.text('Import sleep'), findsOneWidget);
   });
 
   testWidgets('patient can validate accept and revoke invite sharing', (
@@ -526,15 +618,26 @@ Future<void> _expectSurfacesRenderAtSize(WidgetTester tester, Size size) async {
   await _completePatientOnboarding(tester);
   expect(tester.takeException(), isNull);
 
-  for (final icon in [
-    Icons.edit_note_outlined,
-    Icons.menu_book_outlined,
-    Icons.health_and_safety_outlined,
-  ]) {
-    await tester.tap(find.byIcon(icon).last);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-  }
+  // Walk the new IA: Trends, Explore, Profile all render without overflow at
+  // both widths. Today (index 0) is already on screen from onboarding.
+  await tester.tap(find.byIcon(Icons.bar_chart_outlined).first);
+  await tester.pumpAndSettle();
+  expect(find.text('Trends'), findsWidgets);
+  expect(tester.takeException(), isNull);
+
+  await tester.tap(find.byIcon(Icons.explore_outlined).first);
+  await tester.pumpAndSettle();
+  expect(find.text('Explore'), findsWidgets);
+  expect(tester.takeException(), isNull);
+
+  await tester.tap(find.byIcon(Icons.person_outline).first);
+  await tester.pumpAndSettle();
+  expect(find.text('Profile'), findsWidgets);
+  final signOut = find.text('Sign out');
+  await tester.scrollUntilVisible(signOut, 200);
+  await tester.pumpAndSettle();
+  expect(signOut, findsOneWidget);
+  expect(tester.takeException(), isNull);
 
   await state.signOut();
   await tester.pumpAndSettle();

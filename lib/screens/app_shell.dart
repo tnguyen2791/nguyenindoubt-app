@@ -5,9 +5,8 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'clinician_dashboard.dart';
 import 'common_widgets.dart';
-import 'journal_screen.dart';
 import 'patient_dashboard.dart';
-import 'resources_screen.dart';
+import 'tab_shells.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.state});
@@ -71,11 +70,13 @@ class _AppShellState extends State<AppShell> {
           );
         }
 
+        // The four selectable tabs (index 0-3). The design's center [+] is an
+        // action, not a tab — it opens the Add-sheet and never selects.
         final screens = [
-          PatientDashboard(state: widget.state),
-          JournalScreen(state: widget.state),
-          ResourcesScreen(state: widget.state),
-          const SafetyScreen(),
+          PatientDashboard(state: widget.state), // Today
+          const TrendsScreen(), // Trends
+          ExploreScreen(state: widget.state), // Explore
+          ProfileScreen(state: widget.state, onSignOut: _signOut), // Profile
         ];
 
         return LayoutBuilder(
@@ -86,30 +87,11 @@ class _AppShellState extends State<AppShell> {
               body: Row(
                 children: [
                   if (isWide)
-                    NavigationRail(
+                    _WideNavRail(
                       selectedIndex: _selectedIndex,
-                      onDestinationSelected: (index) {
-                        setState(() => _selectedIndex = index);
-                      },
-                      labelType: NavigationRailLabelType.all,
-                      destinations: const [
-                        NavigationRailDestination(
-                          icon: Icon(Icons.insights_outlined),
-                          label: Text('Sleep'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.edit_note_outlined),
-                          label: Text('Journal'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.menu_book_outlined),
-                          label: Text('Guides'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.health_and_safety_outlined),
-                          label: Text('Safety'),
-                        ),
-                      ],
+                      onSelect: (index) =>
+                          setState(() => _selectedIndex = index),
+                      onAdd: _openAddSheet,
                     ),
                   Expanded(
                     child: Column(
@@ -126,29 +108,11 @@ class _AppShellState extends State<AppShell> {
               ),
               bottomNavigationBar: isWide
                   ? null
-                  : NavigationBar(
+                  : _NidTabBar(
                       selectedIndex: _selectedIndex,
-                      onDestinationSelected: (index) {
-                        setState(() => _selectedIndex = index);
-                      },
-                      destinations: const [
-                        NavigationDestination(
-                          icon: Icon(Icons.insights_outlined),
-                          label: 'Sleep',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.edit_note_outlined),
-                          label: 'Journal',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.menu_book_outlined),
-                          label: 'Guides',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.health_and_safety_outlined),
-                          label: 'Safety',
-                        ),
-                      ],
+                      onSelect: (index) =>
+                          setState(() => _selectedIndex = index),
+                      onAdd: _openAddSheet,
                     ),
             );
           },
@@ -161,6 +125,8 @@ class _AppShellState extends State<AppShell> {
     await widget.state.signOut();
     setState(() => _selectedIndex = 0);
   }
+
+  Future<void> _openAddSheet() => showAddSheet(context, widget.state);
 
   Future<void> _confirmResetDemoData() async {
     final shouldReset = await showDialog<bool>(
@@ -191,6 +157,218 @@ class _AppShellState extends State<AppShell> {
     if (mounted) {
       setState(() => _selectedIndex = 0);
     }
+  }
+}
+
+/// The four selectable destinations, matching the design's tab grammar
+/// (icon + short label). The center [+] Add action lives between Trends and
+/// Explore but is not part of this list — it is an action, not a tab.
+const List<({IconData icon, String label})> _patientTabs = [
+  (icon: Icons.wb_sunny_outlined, label: 'Today'),
+  (icon: Icons.bar_chart_outlined, label: 'Trends'),
+  (icon: Icons.explore_outlined, label: 'Explore'),
+  (icon: Icons.person_outline, label: 'Profile'),
+];
+
+/// The mobile bottom tab bar — Today · Trends · [+] · Explore · Profile.
+/// Active canopy, faint inactive, and a canopy-filled center Add pill, per
+/// 18-dashboard-mobile's `.tabbar` grammar.
+class _NidTabBar extends StatelessWidget {
+  const _NidTabBar({
+    required this.selectedIndex,
+    required this.onSelect,
+    required this.onAdd,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 0,
+      child: SafeArea(
+        top: false,
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Color(0x241E4A34)), // canopy @ ~14%.
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: NidSpace.s,
+            vertical: NidSpace.s,
+          ),
+          // A fixed-height row so the bottom bar reports a bounded intrinsic
+          // height under the Scaffold's loose slot constraints (otherwise the
+          // Expanded/Center children stretch to fill the whole screen).
+          child: SizedBox(
+            height: 52,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _TabItem(
+                  tab: _patientTabs[0],
+                  selected: selectedIndex == 0,
+                  onTap: () => onSelect(0),
+                ),
+                _TabItem(
+                  tab: _patientTabs[1],
+                  selected: selectedIndex == 1,
+                  onTap: () => onSelect(1),
+                ),
+                _AddButton(onTap: onAdd),
+                _TabItem(
+                  tab: _patientTabs[2],
+                  selected: selectedIndex == 2,
+                  onTap: () => onSelect(2),
+                ),
+                _TabItem(
+                  tab: _patientTabs[3],
+                  selected: selectedIndex == 3,
+                  onTap: () => onSelect(3),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TabItem extends StatelessWidget {
+  const _TabItem({
+    required this.tab,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final ({IconData icon, String label}) tab;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? NidColors.canopy : NidColors.faint;
+    return Expanded(
+      child: InkResponse(
+        onTap: onTap,
+        radius: 36,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(tab.icon, size: 22, color: color),
+            const SizedBox(height: NidSpace.xs),
+            Text(
+              tab.label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// The center canopy-filled [+] Add action.
+class _AddButton extends StatelessWidget {
+  const _AddButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: Semantics(
+          button: true,
+          label: 'Add to today',
+          child: Material(
+            color: NidColors.canopy,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: const SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(Icons.add, color: Colors.white, size: 22),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The wide-layout equivalent of the tab bar — a NavigationRail carrying the
+/// same four destinations, with the [+] Add action as a leading canopy pill.
+class _WideNavRail extends StatelessWidget {
+  const _WideNavRail({
+    required this.selectedIndex,
+    required this.onSelect,
+    required this.onAdd,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationRail(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onSelect,
+      labelType: NavigationRailLabelType.all,
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(vertical: NidSpace.m),
+        child: Column(
+          children: [
+            Semantics(
+              button: true,
+              label: 'Add to today',
+              child: Material(
+                color: NidColors.canopy,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: onAdd,
+                  child: const SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Icon(Icons.add, color: Colors.white, size: 22),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: NidSpace.xs),
+            const Text(
+              'Add',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: NidColors.canopy,
+              ),
+            ),
+          ],
+        ),
+      ),
+      destinations: [
+        for (final tab in _patientTabs)
+          NavigationRailDestination(
+            icon: Icon(tab.icon),
+            label: Text(tab.label),
+          ),
+      ],
+    );
   }
 }
 

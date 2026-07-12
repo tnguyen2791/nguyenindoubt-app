@@ -167,8 +167,15 @@ void main() {
   });
 }
 
+/// Journal no longer has its own tab (P12 IA restructure); it is reached from
+/// the Profile tab's Preferences group. Open Profile, then the Journal row.
 Future<void> _openJournal(WidgetTester tester) async {
-  await tester.tap(find.byIcon(Icons.edit_note_outlined).last);
+  await tester.tap(find.byIcon(Icons.person_outline).first);
+  await tester.pumpAndSettle();
+  final journalRow = find.text('Journal');
+  await tester.scrollUntilVisible(journalRow, 200);
+  await tester.pumpAndSettle();
+  await tester.tap(journalRow);
   await tester.pumpAndSettle();
 }
 
