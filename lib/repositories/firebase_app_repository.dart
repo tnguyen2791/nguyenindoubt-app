@@ -28,6 +28,51 @@ class FirebaseAppRepository
       firestore.collection('consentEvents');
 
   @override
+  Future<AppUser?> getUser(String uid) async {
+    _requireSignedInAs(uid);
+    final doc = await _users.doc(uid).get();
+    if (!doc.exists) {
+      return null;
+    }
+    return _userFromDoc(doc);
+  }
+
+  @override
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    _requireSignedInAs(uid);
+    final ref = _users.doc(uid);
+    final existing = await ref.get();
+    if (existing.exists) {
+      return _userFromDoc(existing);
+    }
+
+    // A freshly signed-in account has no profile yet. Create a minimal
+    // patient profile — the users/{uid} create rule requires role=='patient'
+    // and isSelf(uid), both satisfied here. Consent starts un-asked; the
+    // patient opts into sharing later through the consent flow.
+    final now = DateTime.now();
+    final safeName = displayName.trim().isEmpty ? 'You' : displayName.trim();
+    await ref.set({
+      'displayName': safeName,
+      'role': UserRole.patient.name,
+      'consentStatus': ConsentStatus.notAsked.name,
+      'clinicCode': null,
+      'createdAt': Timestamp.fromDate(now),
+      'updatedAt': Timestamp.fromDate(now),
+    });
+    return AppUser(
+      id: uid,
+      displayName: safeName,
+      role: UserRole.patient,
+      consentStatus: ConsentStatus.notAsked,
+    );
+  }
+
+  @override
   Future<List<ResourceCard>> getResourceCards() async {
     final snapshot = await _resources.orderBy('sortOrder').get();
     return snapshot.docs.map((doc) => _resourceFromDoc(doc)).toList();

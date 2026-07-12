@@ -7,6 +7,25 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 
 abstract class AppRepository {
+  /// Reads the profile for [uid], or null when no profile exists yet.
+  ///
+  /// InMemory: returns the seeded demo user when [uid] matches, else null.
+  /// Firebase: reads `users/{uid}` and maps it to an [AppUser], or null when
+  /// the document is absent (a freshly signed-in account before bootstrap).
+  Future<AppUser?> getUser(String uid);
+
+  /// Ensures a profile exists for [uid], creating a minimal patient profile
+  /// (role=patient, consentStatus=notAsked) when absent, and returns it.
+  ///
+  /// InMemory: a no-op that returns the seeded demo user (tests never create
+  /// real accounts). Firebase: creates `users/{uid}` if missing, then returns
+  /// the current profile. Idempotent — safe to call on every signed-in boot.
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  });
+
   Future<List<ResourceCard>> getResourceCards();
 
   Future<List<JournalEntry>> getJournalEntriesForPatient({
@@ -234,6 +253,23 @@ class InMemoryAppRepository
     _users[index] = updated;
     await _persist();
     return updated;
+  }
+
+  @override
+  Future<AppUser?> getUser(String uid) async {
+    return _findUser(uid);
+  }
+
+  @override
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    // Demo/in-memory: never mints real accounts. Return the existing seeded
+    // user when it matches; otherwise fall back to the demo patient so the
+    // demo path stays entirely offline and deterministic (tests rely on this).
+    return _findUser(uid) ?? patientDemo;
   }
 
   @override
