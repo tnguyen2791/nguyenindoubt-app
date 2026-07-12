@@ -176,14 +176,18 @@ class _StatGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < stats.length; i++) ...[
-          if (i > 0) const SizedBox(width: NidSpace.s),
-          Expanded(child: _StatTile(stat: stats[i])),
+    // IntrinsicHeight lets the three tiles share the tallest tile's height
+    // without forcing an infinite height inside the vertically-unbounded list.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < stats.length; i++) ...[
+            if (i > 0) const SizedBox(width: NidSpace.s),
+            Expanded(child: _StatTile(stat: stats[i])),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
