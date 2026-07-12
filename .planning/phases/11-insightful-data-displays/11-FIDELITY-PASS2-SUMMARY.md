@@ -72,3 +72,8 @@ None — Groups D and E were implemented exactly to the spec's values. No auto-f
 
 ## Known Stubs
 None introduced. No hardcoded empty data, placeholder text, or unwired components added.
+
+## Self-Check: PASSED
+- All modified source files + this SUMMARY exist on disk.
+- All three commits (28df7e4 Group D, d0ac61e Group E, 33f1884 SUMMARY) present in git log.
+- STATE.md / ROADMAP.md clean (untouched). Branch: design/v1.1-experience.
