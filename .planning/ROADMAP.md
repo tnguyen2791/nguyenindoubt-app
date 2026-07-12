@@ -24,7 +24,7 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
 - [x] **Phase 8: Design System Foundations** - Real type hierarchy, spacing/radius tokens, state-driven pills, neutralize the Material seed leak, one BrandMark. (foundation for all v1.1 visual work) (completed 2026-07-06)
 - [x] **Phase 9: Safety and Affordance Integrity** - Crisis buttons dial/text directly, cards tell the truth about tappability, journal gets an empty state + delete. (completed 2026-07-06)
 - [x] **Phase 10: Brand Arrival and Guided Onboarding** - Animated brand-intro splash + on-brand web loader, patient-first welcome, expectation-setting onboarding, guided first-run. (completed 2026-07-12)
-- [ ] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights.
+- [x] **Phase 11: Insightful Data Displays** - Oura-style hierarchy, a real (or retired) score ring, honest fixed-axis trend bars with a target line, gentle observational insights. (completed 2026-07-12)
 - [ ] **Phase 12: Sharing as a First-Class Flow** - Promote consent to its own destination, one vocabulary, confirm-gated revoke, explicit 2-step invite.
 - [ ] **Phase 13: Motion and Feedback Choreography** - Cross-fade transitions, reassuring consent/import confirmations, sleep-bar grow-in, calm loading and micro-interactions.
 
@@ -223,13 +223,13 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. A gentle, strictly-observational insight line (week-over-week / last-night-vs-baseline) is present and never labels the person.
   5. Consistency/balance micro-insights and a directional clinician summary replace raw counts like "samples".
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 
 - [x] 11-01-PLAN.md — State-color tokens, pure on-device score/insight computation (unit-tested), honest fixed-axis SleepTrendBars with 8h hairline + ramp legend, ScoreRing/ContributorBar/InfoTip/StatDeltaRow widget kit (wave 1)
 - [x] 11-02-PLAN.md — Patient dashboard hierarchy rebuild: greeting/status + insight line, score ring hero with contributors + "not a diagnosis", two-up mini-cards, trend micro-insight, consent card last; coupled widget_test migration (wave 2)
-- [ ] 11-03-PLAN.md — Clinician directional stat-delta summary (avg + delta vs prior week, variability, nights-with-data) replacing raw counts; clinician_affordance_test coverage + full phase verification bar (wave 3)
+- [x] 11-03-PLAN.md — Clinician directional stat-delta summary (avg + delta vs prior week, variability, nights-with-data) replacing raw counts; clinician_affordance_test coverage + full phase verification bar (wave 3)
 
 **UI hint**: yes
 
@@ -284,6 +284,6 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
 | 9. Safety & Affordance Integrity | 3/3 | Complete | 2026-07-06 |
 | 10. Brand Arrival & Guided Onboarding | 3/3 | Complete   | 2026-07-12 |
-| 11. Insightful Data Displays | 2/3 | In Progress|  |
+| 11. Insightful Data Displays | 3/3 | Complete   | 2026-07-12 |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
 | 13. Motion & Feedback Choreography | 0/0 | Not started | - |
