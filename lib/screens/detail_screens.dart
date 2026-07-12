@@ -190,7 +190,7 @@ class _ReadinessDetailBody extends StatelessWidget {
               ),
               const SizedBox(height: NidSpace.l),
               for (var i = 0; i < readiness.contributors.length; i++) ...[
-                if (i > 0) const SizedBox(height: NidSpace.m),
+                if (i > 0) const SizedBox(height: 10), // mock .crows gap:10px
                 _ReadinessContributorRow(
                   contributor: readiness.contributors[i],
                 ),

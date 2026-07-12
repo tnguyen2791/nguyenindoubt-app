@@ -237,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.g_mobiledata_outlined,
           onPressed: _busy ? null : _google,
         ),
-        const SizedBox(height: NidSpace.s),
+        const SizedBox(height: NidSpace.m), // mock .cta margin-top:12px
         // Apple sign-in is not enabled server-side yet, so the button stays
         // gently disabled with calm "coming soon" copy rather than throwing a
         // provider error on tap (project rule: no raw errors, calm surfaces).
@@ -253,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, color: NidColors.faint),
         ),
-        const SizedBox(height: NidSpace.s),
+        const SizedBox(height: NidSpace.m), // mock .cta margin-top:12px
         _ProviderButton(
           label: 'Continue with phone',
           icon: Icons.phone_outlined,

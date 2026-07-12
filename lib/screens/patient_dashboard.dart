@@ -573,7 +573,7 @@ class _ScoreHeroCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < score.contributors.length; i++) ...[
-          if (i > 0) const SizedBox(height: NidSpace.m),
+          if (i > 0) const SizedBox(height: 10), // mock .contrib gap:10px
           ContributorBar(
             name: score.contributors[i].name,
             word: score.contributors[i].word,
