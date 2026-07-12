@@ -341,26 +341,34 @@ class StatDeltaRow extends StatelessWidget {
             ],
           ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: NidColors.ink,
+        const SizedBox(width: NidSpace.s),
+        // Constrain the value/delta column so a long delta (e.g. an
+        // observational insight line) wraps right-aligned instead of
+        // overflowing the row at phone width.
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: NidColors.ink,
+                ),
               ),
-            ),
-            Text(
-              delta,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: flagged ? NidColors.ember : NidColors.moss,
+              Text(
+                delta,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: flagged ? NidColors.ember : NidColors.moss,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

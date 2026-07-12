@@ -128,4 +128,17 @@ void main() {
     expect(find.text('5h short'), findsOneWidget);
     expect(find.text('8h+ optimal'), findsOneWidget);
   });
+
+  test('nidReadinessTone bands match the readiness scoring thresholds', () {
+    // >=.85 optimal, >=.70 good, >=.50 fair, else attention — so a
+    // contributor's bar color always matches its own value.
+    expect(nidReadinessTone(0.92), StateTone.optimal);
+    expect(nidReadinessTone(0.85), StateTone.optimal);
+    expect(nidReadinessTone(0.78), StateTone.good);
+    expect(nidReadinessTone(0.70), StateTone.good);
+    expect(nidReadinessTone(0.55), StateTone.fair);
+    expect(nidReadinessTone(0.50), StateTone.fair);
+    expect(nidReadinessTone(0.40), StateTone.attention);
+    expect(nidReadinessTone(0.0), StateTone.attention);
+  });
 }
