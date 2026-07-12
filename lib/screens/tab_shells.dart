@@ -822,56 +822,6 @@ class _ProfileRow extends StatelessWidget {
   }
 }
 
-/// The Explore tab — re-homes the existing resources content under the
-/// design's "Explore" title + intro line (the full 70-explore rebuild —
-/// featured practice, marker explainers, article rows — lands in P15). The
-/// resource cards, including the crisis/988 line, are kept intact.
-class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({super.key, required this.state});
-
-  final NguyenInDoubtState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            NidSpace.xl,
-            NidSpace.xl,
-            NidSpace.xl,
-            0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Explore',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontSize: 26,
-                  color: NidColors.canopy,
-                  letterSpacing: -0.52,
-                ),
-              ),
-              const SizedBox(height: NidSpace.xs),
-              Text(
-                'Short reads and practices — learn what your body is telling '
-                'you.',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: NidColors.slate,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(child: ResourcesScreen(state: state)),
-      ],
-    );
-  }
-}
-
 /// Shows the P12 Add-sheet stub — a bottom sheet matching 30-add-sheet's
 /// grammar. The one wired action is "Import sleep" (reuses the existing mock
 /// import); the rest are calm placeholders that land in later phases.

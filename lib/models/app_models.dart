@@ -326,6 +326,123 @@ class ResourceCard {
   final int sortOrder;
 }
 
+/// A single "your markers, explained" row in Explore — a wearable signal the
+/// app now reads, paired with its short abbreviation and a plain-language
+/// InfoTip body. Static educational content (no wearable data flows through it),
+/// so it is plain data with no Flutter dependency.
+@immutable
+class ExploreMarker {
+  const ExploreMarker({
+    required this.name,
+    required this.abbr,
+    required this.tip,
+  });
+
+  /// Full signal name shown in the row ("Heart rate variability").
+  final String name;
+
+  /// Compact abbreviation on the row's trailing edge ("HRV", "RHR", "°").
+  final String abbr;
+
+  /// Plain-language InfoTip body: what the signal is and what a change usually
+  /// means, ending reassuring — never a warning, no exclamation marks.
+  final String tip;
+}
+
+/// A short, non-diagnostic article or guided practice surfaced in Explore and
+/// opened in the Article reader (design 72). Static seed content authored in
+/// the brand voice: supportive, educational-not-medical, closing on
+/// reassurance. Plain data — no Flutter dependency — so it stays test-friendly.
+@immutable
+class ExploreArticle {
+  const ExploreArticle({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.readMinutes,
+    required this.rowSummary,
+    required this.section,
+    required this.reviewedBy,
+    required this.updated,
+    required this.lede,
+    required this.body,
+    required this.calloutTitle,
+    required this.calloutBody,
+    required this.practiceTitle,
+    required this.practiceBody,
+    required this.practiceCta,
+    this.featured = false,
+    this.readNextIds = const <String>[],
+  });
+
+  /// Stable id, used for read-next links and featured lookup.
+  final String id;
+
+  /// "Read" or "Practice" — drives the kicker/meta label and the featured
+  /// card's eyebrow.
+  final String kind;
+
+  /// Article title / featured practice name.
+  final String title;
+
+  /// Estimated read/practice time in minutes.
+  final int readMinutes;
+
+  /// One-line summary shown on the Explore row beneath the title.
+  final String rowSummary;
+
+  /// Section eyebrow for the reader kicker ("Mind & mood").
+  final String section;
+
+  /// Reviewer attribution line (byline).
+  final String reviewedBy;
+
+  /// "Updated" recency label ("Jun 2026").
+  final String updated;
+
+  /// Opening lede paragraph.
+  final String lede;
+
+  /// Ordered body blocks — each an [ArticleBlock] (heading or paragraph).
+  final List<ArticleBlock> body;
+
+  /// "Worth knowing" callout heading + body.
+  final String calloutTitle;
+  final String calloutBody;
+
+  /// "Try it now" practice card title, body, and CTA label.
+  final String practiceTitle;
+  final String practiceBody;
+  final String practiceCta;
+
+  /// Whether this is the Explore hero featured practice.
+  final bool featured;
+
+  /// Ids of the "Read next" rows at the foot of the reader.
+  final List<String> readNextIds;
+}
+
+/// One block in an [ExploreArticle] body — either a section heading or a
+/// paragraph. Paragraphs may carry a trailing inline InfoTip term/body.
+@immutable
+class ArticleBlock {
+  const ArticleBlock.heading(this.text)
+    : isHeading = true,
+      tipTerm = null,
+      tipBody = null;
+
+  const ArticleBlock.paragraph(this.text, {this.tipTerm, this.tipBody})
+    : isHeading = false;
+
+  final String text;
+  final bool isHeading;
+
+  /// When non-null, an inline InfoTip is rendered after the paragraph for this
+  /// term (design 72's inline `.tipdot`).
+  final String? tipTerm;
+  final String? tipBody;
+}
+
 @immutable
 class PatientSleepBundle {
   const PatientSleepBundle({

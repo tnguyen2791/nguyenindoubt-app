@@ -5,6 +5,7 @@ import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'clinician_dashboard.dart';
 import 'common_widgets.dart';
+import 'explore_screen.dart';
 import 'patient_dashboard.dart';
 import 'tab_shells.dart';
 
