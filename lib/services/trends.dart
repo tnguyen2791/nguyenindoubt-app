@@ -274,9 +274,7 @@ String _headnote(List<TrendPoint> points) {
     return 'settling in';
   }
   final third = (points.length / 3).floor().clamp(1, points.length);
-  final firstAvg = _mean(
-    points.take(third).map((p) => p.value).toList(),
-  )!;
+  final firstAvg = _mean(points.take(third).map((p) => p.value).toList())!;
   final lastAvg = _mean(
     points.reversed.take(third).map((p) => p.value).toList(),
   )!;
@@ -418,9 +416,7 @@ _Consistency _consistency(
   // Leading empties so the first day sits under its weekday column (Mon=0).
   final first = points.first.date;
   final leading = (first.weekday - 1) % 7;
-  final cells = <HeatLevel>[
-    for (var i = 0; i < leading; i++) HeatLevel.empty,
-  ];
+  final cells = <HeatLevel>[for (var i = 0; i < leading; i++) HeatLevel.empty];
   var onTarget = 0;
   for (final p in points) {
     final level = levelFor(p);
