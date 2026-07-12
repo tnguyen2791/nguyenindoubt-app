@@ -31,19 +31,18 @@ void main() {
     await _completePatientOnboarding(tester, displayName: 'Taylor Nguyen');
 
     expect(find.text('Morning check-in'), findsOneWidget);
-    expect(find.text('No sleep samples yet'), findsOneWidget);
-    expect(find.text('sleep permission needed'), findsOneWidget);
-    expect(find.text('Import requests sleep-only access.'), findsOneWidget);
+    expect(find.text("Start with last night's sleep"), findsOneWidget);
+    expect(find.textContaining('never your journal'), findsOneWidget);
     expect(state.currentUser.displayName, 'Taylor Nguyen');
 
-    final importButton = find.widgetWithText(FilledButton, 'Import');
+    final importButton = find.widgetWithText(FilledButton, 'Import sleep');
     await tester.ensureVisible(importButton);
     await tester.tap(importButton);
     await tester.pumpAndSettle();
 
     expect(state.summaries, isNotEmpty);
     expect(find.text('sleep access ready'), findsOneWidget);
-    expect(find.text('No sleep samples yet'), findsNothing);
+    expect(find.text("Start with last night's sleep"), findsNothing);
   });
 
   testWidgets('patient can reset local demo data', (tester) async {
@@ -102,7 +101,7 @@ void main() {
     expect(state.summaries, isEmpty);
     expect(state.currentUser.consentStatus, ConsentStatus.notAsked);
     expect(find.text('Get started'), findsOneWidget);
-    expect(find.text('No sleep samples yet'), findsNothing);
+    expect(find.text("Start with last night's sleep"), findsNothing);
     expect(find.text('Reset title'), findsNothing);
   });
 
