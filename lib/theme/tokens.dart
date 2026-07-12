@@ -16,6 +16,12 @@ class NidSpace {
   static const double l = 16;
   static const double xl = 24;
   static const double xxl = 32;
+
+  /// Interior padding for cards — a touch roomier than the page gutter.
+  static const double cardPad = 18;
+
+  /// Vertical rhythm between stacked cards / sections.
+  static const double cardGap = 14;
 }
 
 /// The one corner-radius scale.
@@ -23,7 +29,16 @@ class NidRadius {
   const NidRadius._();
 
   /// Cards, headers, empty states — the default surface corner.
-  static const double card = 8;
+  static const double card = 16;
+
+  /// Larger surfaces — hero cards, brand lockups.
+  static const double cardLg = 18;
+
+  /// Controls — buttons, inputs.
+  static const double control = 14;
+
+  /// Small tiles — bullet icon chips, mini indicators.
+  static const double tile = 11;
 
   /// Fully rounded pills.
   static const double pill = 999;

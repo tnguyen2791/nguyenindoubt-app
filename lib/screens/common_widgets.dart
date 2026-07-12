@@ -185,7 +185,7 @@ class SectionCard extends StatelessWidget {
   const SectionCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(NidSpace.l),
+    this.padding = const EdgeInsets.all(NidSpace.cardPad),
   });
 
   final Widget child;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'tokens.dart';
+
 class NidColors {
   static const ink = Color(0xFF17211B);
   static const canopy = Color(0xFF1E4A34);
@@ -173,16 +175,41 @@ ThemeData buildNidTheme() {
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: NidColors.canopy.withValues(alpha: 0.16)),
+        borderRadius: BorderRadius.circular(NidRadius.card),
+        side: BorderSide(color: NidColors.canopy.withValues(alpha: 0.14)),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(NidRadius.control),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 18),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+        // Min height 50 without forcing width: intrinsic when inline (e.g.
+        // the trend-card "Import" button in a Row), full-width only when the
+        // caller wraps it in SizedBox(width: double.infinity). Size.fromHeight
+        // would set width == infinity and blow up unbounded-Row layouts.
+        minimumSize: const Size(0, 50),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: NidColors.slate,
+        textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(NidRadius.control),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(NidRadius.control),
+      ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(NidRadius.control),
         borderSide: const BorderSide(color: NidColors.canopy, width: 2),
       ),
     ),
