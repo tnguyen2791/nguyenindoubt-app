@@ -241,10 +241,21 @@ class ContributorBar extends StatelessWidget {
 /// change usually means — ending reassuring, never a warning, and never an
 /// exclamation mark.
 class InfoTip extends StatelessWidget {
-  const InfoTip({super.key, required this.term, required this.body});
+  const InfoTip({
+    super.key,
+    required this.term,
+    required this.body,
+    this.dotSize = 15,
+    this.iconSize = 9,
+  });
 
   final String term;
   final String body;
+
+  /// Diameter of the info dot. Defaults to the article-reader size (15/9); the
+  /// Explore markers strip passes the larger 16/10 per its mock.
+  final double dotSize;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -276,18 +287,18 @@ class InfoTip extends StatelessWidget {
           );
         },
         child: Container(
-          width: 15,
-          height: 15,
+          width: dotSize,
+          height: dotSize,
           decoration: BoxDecoration(
             color: NidColors.mint,
             shape: BoxShape.circle,
             border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               'i',
               style: TextStyle(
-                fontSize: 9,
+                fontSize: iconSize,
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.italic,
                 color: NidColors.canopy,
@@ -692,6 +703,13 @@ class ConsistencyHeatmap extends StatelessWidget {
               ),
             );
           },
+        ),
+        const SizedBox(height: NidSpace.m),
+        // A 1px hairline (mock `--line`) separates the grid from its legend.
+        Divider(
+          height: 1,
+          thickness: 1,
+          color: NidColors.canopy.withValues(alpha: 0.14),
         ),
         const SizedBox(height: NidSpace.m),
         // Legend: less → more, plus the flag swatch. Wraps so the two groups

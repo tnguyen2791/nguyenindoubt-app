@@ -22,6 +22,12 @@ class NidSpace {
 
   /// Vertical rhythm between stacked cards / sections.
   static const double cardGap = 14;
+
+  /// Space above a standalone section kicker (mock `.k` margin-top ~22px).
+  static const double kickerTop = 22;
+
+  /// Space below a standalone section kicker (mock `.k` margin-bottom 10px).
+  static const double kickerBottom = 10;
 }
 
 /// The one corner-radius scale.

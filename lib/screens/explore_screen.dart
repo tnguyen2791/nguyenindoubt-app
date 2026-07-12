@@ -72,9 +72,13 @@ class ExploreScreen extends StatelessWidget {
         const SizedBox(height: NidSpace.xs),
         Text(
           'Short reads and practices — learn what your body is telling you.',
-          style: theme.textTheme.bodyMedium?.copyWith(color: NidColors.slate),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 13,
+            height: 1.5,
+            color: NidColors.slate,
+          ),
         ),
-        const SizedBox(height: NidSpace.l),
+        const SizedBox(height: 18),
 
         // Featured practice — the mint hero card.
         _FeaturedPracticeCard(
@@ -82,14 +86,14 @@ class ExploreScreen extends StatelessWidget {
           onBegin: () => openArticle(context, featured, articles),
         ),
 
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Your markers, explained'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         _MarkersCard(markers: markers),
 
-        const SizedBox(height: NidSpace.l),
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Mind & mood'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         for (final article in _mindAndMood) ...[
           _ArticleRow(
             article: article,
@@ -152,7 +156,7 @@ class _FeaturedPracticeCard extends StatelessWidget {
               color: NidColors.slate,
             ),
           ),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: 14),
           Align(
             alignment: Alignment.centerLeft,
             child: Material(
@@ -232,7 +236,12 @@ class _MarkerRow extends StatelessWidget {
               ),
             ),
           ),
-          InfoTip(term: marker.name, body: marker.tip),
+          InfoTip(
+            term: marker.name,
+            body: marker.tip,
+            dotSize: 16,
+            iconSize: 10,
+          ),
           const Spacer(),
           Text(
             marker.abbr,
@@ -321,7 +330,7 @@ class _ArticleRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: NidSpace.s),
-              const Icon(Icons.chevron_right, size: 18, color: NidColors.faint),
+              const Icon(Icons.chevron_right, size: 16, color: NidColors.faint),
             ],
           ),
         ),

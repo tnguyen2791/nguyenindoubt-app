@@ -263,21 +263,23 @@ class NotificationsFeedScreen extends StatelessWidget {
         children: [
           for (final section in sections) ...[
             SectionKicker(section.label),
-            const SizedBox(height: NidSpace.m),
+            const SizedBox(height: NidSpace.kickerBottom),
             _NotificationCard(
               items: section.items,
               onOpen: (target) => _open(context, target),
             ),
-            const SizedBox(height: NidSpace.l),
+            const SizedBox(height: NidSpace.kickerTop),
           ],
           const SizedBox(height: NidSpace.s),
           Text(
             "That's everything. We only write when there's something worth "
             'knowing.',
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: NidColors.faint),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontSize: 12,
+              height: 1.6,
+              color: NidColors.faint,
+            ),
           ),
         ],
       ),

@@ -84,8 +84,11 @@ class ClinicianDashboard extends StatelessWidget {
         final worthALook = _WorthALookSection(state: state);
         final roster = _RosterSection(state: state);
 
-        return ListView(
-          padding: const EdgeInsets.all(NidSpace.xl),
+        final content = ListView(
+          // Desktop page padding (mock 32/28/48); phone keeps the 24 gutter.
+          padding: isWide
+              ? const EdgeInsets.fromLTRB(32, 28, 32, 48)
+              : const EdgeInsets.all(NidSpace.xl),
           children: [
             _ProviderHeader(state: state),
             const SizedBox(height: NidSpace.l),
@@ -119,6 +122,18 @@ class ClinicianDashboard extends StatelessWidget {
             ],
           ],
         );
+
+        // Clamp the desktop portal to a comfortable reading measure (mock
+        // 1120px) and centre it; phone widths use the full column.
+        if (isWide) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1120),
+              child: content,
+            ),
+          );
+        }
+        return content;
       },
     );
   }
@@ -169,7 +184,10 @@ class _ProviderHeader extends StatelessWidget {
         const SizedBox(height: NidSpace.xs),
         Text.rich(
           TextSpan(
-            style: theme.textTheme.bodyMedium?.copyWith(color: NidColors.slate),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: NidColors.slate,
+            ),
             children: [
               TextSpan(
                 text:
@@ -267,6 +285,7 @@ class _RequestCard extends StatelessWidget {
               Text(
                 link.patientDisplayName ?? 'Unknown person',
                 style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -418,6 +437,7 @@ class _WorthALookCard extends StatelessWidget {
                     Text(
                       name,
                       style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -527,7 +547,9 @@ class _InviteRow extends StatelessWidget {
               children: [
                 Text(
                   link.patientDisplayName ?? 'Unknown patient',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(fontSize: 15),
                 ),
                 const SizedBox(height: NidSpace.xs),
                 // Lifecycle label — preserved verbatim for affordance/lifecycle

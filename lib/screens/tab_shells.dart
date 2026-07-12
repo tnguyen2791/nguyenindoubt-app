@@ -85,13 +85,16 @@ class _TrendsScreenState extends State<TrendsScreen> {
     );
 
     return ListView(
-      padding: const EdgeInsets.all(NidSpace.xl),
+      padding: const EdgeInsets.symmetric(
+        horizontal: NidSpace.l,
+        vertical: NidSpace.xl,
+      ),
       children: [
         Text(
           'Trends',
           style: theme.textTheme.headlineMedium?.copyWith(
             fontSize: 26,
-            color: NidColors.canopy,
+            color: NidColors.ink,
             letterSpacing: -0.52,
           ),
         ),
@@ -111,9 +114,9 @@ class _TrendsScreenState extends State<TrendsScreen> {
           _TrendsEmpty(signal: _signal)
         else ...[
           _TrendCard(data: data, signalNoun: _signalNoun, state: _state),
-          const SizedBox(height: NidSpace.l),
+          const SizedBox(height: NidSpace.cardGap),
           _WeeklyCard(data: data),
-          const SizedBox(height: NidSpace.l),
+          const SizedBox(height: NidSpace.cardGap),
           _ConsistencyCard(data: data, flagLabel: _flagLabel),
         ],
       ],
@@ -166,29 +169,45 @@ class _SegButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: Material(
-        color: selected ? Colors.white : Colors.transparent,
+    final button = Material(
+      color: selected ? Colors.white : Colors.transparent,
+      borderRadius: BorderRadius.circular(NidRadius.pill),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(NidRadius.pill),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(NidRadius.pill),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: NidSpace.s),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: selected ? NidColors.canopy : NidColors.slate,
-              ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: NidSpace.s),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: selected ? NidColors.canopy : NidColors.slate,
             ),
           ),
         ),
       ),
+    );
+    return Semantics(
+      button: true,
+      selected: selected,
+      // The active pill carries a soft lift (0 1px 3px canopy@12%) per the mock.
+      child: selected
+          ? DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(NidRadius.pill),
+                boxShadow: [
+                  BoxShadow(
+                    color: NidColors.canopy.withValues(alpha: 0.12),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: button,
+            )
+          : button,
     );
   }
 }
@@ -327,7 +346,7 @@ class _TrendCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: 6),
           Row(
             children: [
               Expanded(
@@ -594,7 +613,10 @@ class ProfileScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final prefs = state.preferences;
     return ListView(
-      padding: const EdgeInsets.all(NidSpace.xl),
+      padding: const EdgeInsets.symmetric(
+        horizontal: NidSpace.l,
+        vertical: NidSpace.xl,
+      ),
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -604,7 +626,7 @@ class ProfileScreen extends StatelessWidget {
                 'Profile',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 26,
-                  color: NidColors.canopy,
+                  color: NidColors.ink,
                   letterSpacing: -0.52,
                 ),
               ),
@@ -624,6 +646,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: NidSpace.l),
         // Identity header — canopy avatar with the display-name initial.
         SectionCard(
+          padding: const EdgeInsets.all(NidSpace.l),
           child: Row(
             children: [
               Container(
@@ -637,6 +660,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Text(
                   _initial,
                   style: theme.textTheme.titleLarge?.copyWith(
+                    fontSize: 22,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
@@ -650,6 +674,7 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       state.currentUser.displayName,
                       style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 17,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -657,6 +682,8 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       'Demo member · data stays on this device',
                       style: theme.textTheme.bodySmall?.copyWith(
+                        fontSize: 12,
+                        height: 1.5,
                         color: NidColors.moss,
                         fontWeight: FontWeight.w600,
                       ),
@@ -667,10 +694,9 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: NidSpace.l),
-
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Account'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         _ProfileGroup(
           rows: [
             _ProfileRow(
@@ -686,10 +712,9 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NidSpace.l),
-
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Sharing'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         _ProfileGroup(
           rows: [
             _ProfileRow(
@@ -705,10 +730,9 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NidSpace.l),
-
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Preferences'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         _ProfileGroup(
           rows: [
             _ProfileRow(
@@ -731,10 +755,9 @@ class ProfileScreen extends StatelessWidget {
             _ProfileRow(icon: Icons.lock_outline, label: 'Privacy & data'),
           ],
         ),
-        const SizedBox(height: NidSpace.l),
-
+        const SizedBox(height: NidSpace.kickerTop),
         const SectionKicker('Support'),
-        const SizedBox(height: NidSpace.m),
+        const SizedBox(height: NidSpace.kickerBottom),
         _ProfileGroup(
           rows: [
             // Safety must stay reachable (standing project rule) now that the
@@ -884,7 +907,7 @@ class _ProfileRow extends StatelessWidget {
               ),
               const SizedBox(width: NidSpace.s),
             ],
-            const Icon(Icons.chevron_right, size: 18, color: NidColors.faint),
+            const Icon(Icons.chevron_right, size: 16, color: NidColors.faint),
           ],
         ),
       ),

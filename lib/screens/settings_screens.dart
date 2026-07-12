@@ -126,7 +126,7 @@ class GoalsSettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(NidSpace.l),
         children: [
           const SectionKicker('Sleep'),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: NidSpace.kickerBottom),
           _GoalCard(
             value: _durationLabel(_prefs.sleepGoalMinutes),
             valueLabel: 'nightly sleep goal',
@@ -138,10 +138,10 @@ class GoalsSettingsScreen extends StatelessWidget {
                 ? () => _bumpSleep(_sleepStepMinutes)
                 : null,
           ),
-          const SizedBox(height: NidSpace.xl),
+          const SizedBox(height: NidSpace.kickerTop),
 
           const SectionKicker('Activity'),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: NidSpace.kickerBottom),
           _GoalCard(
             value: _stepLabel(_prefs.stepTarget),
             valueLabel: 'daily step target',
@@ -158,9 +158,11 @@ class GoalsSettingsScreen extends StatelessWidget {
           Text(
             'Goals shape guidance only — they never change your scores.',
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: NidColors.faint),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontSize: 12,
+              height: 1.6,
+              color: NidColors.faint,
+            ),
           ),
         ],
       ),
@@ -174,6 +176,24 @@ String _durationLabel(int minutes) {
   final m = minutes % 60;
   final mm = m.toString().padLeft(2, '0');
   return '${h}h ${mm}m';
+}
+
+/// Splits a goal readout ("8h 00m") into inline spans so the unit letters
+/// (h / m) render small (15px/600/muted) beside the big 34px number, per the
+/// mock's `.goal .num` + `.u` grammar. Pure-numeric values ("9,000") stay big.
+List<InlineSpan> _goalValueSpans(String value) {
+  const unitStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0,
+    color: NidColors.slate,
+  );
+  final spans = <InlineSpan>[];
+  for (final ch in value.characters) {
+    final isUnit = RegExp(r'[a-zA-Z]').hasMatch(ch);
+    spans.add(TextSpan(text: ch, style: isUnit ? unitStyle : null));
+  }
+  return spans;
 }
 
 /// A grouped step-target label ("9,000").
@@ -219,8 +239,8 @@ class _GoalCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      value,
+                    Text.rich(
+                      TextSpan(children: _goalValueSpans(value)),
                       style: const TextStyle(
                         fontSize: 34,
                         fontWeight: FontWeight.w700,
@@ -347,7 +367,7 @@ class NotificationSettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(NidSpace.l),
         children: [
           const SectionKicker('Daily'),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: NidSpace.kickerBottom),
           _ToggleGroup(
             rows: [
               _ToggleRow(
@@ -370,10 +390,10 @@ class NotificationSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: NidSpace.xl),
+          const SizedBox(height: NidSpace.kickerTop),
 
           const SectionKicker('Signals'),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: NidSpace.kickerBottom),
           _ToggleGroup(
             rows: [
               _ToggleRow(
@@ -396,10 +416,10 @@ class NotificationSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: NidSpace.xl),
+          const SizedBox(height: NidSpace.kickerTop),
 
           const SectionKicker('Quiet hours'),
-          const SizedBox(height: NidSpace.m),
+          const SizedBox(height: NidSpace.kickerBottom),
           _QuietHoursCard(
             enabled: prefs.quietHoursEnabled,
             fromLabel: _clockLabel(prefs.quietHoursFromMinutes),
@@ -412,9 +432,11 @@ class NotificationSettingsScreen extends StatelessWidget {
             "We only write when there's something worth knowing — never "
             'streaks, never guilt.',
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: NidColors.faint),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontSize: 12,
+              height: 1.6,
+              color: NidColors.faint,
+            ),
           ),
         ],
       ),
@@ -442,6 +464,7 @@ class _QuietHoursCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
+      padding: const EdgeInsets.all(NidSpace.l),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -485,13 +508,13 @@ class _QuietHoursCard extends StatelessWidget {
               NidToggle(value: enabled, onChanged: onChanged),
             ],
           ),
-          const SizedBox(height: NidSpace.l),
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
                 child: _TimePill(label: 'From', time: fromLabel),
               ),
-              const SizedBox(width: NidSpace.s),
+              const SizedBox(width: 10),
               Expanded(
                 child: _TimePill(label: 'Until', time: untilLabel),
               ),
