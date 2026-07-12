@@ -264,9 +264,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width < 560;
-    final roleLabel = state.isClinician
-        ? 'Clinician demo override'
-        : 'Patient demo';
+    final roleLabel = state.isClinician ? 'Clinician demo' : 'Patient demo';
 
     return AppBar(
       backgroundColor: NidColors.fog,
@@ -348,12 +346,13 @@ class _OnboardingScreen extends StatelessWidget {
                     : ListView(
                         shrinkWrap: true,
                         children: [
+                          // Stag gets top billing on mobile (ONB-02).
+                          const _StagPanel(),
+                          const SizedBox(height: NidSpace.l),
                           _HeroCopy(
                             onPatient: onPatient,
                             onClinician: onClinician,
                           ),
-                          const SizedBox(height: NidSpace.l),
-                          const _StagPanel(),
                         ],
                       ),
               ),
@@ -385,30 +384,31 @@ class _HeroCopy extends StatelessWidget {
           'Sleep data, private reflection, and mental-health guides with enough humility to leave room for doubt.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
+        const SizedBox(height: NidSpace.xl),
+        // Single patient-first primary action (ONB-02).
+        FilledButton.icon(
+          onPressed: onPatient,
+          icon: const Icon(Icons.person_add_alt_outlined),
+          label: const Text('Get started'),
+        ),
         const SizedBox(height: NidSpace.m),
+        // Required local-only disclosure, kept but lowered to calm
+        // secondary copy (relocated, not deleted — ONB-02).
         Text(
           'Demo auth is local to this device. Firebase sign-in is not live yet.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: NidColors.moss,
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
         ),
-        const SizedBox(height: NidSpace.xl),
-        Wrap(
-          spacing: NidSpace.m,
-          runSpacing: NidSpace.m,
-          children: [
-            FilledButton.icon(
-              onPressed: onPatient,
-              icon: const Icon(Icons.person_add_alt_outlined),
-              label: const Text('Patient sign up'),
-            ),
-            OutlinedButton.icon(
-              onPressed: onClinician,
-              icon: const Icon(Icons.badge_outlined),
-              label: const Text('Clinician demo override'),
-            ),
-          ],
+        const SizedBox(height: NidSpace.l),
+        // Clinician entry stays reachable, just visually quiet (ONB-02).
+        TextButton(
+          onPressed: onClinician,
+          style: TextButton.styleFrom(
+            foregroundColor: NidColors.slate,
+            padding: EdgeInsets.zero,
+          ),
+          child: const Text("I'm a clinician"),
         ),
       ],
     );

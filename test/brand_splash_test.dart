@@ -24,7 +24,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Onboarding surface is reachable immediately.
-    expect(find.text('Patient sign up'), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
     // No splash-only widget remains.
     expect(find.byKey(BrandSplashGate.splashKey), findsNothing);
   });
@@ -39,7 +39,7 @@ void main() {
 
     // The splash renders first.
     expect(find.byKey(BrandSplashGate.splashKey), findsOneWidget);
-    expect(find.text('Patient sign up'), findsNothing);
+    expect(find.text('Get started'), findsNothing);
 
     // The animation is finite, so a bounded settle completes without timeout.
     await tester.pumpAndSettle(
@@ -49,7 +49,7 @@ void main() {
     );
 
     // The signed-out onboarding is shown and the splash is gone.
-    expect(find.text('Patient sign up'), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
     expect(find.byKey(BrandSplashGate.splashKey), findsNothing);
     expect(state.splashHasPlayed, isTrue);
   });

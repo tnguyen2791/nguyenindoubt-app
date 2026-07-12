@@ -25,8 +25,8 @@ void main() {
     await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
-    expect(find.text('Patient sign up'), findsOneWidget);
-    expect(find.text('Clinician demo override'), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
+    expect(find.text("I'm a clinician"), findsOneWidget);
 
     await _completePatientOnboarding(tester, displayName: 'Taylor Nguyen');
 
@@ -101,7 +101,7 @@ void main() {
     expect(state.healthPermissionGranted, isFalse);
     expect(state.summaries, isEmpty);
     expect(state.currentUser.consentStatus, ConsentStatus.notAsked);
-    expect(find.text('Patient sign up'), findsOneWidget);
+    expect(find.text('Get started'), findsOneWidget);
     expect(find.text('No sleep samples yet'), findsNothing);
     expect(find.text('Reset title'), findsNothing);
   });
@@ -115,7 +115,7 @@ void main() {
     await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Patient sign up'));
+    await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();
 
     expect(
@@ -224,7 +224,7 @@ void main() {
     await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Clinician demo override'));
+    await tester.tap(find.text("I'm a clinician"));
     await tester.pumpAndSettle();
 
     expect(state.journalEntries, isEmpty);
@@ -258,7 +258,7 @@ void main() {
 
     await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Clinician demo override'));
+    await tester.tap(find.text("I'm a clinician"));
     await tester.pumpAndSettle();
 
     expect(find.text('Invite status'), findsOneWidget);
@@ -312,7 +312,7 @@ void main() {
     expect(restoredState.sessionStage, SessionStage.patient);
     expect(restoredState.currentUser.displayName, 'Taylor Nguyen');
     expect(find.text('Morning check-in'), findsOneWidget);
-    expect(find.text('Patient sign up'), findsNothing);
+    expect(find.text('Get started'), findsNothing);
   });
 
   testWidgets(
@@ -333,7 +333,7 @@ void main() {
         NguyenInDoubtApp(state: firstState, showSplash: false),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Clinician demo override'));
+      await tester.tap(find.text("I'm a clinician"));
       await tester.pumpAndSettle();
 
       final restoredState = NguyenInDoubtState(
@@ -390,7 +390,10 @@ Future<void> _expectSurfacesRenderAtSize(WidgetTester tester, Size size) async {
 
   await state.signOut();
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Clinician demo override'));
+  final clinicianLink = find.text("I'm a clinician");
+  await tester.ensureVisible(clinicianLink);
+  await tester.pumpAndSettle();
+  await tester.tap(clinicianLink);
   await tester.pumpAndSettle();
   expect(tester.takeException(), isNull);
   expect(
@@ -403,7 +406,10 @@ Future<void> _completePatientOnboarding(
   WidgetTester tester, {
   String displayName = 'Alex Nguyen',
 }) async {
-  await tester.tap(find.text('Patient sign up'));
+  final getStarted = find.text('Get started');
+  await tester.ensureVisible(getStarted);
+  await tester.pumpAndSettle();
+  await tester.tap(getStarted);
   await tester.pumpAndSettle();
   expect(find.text('Patient onboarding'), findsOneWidget);
   await tester.enterText(find.byType(TextField), displayName);

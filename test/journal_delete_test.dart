@@ -178,7 +178,7 @@ Future<void> _completePatientOnboarding(
   WidgetTester tester, {
   String displayName = 'Alex Nguyen',
 }) async {
-  await tester.tap(find.text('Patient sign up'));
+  await tester.tap(find.text('Get started'));
   await tester.pumpAndSettle();
   expect(find.text('Patient onboarding'), findsOneWidget);
   await tester.enterText(find.byType(TextField), displayName);

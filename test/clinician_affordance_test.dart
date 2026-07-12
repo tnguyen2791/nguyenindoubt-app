@@ -29,7 +29,7 @@ void main() {
 
     await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Clinician demo override'));
+    await tester.tap(find.text("I'm a clinician"));
     await tester.pumpAndSettle();
 
     // Seeded links: NID-8274 accepted, NID-1138 pending, NID-4455 expired.
