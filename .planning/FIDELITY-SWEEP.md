@@ -1,5 +1,23 @@
 # Fidelity Sweep — findings backlog (2026-07-12)
 
+> **STATUS — APPLIED.** Pass 1 (this backlog) applied in commit `55dae8e`;
+> a second pass re-audited the untouched Today / detail / login screens and
+> applied confirmed drift in `4b704c3` (contributor gaps 12→10, login CTA gaps
+> 8→12; several audit findings were rejected as false positives). Verified:
+> `dart format` clean, `flutter analyze` clean, 121 tests pass, `flutter build
+> web` succeeds. A separate branding gap surfaced from running the app on device
+> — the app shipped the **default Flutter icon** and a "Nguyenindoubt App" label
+> on every platform; fixed in `563198a` (real NiD icon + "NguyenInDoubt" name +
+> branded launch screen across iOS/Android/web). See §"Deviations" below.
+>
+> **Deviations from this backlog (intentional, mock-justified):** item 4 said
+> only Trends H1 → ink, but both `20-trends` and `31-profile` mocks inherit
+> `--ink` for `h1` (no color override) while the code had *both* on canopy — so
+> both page titles were set to ink. Deferred (ambiguous/structural, flagged to
+> owner): shared-readings card grammar 18/22; provider Worth-a-look grid + roster
+> table responsive layout; §5 owner-ruling items.
+
+
 Full-app audit of the v1.2 buildout vs the design mocks (`docs/design-handoff/screens/*`). Four read-only auditors (auth+Today+detail · Trends+widgets · Explore/Profile/Settings/Notifications · Sharing/Provider/Weekly). **Verdict: structurally faithful** — tokens hex-for-hex, radii/widget geometry (ScoreRing, TrendBars, TrendLine, ConsistencyHeatmap, 44×26 toggle + knob shadow, 40×40 steppers, 36×36 tiles, kicker type) all EXACT; no leaked hex. Remaining drift is chrome + type-size, mechanical and low-risk.
 
 ## Already fixed
