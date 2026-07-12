@@ -448,54 +448,109 @@ class _PatientOnboardingScreenState extends State<_PatientOnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final trimmed = _nameController.text.trim();
     return Scaffold(
       body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
-          child: Padding(
-            padding: const EdgeInsets.all(NidSpace.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                IconButton(
-                  tooltip: 'Back',
-                  onPressed: widget.onBack,
-                  icon: const Icon(Icons.arrow_back_outlined),
-                ),
-                const SizedBox(height: NidSpace.l),
-                const BrandMark(size: 64),
-                const SizedBox(height: NidSpace.l),
-                Text(
-                  'Patient onboarding',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: NidSpace.m),
-                Text(
-                  'Demo mode stores your profile, journal entries, sleep imports, and consent state on this device only. Account-backed production storage is not enabled.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: NidSpace.xl),
-                TextField(
-                  controller: _nameController,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    labelText: 'Display name',
-                    prefixIcon: Icon(Icons.person_outline),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: Padding(
+              padding: const EdgeInsets.all(NidSpace.xl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    tooltip: 'Back',
+                    onPressed: widget.onBack,
+                    icon: const Icon(Icons.arrow_back_outlined),
                   ),
-                  onSubmitted: widget.onComplete,
-                ),
-                const SizedBox(height: NidSpace.xl),
-                FilledButton.icon(
-                  onPressed: () => widget.onComplete(_nameController.text),
-                  icon: const Icon(Icons.check_outlined),
-                  label: const Text('Continue'),
-                ),
-              ],
+                  const SizedBox(height: NidSpace.l),
+                  const BrandMark(size: 64),
+                  const SizedBox(height: NidSpace.l),
+                  Text(
+                    'Patient onboarding',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: NidSpace.m),
+                  Text(
+                    'Demo mode stores your profile, journal entries, sleep imports, and consent state on this device only. Account-backed production storage is not enabled.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: NidSpace.l),
+                  // What this app does — three calm expectations (ONB-03).
+                  const _ExpectationBullet(
+                    icon: Icons.bedtime_outlined,
+                    label: 'Sleep, privately imported',
+                  ),
+                  const SizedBox(height: NidSpace.s),
+                  const _ExpectationBullet(
+                    icon: Icons.lock_outline,
+                    label: 'A journal only you can read',
+                  ),
+                  const SizedBox(height: NidSpace.s),
+                  const _ExpectationBullet(
+                    icon: Icons.menu_book_outlined,
+                    label: 'Guides, with room for doubt',
+                  ),
+                  const SizedBox(height: NidSpace.xl),
+                  TextField(
+                    controller: _nameController,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      labelText: 'Display name',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        widget.onComplete(value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: NidSpace.xl),
+                  FilledButton.icon(
+                    // An empty or whitespace-only name cannot submit (ONB-03).
+                    onPressed: trimmed.isEmpty
+                        ? null
+                        : () => widget.onComplete(_nameController.text),
+                    icon: const Icon(Icons.check_outlined),
+                    label: const Text('Continue'),
+                  ),
+                  const SizedBox(height: NidSpace.s),
+                  TextButton(
+                    // Explicit skip proceeds with the demo fallback name —
+                    // completePatientOnboarding trims empty input and falls
+                    // back to the seeded demo profile name.
+                    onPressed: () => widget.onComplete(''),
+                    child: const Text('Skip for now'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ExpectationBullet extends StatelessWidget {
+  const _ExpectationBullet({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: NidColors.slate),
+        const SizedBox(width: NidSpace.s),
+        Expanded(
+          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
   }
 }

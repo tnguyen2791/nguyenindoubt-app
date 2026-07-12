@@ -135,6 +135,63 @@ void main() {
     );
   });
 
+  testWidgets('onboarding guards the name field and offers a skip fallback', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Get started'));
+    await tester.pumpAndSettle();
+
+    // The three expectation bullets are on the single onboarding screen.
+    expect(find.text('Sleep, privately imported'), findsOneWidget);
+    expect(find.text('A journal only you can read'), findsOneWidget);
+    expect(find.text('Guides, with room for doubt'), findsOneWidget);
+
+    FilledButton continueButton() => tester.widget<FilledButton>(
+      find.ancestor(
+        of: find.text('Continue'),
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton),
+      ),
+    );
+
+    // Empty and whitespace-only names cannot submit.
+    await tester.enterText(find.byType(TextField), '');
+    await tester.pump();
+    expect(continueButton().onPressed, isNull);
+    await tester.enterText(find.byType(TextField), '   ');
+    await tester.pump();
+    expect(continueButton().onPressed, isNull);
+
+    // A real name enables Continue.
+    await tester.enterText(find.byType(TextField), 'Taylor Nguyen');
+    await tester.pump();
+    expect(continueButton().onPressed, isNotNull);
+
+    // Explicit skip proceeds with the demo fallback name.
+    await tester.enterText(find.byType(TextField), '   ');
+    await tester.pump();
+    final skip = find.text('Skip for now');
+    await tester.ensureVisible(skip);
+    await tester.pumpAndSettle();
+    await tester.tap(skip);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Morning check-in'), findsOneWidget);
+    expect(state.currentUser.displayName, demoPatient.displayName);
+  });
+
   testWidgets('safety actions provide explicit urgent support fallback', (
     tester,
   ) async {
