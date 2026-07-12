@@ -99,7 +99,9 @@ void main() {
         healthDataProvider: MockHealthDataProvider(),
       );
 
-      await tester.pumpWidget(NguyenInDoubtApp(state: state));
+      await tester.pumpWidget(
+        NguyenInDoubtApp(state: state, showSplash: false),
+      );
       await tester.pumpAndSettle();
       await _completePatientOnboarding(tester);
 
@@ -129,7 +131,9 @@ void main() {
         healthDataProvider: MockHealthDataProvider(),
       );
 
-      await tester.pumpWidget(NguyenInDoubtApp(state: state));
+      await tester.pumpWidget(
+        NguyenInDoubtApp(state: state, showSplash: false),
+      );
       await tester.pumpAndSettle();
       await _completePatientOnboarding(tester);
       await _openJournal(tester);

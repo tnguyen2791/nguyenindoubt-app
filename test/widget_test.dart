@@ -22,7 +22,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
     expect(find.text('Patient sign up'), findsOneWidget);
@@ -57,7 +57,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
     await _completePatientOnboarding(tester);
@@ -112,7 +112,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Patient sign up'));
@@ -143,7 +143,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
     await _completePatientOnboarding(tester);
@@ -174,7 +174,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
     await _completePatientOnboarding(tester);
 
@@ -221,7 +221,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Clinician demo override'));
@@ -256,7 +256,7 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: state));
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Clinician demo override'));
     await tester.pumpAndSettle();
@@ -291,7 +291,9 @@ void main() {
       healthDataProvider: MockHealthDataProvider(),
     );
 
-    await tester.pumpWidget(NguyenInDoubtApp(state: firstState));
+    await tester.pumpWidget(
+      NguyenInDoubtApp(state: firstState, showSplash: false),
+    );
     await tester.pumpAndSettle();
     await _completePatientOnboarding(tester, displayName: 'Taylor Nguyen');
 
@@ -302,7 +304,9 @@ void main() {
       ),
       healthDataProvider: MockHealthDataProvider(),
     );
-    await tester.pumpWidget(NguyenInDoubtApp(state: restoredState));
+    await tester.pumpWidget(
+      NguyenInDoubtApp(state: restoredState, showSplash: false),
+    );
     await tester.pumpAndSettle();
 
     expect(restoredState.sessionStage, SessionStage.patient);
@@ -325,7 +329,9 @@ void main() {
         healthDataProvider: MockHealthDataProvider(),
       );
 
-      await tester.pumpWidget(NguyenInDoubtApp(state: firstState));
+      await tester.pumpWidget(
+        NguyenInDoubtApp(state: firstState, showSplash: false),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Clinician demo override'));
       await tester.pumpAndSettle();
@@ -337,7 +343,9 @@ void main() {
         ),
         healthDataProvider: MockHealthDataProvider(),
       );
-      await tester.pumpWidget(NguyenInDoubtApp(state: restoredState));
+      await tester.pumpWidget(
+        NguyenInDoubtApp(state: restoredState, showSplash: false),
+      );
       await tester.pumpAndSettle();
 
       expect(restoredState.sessionStage, SessionStage.clinician);
@@ -365,7 +373,7 @@ Future<void> _expectSurfacesRenderAtSize(WidgetTester tester, Size size) async {
     healthDataProvider: MockHealthDataProvider(),
   );
 
-  await tester.pumpWidget(NguyenInDoubtApp(state: state));
+  await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
   await tester.pumpAndSettle();
   await _completePatientOnboarding(tester);
   expect(tester.takeException(), isNull);
