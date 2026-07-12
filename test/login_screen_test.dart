@@ -38,13 +38,15 @@ void main() {
     expect(find.text('Continue with Apple'), findsOneWidget);
     expect(find.text('Continue with phone'), findsOneWidget);
 
-    // All three are enabled on the chooser (DemoAuthService never blocks).
+    // Google and phone are live; Apple is gently disabled with calm
+    // "coming soon" copy (provider not enabled server-side yet).
     expect(
       _buttonForLabel(tester, 'Continue with Google').onPressed,
       isNotNull,
     );
-    expect(_buttonForLabel(tester, 'Continue with Apple').onPressed, isNotNull);
     expect(_buttonForLabel(tester, 'Continue with phone').onPressed, isNotNull);
+    expect(_buttonForLabel(tester, 'Continue with Apple').onPressed, isNull);
+    expect(find.text('Apple sign-in is coming soon.'), findsOneWidget);
   });
 
   testWidgets('phone entry guards empty and invalid numbers', (tester) async {
@@ -104,12 +106,11 @@ void main() {
   ) async {
     await _pumpLogin(tester);
 
-    // Tap each provider button; DemoAuthService no-ops, so nothing should
-    // render a raw exception. Assert none of the usual raw-error markers show.
-    for (final label in const ['Continue with Google', 'Continue with Apple']) {
-      await tester.tap(find.text(label));
-      await tester.pumpAndSettle();
-    }
+    // Tap the live Google provider; DemoAuthService no-ops, so nothing should
+    // render a raw exception. Apple is disabled (coming soon) so it is not
+    // tapped here. Assert none of the usual raw-error markers show.
+    await tester.tap(find.text('Continue with Google'));
+    await tester.pumpAndSettle();
 
     for (final rawMarker in const [
       'Exception',

@@ -270,6 +270,21 @@ class NguyenInDoubtState extends ChangeNotifier {
       );
       _inviteValidation = null;
       await refresh();
+    } on PrivacyException {
+      // Firebase mode intentionally throws here — invite acceptance needs a
+      // trusted backend operation that isn't live yet. Surface it as calm
+      // "not available" invite copy (project rule: no raw errors in the UI),
+      // never an uncaught throw. The demo path never reaches this branch (its
+      // acceptInvite succeeds once canAccept is true).
+      _inviteValidation = InviteValidationResult(
+        status: InviteValidationStatus.invalid,
+        normalizedCode: validation.normalizedCode,
+        clinicianDisplayName: validation.clinicianDisplayName,
+        message:
+            'Accepting invites is not available yet. We\'ll enable clinician '
+            'sharing soon — nothing was changed.',
+      );
+      notifyListeners();
     } finally {
       _setBusy(false);
     }
@@ -281,6 +296,17 @@ class NguyenInDoubtState extends ChangeNotifier {
       _currentUser = await repository.revokeConsent(patientId: _currentUser.id);
       _inviteValidation = null;
       await refresh();
+    } on PrivacyException catch (error) {
+      // Calm surface for a Firebase-mode revoke that has nothing to revoke.
+      // Demo mode only throws when there is genuinely no accepted link, which
+      // the UI already guards, so the demo tests never hit this path.
+      debugPrint('[state] revokeConsent unavailable: $error');
+      _inviteValidation = InviteValidationResult(
+        status: InviteValidationStatus.invalid,
+        normalizedCode: '',
+        message: 'Sharing controls are not available yet. Nothing was changed.',
+      );
+      notifyListeners();
     } finally {
       _setBusy(false);
     }

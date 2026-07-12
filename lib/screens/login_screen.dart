@@ -98,11 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
     widget.onSignedIn?.call();
   });
 
-  Future<void> _apple() => _guard(() async {
-    await widget.auth.signInWithApple();
-    widget.onSignedIn?.call();
-  });
-
   Future<void> _startPhone() => _guard(() async {
     final result = await widget.auth.startPhoneSignIn(
       _phoneController.text.trim(),
@@ -194,10 +189,21 @@ class _LoginScreenState extends State<LoginScreen> {
           label: const Text('Continue with Google'),
         ),
         const SizedBox(height: NidSpace.m),
+        // Apple sign-in is not enabled server-side yet, so the button stays
+        // gently disabled with calm "coming soon" copy rather than throwing a
+        // provider error on tap (project rule: no raw errors, calm surfaces).
         FilledButton.icon(
-          onPressed: _busy ? null : _apple,
+          onPressed: null,
           icon: const Icon(Icons.apple),
           label: const Text('Continue with Apple'),
+        ),
+        const SizedBox(height: NidSpace.xs),
+        Text(
+          'Apple sign-in is coming soon.',
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: NidColors.faint),
         ),
         const SizedBox(height: NidSpace.m),
         FilledButton.icon(
