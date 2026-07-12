@@ -82,6 +82,8 @@ class NguyenInDoubtApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NguyenInDoubt',
       theme: buildNidTheme(),
+      darkTheme: buildNidDarkTheme(),
+      themeMode: ThemeMode.system,
       home: BrandSplashGate(state: state, enabled: showSplash),
     );
   }
@@ -109,6 +111,8 @@ class NguyenInDoubtAuthApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NguyenInDoubt',
       theme: buildNidTheme(),
+      darkTheme: buildNidDarkTheme(),
+      themeMode: ThemeMode.system,
       home: AuthGate(
         authService: authService,
         repository: repository,

@@ -65,7 +65,7 @@ class ExploreScreen extends StatelessWidget {
           'Explore',
           style: theme.textTheme.headlineMedium?.copyWith(
             fontSize: 26,
-            color: NidColors.canopy,
+            color: context.nid.canopy,
             letterSpacing: -0.52,
           ),
         ),
@@ -75,7 +75,7 @@ class ExploreScreen extends StatelessWidget {
           style: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             height: 1.5,
-            color: NidColors.slate,
+            color: context.nid.slate,
           ),
         ),
         const SizedBox(height: 18),
@@ -122,7 +122,7 @@ class _FeaturedPracticeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(NidSpace.l + 4),
       decoration: BoxDecoration(
-        color: NidColors.mint,
+        color: context.nid.mint,
         borderRadius: BorderRadius.circular(NidRadius.cardLg),
       ),
       child: Column(
@@ -130,43 +130,43 @@ class _FeaturedPracticeCard extends StatelessWidget {
         children: [
           Text(
             '${article.kind} · ${article.readMinutes} min',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.9,
-              color: NidColors.moss,
+              color: context.nid.moss,
             ),
           ),
           const SizedBox(height: NidSpace.xs + 2),
           Text(
             article.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.19,
-              color: NidColors.canopy,
+              color: context.nid.canopy,
             ),
           ),
           const SizedBox(height: NidSpace.xs + 2),
           Text(
             article.lede,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.5,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
           ),
           const SizedBox(height: 14),
           Align(
             alignment: Alignment.centerLeft,
             child: Material(
-              color: NidColors.canopy,
+              color: context.nid.canopy,
               borderRadius: BorderRadius.circular(NidRadius.pill),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onBegin,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: NidSpace.l + 2,
                     vertical: NidSpace.s + 1,
                   ),
@@ -175,7 +175,7 @@ class _FeaturedPracticeCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: context.nid.onAccent,
                     ),
                   ),
                 ),
@@ -205,7 +205,7 @@ class _MarkersCard extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                color: NidColors.canopy.withValues(alpha: 0.14),
+                color: context.nid.canopy.withValues(alpha: 0.14),
               ),
             _MarkerRow(marker: markers[i]),
           ],
@@ -229,10 +229,10 @@ class _MarkerRow extends StatelessWidget {
           Flexible(
             child: Text(
               marker.name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: NidColors.ink,
+                color: context.nid.ink,
               ),
             ),
           ),
@@ -245,10 +245,10 @@ class _MarkerRow extends StatelessWidget {
           const Spacer(),
           Text(
             marker.abbr,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ],
@@ -276,7 +276,7 @@ class _ArticleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: context.nid.surface,
       borderRadius: BorderRadius.circular(NidRadius.card),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -284,7 +284,9 @@ class _ArticleRow extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(NidRadius.card),
-            border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+            border: Border.all(
+              color: context.nid.canopy.withValues(alpha: 0.14),
+            ),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: NidSpace.l,
@@ -297,10 +299,10 @@ class _ArticleRow extends StatelessWidget {
                 height: 40,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: NidColors.mint,
+                  color: context.nid.mint,
                   borderRadius: BorderRadius.circular(NidRadius.tile),
                 ),
-                child: Icon(_icon, size: 20, color: NidColors.canopy),
+                child: Icon(_icon, size: 20, color: context.nid.canopy),
               ),
               const SizedBox(width: NidSpace.m + 1),
               Expanded(
@@ -309,28 +311,28 @@ class _ArticleRow extends StatelessWidget {
                   children: [
                     Text(
                       article.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         height: 1.3,
-                        color: NidColors.ink,
+                        color: context.nid.ink,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       '${article.kind} · ${article.readMinutes} min — '
                       '${article.rowSummary}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: NidColors.faint,
+                        color: context.nid.faint,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: NidSpace.s),
-              const Icon(Icons.chevron_right, size: 16, color: NidColors.faint),
+              Icon(Icons.chevron_right, size: 16, color: context.nid.faint),
             ],
           ),
         ),
@@ -360,42 +362,42 @@ class _ExploreDisclaimer extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Educational, not medical advice — and never a diagnosis.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
                 height: 1.6,
-                color: NidColors.faint,
+                color: context.nid.faint,
               ),
             ),
             const SizedBox(height: NidSpace.xs),
             Text.rich(
-              const TextSpan(
+              TextSpan(
                 children: [
                   TextSpan(
                     text: 'If things feel heavy, talking helps. ',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: NidColors.slate,
+                      color: context.nid.slate,
                     ),
                   ),
-                  TextSpan(text: 'In the US, call or text '),
+                  const TextSpan(text: 'In the US, call or text '),
                   TextSpan(
                     text: '988',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: NidColors.canopy,
+                      color: context.nid.canopy,
                     ),
                   ),
-                  TextSpan(text: ' anytime.'),
+                  const TextSpan(text: ' anytime.'),
                 ],
               ),
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 height: 1.6,
-                color: NidColors.faint,
+                color: context.nid.faint,
               ),
             ),
           ],
@@ -412,7 +414,7 @@ void openSafety(BuildContext context) {
     fadeDetailRoute<void>(
       Scaffold(
         appBar: AppBar(
-          backgroundColor: NidColors.fog,
+          backgroundColor: context.nid.fog,
           title: const Text('Safety and limits'),
         ),
         body: const SafetyScreen(),
@@ -461,10 +463,10 @@ class ArticleReaderScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         leading: IconButton(
           tooltip: 'Back',
-          icon: const Icon(Icons.arrow_back_outlined, color: NidColors.canopy),
+          icon: Icon(Icons.arrow_back_outlined, color: context.nid.canopy),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),
@@ -478,11 +480,11 @@ class ArticleReaderScreen extends StatelessWidget {
         children: [
           Text(
             '${article.section} · ${article.kind} · ${article.readMinutes} min',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.9,
-              color: NidColors.moss,
+              color: context.nid.moss,
             ),
           ),
           const SizedBox(height: NidSpace.s),
@@ -491,22 +493,22 @@ class ArticleReaderScreen extends StatelessWidget {
             style: theme.textTheme.headlineMedium?.copyWith(
               fontSize: 27,
               height: 1.2,
-              color: NidColors.canopy,
+              color: context.nid.canopy,
               letterSpacing: -0.54,
             ),
           ),
           const SizedBox(height: NidSpace.s + 2),
           Text(
             '${article.reviewedBy} · Updated ${article.updated}',
-            style: const TextStyle(fontSize: 12, color: NidColors.faint),
+            style: TextStyle(fontSize: 12, color: context.nid.faint),
           ),
           const SizedBox(height: NidSpace.l + 2),
           Text(
             article.lede,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               height: 1.65,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
           ),
 
@@ -555,11 +557,11 @@ class _ArticleBlockView extends StatelessWidget {
         padding: const EdgeInsets.only(top: NidSpace.xl + 2),
         child: Text(
           block.text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.17,
-            color: NidColors.ink,
+            color: context.nid.ink,
           ),
         ),
       );
@@ -574,10 +576,10 @@ class _ArticleBlockView extends StatelessWidget {
           Flexible(
             child: Text(
               block.text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 height: 1.7,
-                color: NidColors.slate,
+                color: context.nid.slate,
               ),
             ),
           ),
@@ -610,7 +612,7 @@ class _WorthKnowingCallout extends StatelessWidget {
         NidSpace.l,
       ),
       decoration: BoxDecoration(
-        color: NidColors.mint,
+        color: context.nid.mint,
         borderRadius: BorderRadius.circular(NidRadius.control),
       ),
       child: Column(
@@ -618,21 +620,17 @@ class _WorthKnowingCallout extends StatelessWidget {
         children: [
           Text(
             title.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.96,
-              color: NidColors.moss,
+              color: context.nid.moss,
             ),
           ),
           const SizedBox(height: NidSpace.xs + 2),
           Text(
             body,
-            style: const TextStyle(
-              fontSize: 13,
-              height: 1.6,
-              color: NidColors.ink,
-            ),
+            style: TextStyle(fontSize: 13, height: 1.6, color: context.nid.ink),
           ),
         ],
       ),
@@ -661,26 +659,26 @@ class _TryItNowCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: NidColors.ink,
+              color: context.nid.ink,
             ),
           ),
           const SizedBox(height: NidSpace.xs + 1),
           Text(
             body,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.55,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
           ),
           const SizedBox(height: NidSpace.m),
           Align(
             alignment: Alignment.centerLeft,
             child: Material(
-              color: NidColors.canopy,
+              color: context.nid.canopy,
               borderRadius: BorderRadius.circular(NidRadius.pill),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -692,10 +690,10 @@ class _TryItNowCard extends StatelessWidget {
                   ),
                   child: Text(
                     cta,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: context.nid.onAccent,
                     ),
                   ),
                 ),
@@ -721,7 +719,7 @@ class _ReadNext extends StatelessWidget {
       padding: const EdgeInsets.only(top: NidSpace.l + 2),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: NidColors.canopy.withValues(alpha: 0.14)),
+          top: BorderSide(color: context.nid.canopy.withValues(alpha: 0.14)),
         ),
       ),
       child: Column(
@@ -738,17 +736,17 @@ class _ReadNext extends StatelessWidget {
                     Expanded(
                       child: Text(
                         article.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: NidColors.ink,
+                          color: context.nid.ink,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
                       size: 16,
-                      color: NidColors.faint,
+                      color: context.nid.faint,
                     ),
                   ],
                 ),
@@ -766,31 +764,31 @@ class _ArticleDisclaimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Text(
           'Educational, not medical advice — and never a diagnosis.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 11, height: 1.6, color: NidColors.faint),
+          style: TextStyle(fontSize: 11, height: 1.6, color: context.nid.faint),
         ),
-        SizedBox(height: NidSpace.xs),
+        const SizedBox(height: NidSpace.xs),
         Text.rich(
           TextSpan(
             children: [
-              TextSpan(text: 'If things feel heavy, talking helps. '),
-              TextSpan(text: 'In the US, call or text '),
+              const TextSpan(text: 'If things feel heavy, talking helps. '),
+              const TextSpan(text: 'In the US, call or text '),
               TextSpan(
                 text: '988',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
-              TextSpan(text: ' anytime.'),
+              const TextSpan(text: ' anytime.'),
             ],
           ),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 11, height: 1.6, color: NidColors.faint),
+          style: TextStyle(fontSize: 11, height: 1.6, color: context.nid.faint),
         ),
       ],
     );

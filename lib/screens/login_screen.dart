@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NidColors.fog,
+      backgroundColor: context.nid.fog,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 1.15,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.6,
-            color: NidColors.canopy,
+            color: context.nid.canopy,
           ),
         ),
         const SizedBox(height: NidSpace.m),
@@ -221,9 +221,10 @@ class _LoginScreenState extends State<LoginScreen> {
           'NguyenInDoubt reads your sleep, recovery, and rhythm — and tells '
           'you what it means, not what to fear.',
           textAlign: TextAlign.center,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: NidColors.slate, height: 1.5),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: context.nid.slate,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: NidSpace.xl),
         if (_errorCopy != null) ...[
@@ -248,10 +249,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ghost: true,
         ),
         const SizedBox(height: NidSpace.xs),
-        const Text(
+        Text(
           'Apple sign-in is coming soon.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: NidColors.faint),
+          style: TextStyle(fontSize: 12, color: context.nid.faint),
         ),
         const SizedBox(height: NidSpace.m), // mock .cta margin-top:12px
         _ProviderButton(
@@ -281,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Sign in with phone',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontSize: 26,
-            color: NidColors.canopy,
+            color: context.nid.canopy,
             letterSpacing: -0.52,
           ),
         ),
@@ -290,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
           "We'll text a one-time code — no password to remember.",
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: NidColors.slate),
+          ).textTheme.bodyMedium?.copyWith(color: context.nid.slate),
         ),
         const SizedBox(height: NidSpace.l),
         if (_errorCopy != null) ...[
@@ -318,9 +319,9 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
         const SizedBox(height: NidSpace.s),
-        const Text(
+        Text(
           'Used for sign-in only. Never for marketing by default.',
-          style: TextStyle(fontSize: 12, color: NidColors.faint),
+          style: TextStyle(fontSize: 12, color: context.nid.faint),
         ),
         const SizedBox(height: NidSpace.xl),
         _PrimaryCta(
@@ -346,7 +347,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Enter your code',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontSize: 26,
-            color: NidColors.canopy,
+            color: context.nid.canopy,
             letterSpacing: -0.52,
           ),
         ),
@@ -355,13 +356,13 @@ class _LoginScreenState extends State<LoginScreen> {
           TextSpan(
             style: Theme.of(
               context,
-            ).textTheme.bodyMedium?.copyWith(color: NidColors.slate),
+            ).textTheme.bodyMedium?.copyWith(color: context.nid.slate),
             children: [
               const TextSpan(text: 'We sent a 6-digit code to '),
               TextSpan(
                 text: _phoneController.text.trim(),
-                style: const TextStyle(
-                  color: NidColors.ink,
+                style: TextStyle(
+                  color: context.nid.ink,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -394,17 +395,17 @@ class _LoginScreenState extends State<LoginScreen> {
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Nothing yet? ',
-                style: TextStyle(fontSize: 13, color: NidColors.slate),
+                style: TextStyle(fontSize: 13, color: context.nid.slate),
               ),
               _QuietLink(
                 label: 'Resend code',
                 onTap: _busy ? null : _resendCode,
               ),
-              const Text(
+              Text(
                 '  ·  ',
-                style: TextStyle(fontSize: 13, color: NidColors.faint),
+                style: TextStyle(fontSize: 13, color: context.nid.faint),
               ),
               _QuietLink(
                 label: 'Change number',
@@ -447,7 +448,7 @@ class _ProgressDots extends StatelessWidget {
             width: i == active ? 18 : 6,
             height: 6,
             decoration: BoxDecoration(
-              color: i == active ? NidColors.canopy : NidColors.mint,
+              color: i == active ? context.nid.canopy : context.nid.mint,
               borderRadius: BorderRadius.circular(NidRadius.pill),
             ),
           ),
@@ -493,7 +494,13 @@ class _RingHero extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(size: const Size(168, 168), painter: _RingHeroPainter()),
+          CustomPaint(
+            size: const Size(168, 168),
+            painter: _RingHeroPainter(
+              track: context.nid.mint,
+              moss: context.nid.moss,
+            ),
+          ),
           const _CompactMark(),
         ],
       ),
@@ -502,7 +509,11 @@ class _RingHero extends StatelessWidget {
 }
 
 class _RingHeroPainter extends CustomPainter {
-  const _RingHeroPainter();
+  const _RingHeroPainter({required this.track, required this.moss});
+
+  /// Palette colors resolved by the widget (painters have no BuildContext).
+  final Color track;
+  final Color moss;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -510,11 +521,11 @@ class _RingHeroPainter extends CustomPainter {
     // Two concentric rings, tracks in mint, arcs in optimal/moss, rounded caps,
     // rotated to start at the top — matching the 42 hero geometry.
     void ring(double radius, Color arc, double sweepFraction) {
-      final track = Paint()
-        ..color = NidColors.mint
+      final trackPaint = Paint()
+        ..color = track
         ..style = PaintingStyle.stroke
         ..strokeWidth = 8;
-      canvas.drawCircle(center, radius, track);
+      canvas.drawCircle(center, radius, trackPaint);
       final paint = Paint()
         ..color = arc
         ..style = PaintingStyle.stroke
@@ -531,11 +542,12 @@ class _RingHeroPainter extends CustomPainter {
     }
 
     ring(76, NidStateColors.optimal, 0.68);
-    ring(60, NidColors.moss, 0.55);
+    ring(60, moss, 0.55);
   }
 
   @override
-  bool shouldRepaint(covariant _RingHeroPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _RingHeroPainter oldDelegate) =>
+      oldDelegate.track != track || oldDelegate.moss != moss;
 }
 
 /// The compact `NiD` lockup (42 `.mark-lg`): a canopy pill with white bold
@@ -549,23 +561,23 @@ class _CompactMark extends StatelessWidget {
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        color: NidColors.canopy,
+        color: context.nid.canopy,
         borderRadius: BorderRadius.circular(NidRadius.card),
       ),
       alignment: Alignment.center,
-      child: const Text.rich(
+      child: Text.rich(
         TextSpan(
           style: TextStyle(
             fontSize: 23,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.69,
-            color: Colors.white,
+            color: context.nid.onAccent,
           ),
           children: [
             TextSpan(text: 'N'),
             TextSpan(
               text: 'i',
-              style: TextStyle(color: NidColors.ember),
+              style: TextStyle(color: context.nid.ember),
             ),
             TextSpan(text: 'D'),
           ],
@@ -638,10 +650,10 @@ class _FinePrint extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
+        Text(
           'Private by design — your data stays yours.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: NidColors.faint, height: 1.6),
+          style: TextStyle(fontSize: 12, color: context.nid.faint, height: 1.6),
         ),
         const SizedBox(height: 2),
         Wrap(
@@ -649,9 +661,9 @@ class _FinePrint extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             _QuietLink(label: 'Terms', onTap: () {}),
-            const Text(
+            Text(
               '  ·  ',
-              style: TextStyle(fontSize: 12, color: NidColors.faint),
+              style: TextStyle(fontSize: 12, color: context.nid.faint),
             ),
             _QuietLink(label: 'Privacy', onTap: () {}),
           ],
@@ -681,7 +693,7 @@ class _QuietLink extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: onTap == null ? NidColors.faint : NidColors.canopy,
+            color: onTap == null ? context.nid.faint : context.nid.canopy,
           ),
         ),
       ),
@@ -778,12 +790,12 @@ class _OtpCell extends StatelessWidget {
       aspectRatio: 0.82,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.nid.surface,
           borderRadius: BorderRadius.circular(13),
           border: Border.all(
             color: active
-                ? NidColors.canopy
-                : NidColors.canopy.withValues(alpha: 0.14),
+                ? context.nid.canopy
+                : context.nid.canopy.withValues(alpha: 0.14),
             width: active ? 1.5 : 1,
           ),
         ),
@@ -791,10 +803,10 @@ class _OtpCell extends StatelessWidget {
           child: value.isNotEmpty
               ? Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: NidColors.ink,
+                    color: context.nid.ink,
                   ),
                 )
               : (active
@@ -802,7 +814,7 @@ class _OtpCell extends StatelessWidget {
                     // blink would keep the tree animating and break the
                     // pumpAndSettle the app-pumping tests rely on, so the caret
                     // stays steady — the canopy border already signals "active".
-                    ? Container(width: 2, height: 22, color: NidColors.canopy)
+                    ? Container(width: 2, height: 22, color: context.nid.canopy)
                     : const SizedBox.shrink()),
         ),
       ),
@@ -825,20 +837,20 @@ class _ErrorBanner extends StatelessWidget {
         vertical: NidSpace.m,
       ),
       decoration: BoxDecoration(
-        color: NidColors.ember.withValues(alpha: 0.12),
+        color: context.nid.ember.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(NidRadius.control),
-        border: Border.all(color: NidColors.ember.withValues(alpha: 0.28)),
+        border: Border.all(color: context.nid.ember.withValues(alpha: 0.28)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline, size: 18, color: NidColors.ember),
+          Icon(Icons.info_outline, size: 18, color: context.nid.ember),
           const SizedBox(width: NidSpace.s),
           Expanded(
             child: Text(
               message,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: NidColors.ember,
+                color: context.nid.ember,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -861,20 +873,20 @@ class _BackAffordance extends StatelessWidget {
       width: 32,
       height: 32,
       child: Material(
-        color: Colors.white,
+        color: context.nid.surface,
         shape: CircleBorder(
-          side: BorderSide(color: NidColors.canopy.withValues(alpha: 0.14)),
+          side: BorderSide(color: context.nid.canopy.withValues(alpha: 0.14)),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
           customBorder: const CircleBorder(),
-          child: const Tooltip(
+          child: Tooltip(
             message: 'Back',
             child: Icon(
               Icons.arrow_back_outlined,
               size: 18,
-              color: NidColors.canopy,
+              color: context.nid.canopy,
             ),
           ),
         ),
@@ -889,12 +901,12 @@ class _CalmProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 22,
       height: 22,
       child: CircularProgressIndicator(
         strokeWidth: 2.4,
-        valueColor: AlwaysStoppedAnimation<Color>(NidColors.canopy),
+        valueColor: AlwaysStoppedAnimation<Color>(context.nid.canopy),
       ),
     );
   }

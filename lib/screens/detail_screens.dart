@@ -96,7 +96,7 @@ class ReadinessDetailScreen extends StatelessWidget {
     final readiness = state.readiness;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Readiness'),
       ),
       body: readiness == null
@@ -174,16 +174,16 @@ class _ReadinessDetailBody extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.99,
-                      color: NidColors.canopy,
+                      color: context.nid.canopy,
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'not a diagnosis',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: NidColors.faint,
+                      color: context.nid.faint,
                     ),
                   ),
                 ],
@@ -205,7 +205,7 @@ class _ReadinessDetailBody extends StatelessWidget {
           'a diagnosis.',
           style: Theme.of(
             context,
-          ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
+          ).textTheme.bodySmall?.copyWith(color: context.nid.slate),
         ),
       ],
     );
@@ -240,7 +240,7 @@ class _ReadinessContributorRow extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             _valueLabel(contributor),
-            style: const TextStyle(fontSize: 11, color: NidColors.faint),
+            style: TextStyle(fontSize: 11, color: context.nid.faint),
           ),
         ],
       ],
@@ -275,7 +275,7 @@ class SleepDetailScreen extends StatelessWidget {
     final summaries = state.summaries;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Sleep'),
       ),
       body: summaries.isEmpty
@@ -348,16 +348,16 @@ class _SleepDetailBody extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.99,
-                      color: NidColors.canopy,
+                      color: context.nid.canopy,
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'not a diagnosis',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: NidColors.faint,
+                      color: context.nid.faint,
                     ),
                   ),
                 ],
@@ -391,7 +391,7 @@ class _SleepDetailBody extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.99,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
               const SizedBox(height: NidSpace.l),
@@ -416,7 +416,7 @@ class _SleepDetailBody extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.99,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
               const SizedBox(height: NidSpace.l),

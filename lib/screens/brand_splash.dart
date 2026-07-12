@@ -123,7 +123,7 @@ class _BrandSplashView extends StatelessWidget {
           ),
         );
     return Scaffold(
-      backgroundColor: NidColors.fog,
+      backgroundColor: context.nid.fog,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -163,22 +163,22 @@ class _BrandWordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const base = TextStyle(
+    final base = TextStyle(
       fontSize: 28,
       fontWeight: FontWeight.w700,
       letterSpacing: -0.84,
-      color: NidColors.canopy,
+      color: context.nid.canopy,
     );
     return Text.rich(
-      const TextSpan(
+      TextSpan(
         style: base,
         children: [
-          TextSpan(text: 'Nguyen'),
+          const TextSpan(text: 'Nguyen'),
           TextSpan(
             text: 'In',
-            style: TextStyle(color: NidColors.ember),
+            style: TextStyle(color: context.nid.ember),
           ),
-          TextSpan(text: 'Doubt'),
+          const TextSpan(text: 'Doubt'),
         ],
       ),
       key: wordmarkKey,

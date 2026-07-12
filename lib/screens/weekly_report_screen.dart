@@ -57,7 +57,7 @@ class WeeklyReportScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Your week'),
       ),
       body: report.isEmpty
@@ -92,29 +92,30 @@ class _WeeklyReportBody extends StatelessWidget {
         // Range + takeaway headline + calm sub-line.
         Text(
           report.rangeLabel,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: NidColors.faint,
+            color: context.nid.faint,
           ),
         ),
         const SizedBox(height: NidSpace.xs),
         Text(
           report.takeaway,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.7,
             height: 1.15,
-            color: NidColors.canopy,
+            color: context.nid.canopy,
           ),
         ),
         const SizedBox(height: NidSpace.s),
         Text(
           report.takeawaySub,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: NidColors.slate, height: 1.5),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: context.nid.slate,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: NidSpace.l),
 
@@ -159,9 +160,10 @@ class _WeeklyReportBody extends StatelessWidget {
         Text(
           'Patterns, not grades — a week is data, not a verdict.',
           textAlign: TextAlign.center,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: NidColors.faint, height: 1.5),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: context.nid.faint,
+            height: 1.5,
+          ),
         ),
       ],
     );
@@ -202,29 +204,29 @@ class _StatTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(NidSpace.l),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       child: Column(
         children: [
           Text.rich(
             TextSpan(
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.44,
-                color: NidColors.canopy,
+                color: context.nid.canopy,
               ),
               children: [
                 TextSpan(text: stat.value),
                 if (stat.unitTail != null)
                   TextSpan(
                     text: stat.unitTail,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: NidColors.slate,
+                      color: context.nid.slate,
                     ),
                   ),
               ],
@@ -235,11 +237,11 @@ class _StatTile extends StatelessWidget {
           Text(
             stat.label.toUpperCase(),
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ],
@@ -280,10 +282,10 @@ class _NightBars extends StatelessWidget {
                       children: [
                         Text(
                           night.sleepHours.toStringAsFixed(1),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: NidColors.canopy,
+                            color: context.nid.canopy,
                           ),
                         ),
                         const SizedBox(height: 5),
@@ -317,7 +319,7 @@ class _NightBars extends StatelessWidget {
                 child: Text(
                   _dow[nights[i].date.weekday - 1],
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 10, color: NidColors.faint),
+                  style: TextStyle(fontSize: 10, color: context.nid.faint),
                 ),
               ),
           ],
@@ -345,7 +347,7 @@ class _CorrelationRow extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: correlation.warm ? NidColors.ember : NidColors.moss,
+              color: correlation.warm ? context.nid.ember : context.nid.moss,
               shape: BoxShape.circle,
             ),
           ),
@@ -354,10 +356,10 @@ class _CorrelationRow extends StatelessWidget {
         Expanded(
           child: Text(
             correlation.text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.5,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
           ),
         ),
@@ -381,28 +383,28 @@ class _OneThingToTry extends StatelessWidget {
         vertical: NidSpace.l - 1,
       ),
       decoration: BoxDecoration(
-        color: NidColors.mint,
+        color: context.nid.mint,
         borderRadius: BorderRadius.circular(NidRadius.control),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'ONE THING TO TRY',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
-              color: NidColors.moss,
+              color: context.nid.moss,
             ),
           ),
           const SizedBox(height: 5),
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.55,
-              color: NidColors.ink,
+              color: context.nid.ink,
             ),
           ),
         ],
@@ -430,9 +432,9 @@ class _SectionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(NidSpace.l),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -444,10 +446,10 @@ class _SectionCard extends StatelessWidget {
               if (headnote != null)
                 Text(
                   headnote!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: NidColors.faint,
+                    color: context.nid.faint,
                   ),
                 ),
             ],

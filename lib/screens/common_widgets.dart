@@ -33,34 +33,35 @@ enum PillTone { neutral, good, caution, flag, private }
 
 extension PillToneColors on PillTone {
   /// The single place a pill color encodes state: (background, foreground).
-  /// Every value resolves to a blessed [NidColors] tone (DS-03).
-  ({Color background, Color foreground}) get colors {
+  /// Every value resolves to the active [NidPalette] tone (DS-03), so pills
+  /// adapt to light/dark. `bark` (caution) has no palette slot and stays fixed.
+  ({Color background, Color foreground}) colorsFor(NidPalette p) {
     switch (this) {
       case PillTone.neutral:
-        return (background: NidColors.mint, foreground: NidColors.canopy);
+        return (background: p.mint, foreground: p.canopy);
       case PillTone.good:
         return (
           background: Color.alphaBlend(
-            NidColors.sage.withValues(alpha: 0.45),
-            Colors.white,
+            p.sage.withValues(alpha: 0.45),
+            p.surface,
           ),
-          foreground: NidColors.canopy,
+          foreground: p.canopy,
         );
       case PillTone.caution:
         return (
           background: Color.alphaBlend(
             NidColors.bark.withValues(alpha: 0.16),
-            Colors.white,
+            p.surface,
           ),
           foreground: NidColors.bark,
         );
       case PillTone.flag:
         return (
-          background: NidColors.ember.withValues(alpha: 0.14),
-          foreground: NidColors.ember,
+          background: p.ember.withValues(alpha: 0.14),
+          foreground: p.ember,
         );
       case PillTone.private:
-        return (background: NidColors.fog, foreground: NidColors.ink);
+        return (background: p.fog, foreground: p.ink);
     }
   }
 }
@@ -81,7 +82,7 @@ class BrandMark extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(clearspace),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.badge),
       ),
       child: ClipRRect(
@@ -116,7 +117,7 @@ class BrandHeader extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isWide ? NidSpace.xl : NidSpace.l),
       decoration: BoxDecoration(
-        color: NidColors.canopy,
+        color: context.nid.canopy,
         borderRadius: BorderRadius.circular(NidRadius.card),
       ),
       child: LayoutBuilder(
@@ -130,15 +131,15 @@ class BrandHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall?.copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: context.nid.onAccent,
+                  ),
                 ),
                 const SizedBox(height: NidSpace.xs),
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.84),
+                    color: context.nid.onAccent.withValues(alpha: 0.84),
                   ),
                 ),
               ],
@@ -222,14 +223,14 @@ class StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = tone.colors;
+    final palette = tone.colorsFor(context.nid);
     final background = color ?? palette.background;
     final foreground = palette.foreground;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(NidRadius.pill),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.08)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.08)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -295,15 +296,15 @@ class SleepTrendBars extends StatelessWidget {
                 bottom: targetBottom,
                 child: Container(
                   height: 1,
-                  color: NidColors.canopy.withValues(alpha: 0.07),
+                  color: context.nid.canopy.withValues(alpha: 0.07),
                 ),
               ),
               Positioned(
                 right: 0,
                 bottom: targetBottom + 2,
-                child: const Text(
+                child: Text(
                   '8h',
-                  style: TextStyle(fontSize: 10, color: NidColors.faint),
+                  style: TextStyle(fontSize: 10, color: context.nid.faint),
                 ),
               ),
               Row(
@@ -353,7 +354,7 @@ class SleepTrendBars extends StatelessWidget {
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
-                                    color: NidColors.canopy,
+                                    color: context.nid.canopy,
                                   ),
                             ),
                           ),
@@ -373,14 +374,14 @@ class SleepTrendBars extends StatelessWidget {
               child: Text(
                 dayLetter(summary.date),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11, color: NidColors.faint),
+                style: TextStyle(fontSize: 11, color: context.nid.faint),
               ),
             );
           }).toList(),
         ),
         const SizedBox(height: NidSpace.xs),
         // Calm baseline hairline under the chart.
-        Container(height: 1, color: NidColors.canopy.withValues(alpha: 0.14)),
+        Container(height: 1, color: context.nid.canopy.withValues(alpha: 0.14)),
         const SizedBox(height: NidSpace.m),
         // Explicit scale: short-to-optimal hours ramp.
         Row(
@@ -407,7 +408,7 @@ class SleepTrendBars extends StatelessWidget {
               ),
             ),
             const SizedBox(width: NidSpace.s),
-            const Text(
+            Text(
               '8h+ optimal',
               style: TextStyle(
                 fontSize: 11,
@@ -445,7 +446,7 @@ class NidToggle extends StatelessWidget {
           width: 44,
           height: 26,
           decoration: BoxDecoration(
-            color: value ? NidColors.canopy : NidColors.mint,
+            color: value ? context.nid.canopy : context.nid.mint,
             borderRadius: BorderRadius.circular(NidRadius.pill),
           ),
           child: AnimatedAlign(
@@ -462,7 +463,7 @@ class NidToggle extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: NidColors.ink.withValues(alpha: 0.25),
+                      color: context.nid.ink.withValues(alpha: 0.25),
                       blurRadius: 3,
                       offset: const Offset(0, 1),
                     ),
@@ -495,12 +496,12 @@ class EmptyState extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(NidSpace.xl),
       decoration: BoxDecoration(
-        color: NidColors.mint.withValues(alpha: 0.62),
+        color: context.nid.mint.withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(NidRadius.card),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 34, color: NidColors.canopy),
+          Icon(icon, size: 34, color: context.nid.canopy),
           const SizedBox(height: NidSpace.s),
           Text(title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: NidSpace.xs),

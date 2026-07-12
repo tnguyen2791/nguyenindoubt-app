@@ -79,7 +79,7 @@ class ScoreRing extends StatelessWidget {
             painter: _ScoreRingPainter(
               progress: animatedScore / 100,
               color: color,
-              trackColor: NidColors.mint,
+              trackColor: context.nid.mint,
               strokeWidth: strokeWidth,
             ),
             child: child,
@@ -97,16 +97,16 @@ class ScoreRing extends StatelessWidget {
                   fontSize: (size * 0.28).round().toDouble(),
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.68,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                 ),
               ),
               const SizedBox(height: 3),
               Text(
                 word,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.slate,
+                  color: context.nid.slate,
                 ),
               ),
             ],
@@ -192,10 +192,10 @@ class ContributorBar extends StatelessWidget {
           children: [
             Text(
               name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: NidColors.contributorName,
+                color: context.nid.contributorName,
               ),
             ),
             ?infoTip,
@@ -215,7 +215,7 @@ class ContributorBar extends StatelessWidget {
         Container(
           height: 7,
           decoration: BoxDecoration(
-            color: NidColors.mint,
+            color: context.nid.mint,
             borderRadius: BorderRadius.circular(NidRadius.pill),
           ),
           child: FractionallySizedBox(
@@ -279,7 +279,7 @@ class InfoTip extends StatelessWidget {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Got it'),
+                    child: Text('Got it'),
                   ),
                 ],
               );
@@ -290,9 +290,11 @@ class InfoTip extends StatelessWidget {
           width: dotSize,
           height: dotSize,
           decoration: BoxDecoration(
-            color: NidColors.mint,
+            color: context.nid.mint,
             shape: BoxShape.circle,
-            border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+            border: Border.all(
+              color: context.nid.canopy.withValues(alpha: 0.14),
+            ),
           ),
           child: Center(
             child: Text(
@@ -301,7 +303,7 @@ class InfoTip extends StatelessWidget {
                 fontSize: iconSize,
                 fontWeight: FontWeight.w700,
                 fontStyle: FontStyle.italic,
-                color: NidColors.canopy,
+                color: context.nid.canopy,
               ),
             ),
           ),
@@ -340,16 +342,16 @@ class StatDeltaRow extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                 ),
               ),
               if (sub != null)
                 Text(
                   sub!,
-                  style: const TextStyle(fontSize: 12, color: NidColors.faint),
+                  style: TextStyle(fontSize: 12, color: context.nid.faint),
                 ),
             ],
           ),
@@ -365,10 +367,10 @@ class StatDeltaRow extends StatelessWidget {
               Text(
                 value,
                 textAlign: TextAlign.right,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: NidColors.ink,
+                  color: context.nid.ink,
                 ),
               ),
               Text(
@@ -377,7 +379,7 @@ class StatDeltaRow extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: flagged ? NidColors.ember : NidColors.moss,
+                  color: flagged ? context.nid.ember : context.nid.moss,
                 ),
               ),
             ],
@@ -407,7 +409,11 @@ class TrendLine extends StatelessWidget {
         SizedBox(
           height: height,
           child: CustomPaint(
-            painter: _TrendLinePainter(points: points),
+            painter: _TrendLinePainter(
+              points: points,
+              canopy: context.nid.canopy,
+              moss: context.nid.moss,
+            ),
             size: Size.infinite,
           ),
         ),
@@ -439,25 +445,30 @@ class _TrendAxis extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (final label in labels)
-          Text(
-            label,
-            style: const TextStyle(fontSize: 10, color: NidColors.faint),
-          ),
+          Text(label, style: TextStyle(fontSize: 10, color: context.nid.faint)),
       ],
     );
   }
 }
 
 class _TrendLinePainter extends CustomPainter {
-  const _TrendLinePainter({required this.points});
+  const _TrendLinePainter({
+    required this.points,
+    required this.canopy,
+    required this.moss,
+  });
 
   final List<TrendPoint> points;
+
+  /// Palette colors resolved by the widget (painters have no BuildContext).
+  final Color canopy;
+  final Color moss;
 
   @override
   void paint(Canvas canvas, Size size) {
     // Three faint gridlines at 1/4, 1/2, 3/4 height (design `.07` opacity).
     final grid = Paint()
-      ..color = NidColors.canopy.withValues(alpha: 0.07)
+      ..color = canopy.withValues(alpha: 0.07)
       ..strokeWidth = 1;
     for (final fraction in const [0.25, 0.5, 0.75]) {
       final y = size.height * fraction;
@@ -505,16 +516,13 @@ class _TrendLinePainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(
-      area,
-      Paint()..color = NidColors.moss.withValues(alpha: 0.12),
-    );
+    canvas.drawPath(area, Paint()..color = moss.withValues(alpha: 0.12));
 
     // The trend line itself.
     canvas.drawPath(
       line,
       Paint()
-        ..color = NidColors.moss
+        ..color = moss
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5
         ..strokeCap = StrokeCap.round
@@ -522,16 +530,14 @@ class _TrendLinePainter extends CustomPainter {
     );
 
     // End dot on the latest point.
-    canvas.drawCircle(
-      pointAt(points.length - 1),
-      4,
-      Paint()..color = NidColors.moss,
-    );
+    canvas.drawCircle(pointAt(points.length - 1), 4, Paint()..color = moss);
   }
 
   @override
   bool shouldRepaint(covariant _TrendLinePainter oldDelegate) {
-    return oldDelegate.points != points;
+    return oldDelegate.points != points ||
+        oldDelegate.canopy != canopy ||
+        oldDelegate.moss != moss;
   }
 }
 
@@ -592,10 +598,10 @@ class WeeklyAverageBars extends StatelessWidget {
                   children: [
                     Text(
                       _valueLabel(w.value),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: NidColors.canopy,
+                        color: context.nid.canopy,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -615,10 +621,7 @@ class WeeklyAverageBars extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       w.label,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: NidColors.faint,
-                      ),
+                      style: TextStyle(fontSize: 10, color: context.nid.faint),
                     ),
                   ],
                 ),
@@ -678,7 +681,7 @@ class ConsistencyHeatmap extends StatelessWidget {
                 child: Text(
                   d,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 10, color: NidColors.faint),
+                  style: TextStyle(fontSize: 10, color: context.nid.faint),
                 ),
               ),
           ],
@@ -709,7 +712,7 @@ class ConsistencyHeatmap extends StatelessWidget {
         Divider(
           height: 1,
           thickness: 1,
-          color: NidColors.canopy.withValues(alpha: 0.14),
+          color: context.nid.canopy.withValues(alpha: 0.14),
         ),
         const SizedBox(height: NidSpace.m),
         // Legend: less → more, plus the flag swatch. Wraps so the two groups
@@ -722,9 +725,9 @@ class ConsistencyHeatmap extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'less',
-                  style: TextStyle(fontSize: 11, color: NidColors.faint),
+                  style: TextStyle(fontSize: 11, color: context.nid.faint),
                 ),
                 const SizedBox(width: NidSpace.s),
                 for (final level in const [
@@ -737,9 +740,9 @@ class ConsistencyHeatmap extends StatelessWidget {
                   const SizedBox(width: 4),
                 ],
                 const SizedBox(width: NidSpace.xs),
-                const Text(
+                Text(
                   'more',
-                  style: TextStyle(fontSize: 11, color: NidColors.faint),
+                  style: TextStyle(fontSize: 11, color: context.nid.faint),
                 ),
               ],
             ),
@@ -750,7 +753,7 @@ class ConsistencyHeatmap extends StatelessWidget {
                 const SizedBox(width: NidSpace.xs),
                 Text(
                   flagLabel,
-                  style: const TextStyle(fontSize: 11, color: NidColors.faint),
+                  style: TextStyle(fontSize: 11, color: context.nid.faint),
                 ),
               ],
             ),

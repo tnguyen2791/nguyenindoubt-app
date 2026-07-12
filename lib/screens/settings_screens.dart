@@ -119,7 +119,7 @@ class GoalsSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Goals & targets'),
       ),
       body: ListView(
@@ -161,7 +161,7 @@ class GoalsSettingsScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontSize: 12,
               height: 1.6,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ],
@@ -241,20 +241,17 @@ class _GoalCard extends StatelessWidget {
                   children: [
                     Text.rich(
                       TextSpan(children: _goalValueSpans(value)),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 34,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.68,
-                        color: NidColors.canopy,
+                        color: context.nid.canopy,
                       ),
                     ),
                     const SizedBox(height: NidSpace.xs),
                     Text(
                       valueLabel,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: NidColors.slate,
-                      ),
+                      style: TextStyle(fontSize: 12, color: context.nid.slate),
                     ),
                   ],
                 ),
@@ -274,14 +271,17 @@ class _GoalCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: NidSpace.l),
-          Container(height: 1, color: NidColors.canopy.withValues(alpha: 0.14)),
+          Container(
+            height: 1,
+            color: context.nid.canopy.withValues(alpha: 0.14),
+          ),
           const SizedBox(height: NidSpace.l),
           Text(
             hint,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               height: 1.5,
-              color: NidColors.slate,
+              color: context.nid.slate,
             ),
           ),
         ],
@@ -308,8 +308,8 @@ class _StepButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final background = filled ? NidColors.canopy : NidColors.fog;
-    final foreground = filled ? Colors.white : NidColors.canopy;
+    final background = filled ? context.nid.canopy : context.nid.fog;
+    final foreground = filled ? context.nid.onAccent : context.nid.canopy;
     return Opacity(
       opacity: enabled ? 1 : 0.4,
       child: Semantics(
@@ -329,8 +329,8 @@ class _StepButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(NidRadius.m12),
                 border: Border.all(
                   color: filled
-                      ? NidColors.canopy
-                      : NidColors.canopy.withValues(alpha: 0.14),
+                      ? context.nid.canopy
+                      : context.nid.canopy.withValues(alpha: 0.14),
                 ),
               ),
               child: Icon(icon, size: 20, color: foreground),
@@ -360,7 +360,7 @@ class NotificationSettingsScreen extends StatelessWidget {
     final prefs = _prefs;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: NidColors.fog,
+        backgroundColor: context.nid.fog,
         title: const Text('Notifications'),
       ),
       body: ListView(
@@ -435,7 +435,7 @@ class NotificationSettingsScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontSize: 12,
               height: 1.6,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
         ],
@@ -475,17 +475,17 @@ class _QuietHoursCard extends StatelessWidget {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: NidColors.mint,
+                  color: context.nid.mint,
                   borderRadius: BorderRadius.circular(NidRadius.tile),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.nightlight_outlined,
                   size: 18,
-                  color: NidColors.canopy,
+                  color: context.nid.canopy,
                 ),
               ),
               const SizedBox(width: NidSpace.m),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -494,13 +494,13 @@ class _QuietHoursCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: NidColors.ink,
+                        color: context.nid.ink,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       'Nothing arrives during these hours',
-                      style: TextStyle(fontSize: 12, color: NidColors.slate),
+                      style: TextStyle(fontSize: 12, color: context.nid.slate),
                     ),
                   ],
                 ),
@@ -537,28 +537,28 @@ class _TimePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: NidSpace.m),
       decoration: BoxDecoration(
-        color: NidColors.fog,
+        color: context.nid.fog,
         borderRadius: BorderRadius.circular(NidRadius.m12),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       child: Column(
         children: [
           Text(
             label.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.8,
-              color: NidColors.faint,
+              color: context.nid.faint,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             time,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: NidColors.canopy,
+              color: context.nid.canopy,
             ),
           ),
         ],
@@ -578,9 +578,9 @@ class _ToggleGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.nid.surface,
         borderRadius: BorderRadius.circular(NidRadius.card),
-        border: Border.all(color: NidColors.canopy.withValues(alpha: 0.14)),
+        border: Border.all(color: context.nid.canopy.withValues(alpha: 0.14)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -590,7 +590,7 @@ class _ToggleGroup extends StatelessWidget {
               Divider(
                 height: 1,
                 thickness: 1,
-                color: NidColors.canopy.withValues(alpha: 0.14),
+                color: context.nid.canopy.withValues(alpha: 0.14),
               ),
             rows[i],
           ],
@@ -630,19 +630,19 @@ class _ToggleRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: NidColors.ink,
+                    color: context.nid.ink,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     height: 1.4,
-                    color: NidColors.slate,
+                    color: context.nid.slate,
                   ),
                 ),
               ],

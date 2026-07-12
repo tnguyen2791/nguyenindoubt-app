@@ -33,7 +33,7 @@ class PatientFirstRun extends StatelessWidget {
       padding: const EdgeInsets.all(NidSpace.xl),
       child: Column(
         children: [
-          const Icon(Icons.bedtime_outlined, size: 34, color: NidColors.canopy),
+          Icon(Icons.bedtime_outlined, size: 34, color: context.nid.canopy),
           const SizedBox(height: NidSpace.s),
           Text(
             "Start with last night's sleep",
@@ -50,7 +50,7 @@ class PatientFirstRun extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
+            ).textTheme.bodySmall?.copyWith(color: context.nid.slate),
           ),
           const SizedBox(height: NidSpace.l),
           SizedBox(
