@@ -201,10 +201,10 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   3. Onboarding communicates what the app does (sleep/journal/privacy) and rejects empty/invalid names.
   4. The empty first-run dashboard presents one clear primary action with sleep-only permission priming before any OS prompt.
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 - [x] 10-01-PLAN.md — Native web loader + animated brand-intro splash gate + splash-skip test seam (wave 1)
-- [ ] 10-02-PLAN.md — Patient-first welcome reframe + onboarding expectations & name guard (wave 2)
+- [x] 10-02-PLAN.md — Patient-first welcome reframe + onboarding expectations & name guard (wave 2)
 - [ ] 10-03-PLAN.md — Guided empty-dashboard first-run (modular, sleep-only priming) (wave 3)
 
 **UI hint**: yes
@@ -276,7 +276,7 @@ v1.1 (Experience & Insight): 8 -> 9 -> 10 -> 11 -> 12 -> 13 (Phase 8 first; 9 is
 | 7. Production Deployment Posture | 1/1 | Complete    | 2026-07-06 |
 | 8. Design System Foundations | 3/3 | Complete | 2026-07-06 |
 | 9. Safety & Affordance Integrity | 3/3 | Complete | 2026-07-06 |
-| 10. Brand Arrival & Guided Onboarding | 1/3 | In Progress|  |
+| 10. Brand Arrival & Guided Onboarding | 2/3 | In Progress|  |
 | 11. Insightful Data Displays | 0/0 | Not started | - |
 | 12. Sharing as a First-Class Flow | 0/0 | Not started | - |
 | 13. Motion & Feedback Choreography | 0/0 | Not started | - |
