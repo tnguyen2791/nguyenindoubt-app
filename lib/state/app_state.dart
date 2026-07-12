@@ -384,9 +384,7 @@ class NguyenInDoubtState extends ChangeNotifier {
     final latestDay = samples
         .map((s) => dayOf(s.end))
         .reduce((a, b) => a.isAfter(b) ? a : b);
-    final daySamples = samples
-        .where((s) => dayOf(s.end) == latestDay)
-        .toList();
+    final daySamples = samples.where((s) => dayOf(s.end) == latestDay).toList();
 
     final recentSummaries = await repository.getDailySummariesForPatient(
       requesterUserId: currentUser.id,
