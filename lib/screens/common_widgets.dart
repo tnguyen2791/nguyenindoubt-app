@@ -24,6 +24,10 @@ String shortDate(DateTime date) {
 
 String hoursLabel(double hours) => '${hours.toStringAsFixed(1)}h';
 
+/// Single-letter weekday label for compact chart axes.
+String dayLetter(DateTime date) =>
+    const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.weekday - 1];
+
 /// State the [StatusPill] encodes through color, never mint-for-everything.
 enum PillTone { neutral, good, caution, flag, private }
 
@@ -255,6 +259,13 @@ class StatusPill extends StatelessWidget {
 class SleepTrendBars extends StatelessWidget {
   const SleepTrendBars({super.key, required this.summaries});
 
+  /// The fixed hour axis every bar renders against — heights are honest
+  /// fractions of this window, so a 2h night reads tiny.
+  static const double axisMaxHours = 9.5;
+
+  /// Fixed height of the bar region the hairline aligns against.
+  static const double _chartHeight = 168;
+
   final List<DailySummary> summaries;
 
   @override
@@ -267,114 +278,144 @@ class SleepTrendBars extends StatelessWidget {
       );
     }
 
-    final maxHours = summaries
-        .map((summary) => summary.sleepDurationHours)
-        .fold<double>(
-          1,
-          (previous, current) => current > previous ? current : previous,
-        );
+    const targetBottom = _chartHeight * (8 / axisMaxHours);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _SleepBarLegend(),
-        const SizedBox(height: NidSpace.m),
         SizedBox(
-          height: 168,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: summaries.map((summary) {
-              final heightFactor = summary.sleepDurationHours / maxHours;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: NidSpace.xs),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        hoursLabel(summary.sleepDurationHours),
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: NidColors.canopy,
-                        ),
+          height: _chartHeight,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // 8h-target hairline in gridline style, behind the bars.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: targetBottom,
+                child: Container(
+                  height: 1,
+                  color: NidColors.canopy.withValues(alpha: 0.07),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                bottom: targetBottom + 2,
+                child: const Text(
+                  '8h',
+                  style: TextStyle(fontSize: 10, color: NidColors.faint),
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: summaries.map((summary) {
+                  final heightFactor =
+                      (summary.sleepDurationHours / axisMaxHours).clamp(
+                        0.0,
+                        1.0,
+                      );
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: NidSpace.xs,
                       ),
-                      const SizedBox(height: NidSpace.xs),
-                      Flexible(
-                        child: FractionallySizedBox(
-                          heightFactor: heightFactor.clamp(0.25, 1.0),
-                          alignment: Alignment.bottomCenter,
-                          // Oura-style: softly rounded tops, gentle bottom.
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: summary.sleepDurationHours < 6
-                                  ? NidColors.ember
-                                  : NidColors.moss,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(9),
-                                bottom: Radius.circular(6),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: FractionallySizedBox(
+                              heightFactor: heightFactor,
+                              alignment: Alignment.bottomCenter,
+                              // Oura-style: softly rounded tops, gentle
+                              // bottom, color encodes hours on the ramp.
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: NidStateColors.forSleepHours(
+                                    summary.sleepDurationHours,
+                                  ),
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(7),
+                                    bottom: Radius.circular(4),
+                                  ),
+                                ),
+                                child: const SizedBox(width: double.infinity),
                               ),
                             ),
-                            child: const SizedBox(width: double.infinity),
                           ),
-                        ),
+                          // Value label rides just above the bar top.
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: _chartHeight * heightFactor + NidSpace.xs,
+                            child: Text(
+                              hoursLabel(summary.sleepDurationHours),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: NidColors.canopy,
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: NidSpace.s),
-                      Text(
-                        shortDate(summary.date),
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
+        ),
+        const SizedBox(height: NidSpace.s),
+        Row(
+          children: summaries.map((summary) {
+            return Expanded(
+              child: Text(
+                dayLetter(summary.date),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, color: NidColors.faint),
+              ),
+            );
+          }).toList(),
         ),
         const SizedBox(height: NidSpace.xs),
         // Calm baseline hairline under the chart.
         Container(height: 1, color: NidColors.canopy.withValues(alpha: 0.14)),
-      ],
-    );
-  }
-}
-
-class _SleepBarLegend extends StatelessWidget {
-  const _SleepBarLegend();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: const [
-        _LegendDot(color: NidColors.moss, label: 'on target'),
-        SizedBox(width: NidSpace.l),
-        _LegendDot(color: NidColors.ember, label: 'short night'),
-      ],
-    );
-  }
-}
-
-class _LegendDot extends StatelessWidget {
-  const _LegendDot({required this.color, required this.label});
-
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 9,
-          height: 9,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: NidSpace.xs),
-        Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: NidColors.slate),
+        const SizedBox(height: NidSpace.m),
+        // Explicit scale: short-to-optimal hours ramp.
+        Row(
+          children: [
+            Text(
+              '5h short',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: NidStateColors.rampColors[0],
+              ),
+            ),
+            const SizedBox(width: NidSpace.s),
+            Expanded(
+              child: Container(
+                height: 6,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(NidRadius.pill),
+                  gradient: const LinearGradient(
+                    colors: NidStateColors.rampColors,
+                    stops: NidStateColors.rampStops,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: NidSpace.s),
+            const Text(
+              '8h+ optimal',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: NidStateColors.optimal,
+              ),
+            ),
+          ],
         ),
       ],
     );
