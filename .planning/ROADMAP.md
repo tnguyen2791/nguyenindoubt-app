@@ -223,7 +223,13 @@ NguyenInDoubt moves from a local demo that proves the privacy promise into a rev
   4. A gentle, strictly-observational insight line (week-over-week / last-night-vs-baseline) is present and never labels the person.
   5. Consistency/balance micro-insights and a directional clinician summary replace raw counts like "samples".
 
-**Plans:** Not yet planned
+**Plans:** 3 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — State-color tokens, pure on-device score/insight computation (unit-tested), honest fixed-axis SleepTrendBars with 8h hairline + ramp legend, ScoreRing/ContributorBar/InfoTip/StatDeltaRow widget kit (wave 1)
+- [ ] 11-02-PLAN.md — Patient dashboard hierarchy rebuild: greeting/status + insight line, score ring hero with contributors + "not a diagnosis", two-up mini-cards, trend micro-insight, consent card last; coupled widget_test migration (wave 2)
+- [ ] 11-03-PLAN.md — Clinician directional stat-delta summary (avg + delta vs prior week, variability, nights-with-data) replacing raw counts; clinician_affordance_test coverage + full phase verification bar (wave 3)
+
 **UI hint**: yes
 
 ### Phase 12: Sharing as a First-Class Flow
