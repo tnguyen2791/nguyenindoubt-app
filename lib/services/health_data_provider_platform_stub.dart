@@ -36,4 +36,12 @@ class UnavailableHealthDataProvider implements HealthDataProvider {
   Future<List<HealthSample>> fetchSleepSamples(HealthRange range) async {
     return const [];
   }
+
+  @override
+  Future<List<HealthSample>> fetchSamples({
+    required List<MetricType> metrics,
+    required HealthRange range,
+  }) async {
+    return const [];
+  }
 }
