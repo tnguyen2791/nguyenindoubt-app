@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notifications · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative}
+  .back{position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .markall{position:absolute;right:16px;font-size:12px;font-weight:600;color:var(--moss);text-decoration:none}
+  .scroll{flex:1;padding:0 16px 28px}
+  .sect{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:18px 4px 0}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 16px;margin-top:10px}
+  .row{display:flex;gap:13px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line);position:relative}
+  .row:last-child{border-bottom:0}
+  .ic{width:36px;height:36px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ic svg{width:18px;height:18px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ic.warm{background:rgba(197,104,68,.14)}
+  .ic.warm svg{stroke:var(--ember)}
+  .rt{flex:1;min-width:0}
+  .rh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .t{font-size:14px;font-weight:700}
+  .when{font-size:11px;font-weight:600;color:var(--faint);white-space:nowrap}
+  .d{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+  .unread{position:absolute;left:-9px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:99px;background:var(--ember)}
+  .quiet{text-align:center;font-size:12px;color:var(--faint);margin-top:26px;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='18-dashboard-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Notifications</div>
+      <a href="#" class="markall">Mark all read</a>
+    </div>
+    <div class="scroll">
+      <div class="sect">Today</div>
+      <div class="card">
+        <div class="row" onclick="location.href='78-share-provider-mobile.html'" style="cursor:pointer">
+          <span class="unread"></span>
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 3.6-6 8-6 1.5 0 2.9.2 4 .7"/><path d="M17 11l2 2 4-4"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Dr. Nguyen accepted your request</div><div class="when">7:41a</div></div>
+            <div class="d">Sharing starts with tomorrow morning's reading — scores &amp; trends and sleep detail, exactly as you chose. Review or pause anytime.</div>
+          </div>
+        </div>
+        <div class="row" onclick="location.href='18-dashboard-mobile.html'" style="cursor:pointer">
+          <span class="unread"></span>
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Your morning reading is ready</div><div class="when">7:02a</div></div>
+            <div class="d">Readiness 82 — balanced. A protective night and a low resting heart rate.</div>
+          </div>
+        </div>
+        <div class="row" onclick="location.href='21-sleep-detail-mobile.html'" style="cursor:pointer">
+          <span class="unread"></span>
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Bedtime is drifting later</div><div class="when">7:02a</div></div>
+            <div class="d">You've gone to bed about 40 minutes later than usual for three nights. An earlier wind-down tonight could help.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sect">Yesterday</div>
+      <div class="card">
+        <div class="row" onclick="location.href='82-sharing-invite-code-mobile.html'" style="cursor:pointer">
+          <div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M1 21c0-4 3.6-6 8-6 1.5 0 2.9.2 4 .7"/><path d="M16 11l6 6M22 11l-6 6"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Your sharing request wasn't accepted</div><div class="when">4:12p</div></div>
+            <div class="d">Dr. Nguyen declined for now — nothing was ever shared. You can ask again anytime, or check with their office first.</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c2 3 5 4.6 5 8.6a5 5 0 0 1-10 0c0-1.6.7-2.9 1.6-3.9.2 1.4.9 2.2 1.9 2.4C10.2 8 11 5.6 12 3Z"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Goal reached early</div><div class="when">3:41p</div></div>
+            <div class="d">You hit your movement goal by mid-afternoon — nicely paced across the day.</div>
+          </div>
+        </div>
+        <div class="row" onclick="location.href='28-readiness-detail-mobile.html'" style="cursor:pointer">
+          <div class="ic warm"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Elevated overnight heart rate</div><div class="when">7:15a</div></div>
+            <div class="d">Resting heart rate ran above your range last night. A late meal or alcohol can do this — worth watching, not worrying.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sect">This week</div>
+      <div class="card">
+        <div class="row" onclick="location.href='94-weekly-report-mobile.html'" style="cursor:pointer">
+          <div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 11h16"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Your weekly report is ready</div><div class="when">Sun</div></div>
+            <div class="d">A steadier week — bedtimes tightened up and readiness climbed. One takeaway inside.</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M8 12l3 3 5-6"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Baseline complete</div><div class="when">Mon</div></div>
+            <div class="d">Fourteen days of calibration are done. Your scores now compare you to your own typical range.</div>
+          </div>
+        </div>
+        <div class="row" onclick="location.href='20-trends-mobile.html'" style="cursor:pointer">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17L17 7"/></svg></div>
+          <div class="rt">
+            <div class="rh"><div class="t">Sleep quality trending up</div><div class="when">Sun</div></div>
+            <div class="d">Average sleep score rose 6 points this week, mostly from more consistent bedtimes.</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="quiet">That's everything. We only write when there's<br>something worth knowing.</p>
+    </div>
+  </div>
+</body>
+</html>

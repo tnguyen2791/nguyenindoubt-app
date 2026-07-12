@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Provider sign-in · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:28px 40px}
+  .brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .pbadge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);background:var(--mint);border-radius:99px;padding:6px 14px}
+  .mid{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:420px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:36px}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.015em;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
+  .flab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:24px 2px 8px}
+  .input{display:flex;align-items:center;gap:12px;background:var(--fog);border:1.5px solid var(--canopy);border-radius:14px;padding:14px 16px}
+  .input svg{width:18px;height:18px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .input .v{font-size:14px;font-weight:600}
+  .input .caret{width:2px;height:17px;background:var(--canopy);animation:blink 1.1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:18px}
+  .fine{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin-top:16px}
+  .fine svg{width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+  .invite{background:var(--mint);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--ink);line-height:1.55;margin-top:20px}
+  .invite b{color:var(--canopy)}
+  .foot{text-align:center;font-size:11px;color:var(--faint);padding:20px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+    <span class="pbadge">Provider</span>
+  </div>
+  <div class="mid">
+    <div class="card">
+      <h1>Provider sign-in</h1>
+      <p class="sub">For clinicians people choose to share their readings with. We'll email you a one-time code.</p>
+      <div class="flab">Work email</div>
+      <div class="input">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 8l9 6 9-6"/></svg>
+        <span class="v">dr.nguyen@</span><span class="caret"></span>
+      </div>
+      <button class="cta" onclick="location.href='76-provider-dashboard-desktop.html'">Send code</button>
+      <p class="fine">
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/></svg>
+        You only ever see what each person has chosen to share — and they can pause it anytime.
+      </p>
+      <div class="invite"><b>Invite-only.</b> Provider access is currently limited to one verified clinician per practice. Ask your NiD contact for an invite.</div>
+    </div>
+  </div>
+  <p class="foot">NguyenInDoubt Provider · readings are educational context, never a diagnosis</p>
+</body>
+</html>

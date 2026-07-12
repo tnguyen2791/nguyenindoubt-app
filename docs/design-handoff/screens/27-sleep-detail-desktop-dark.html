@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sleep detail · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0F150F;--ember:#E08A63;--line:rgba(232,238,226,.12);--surface:#18211A;--muted:#9DA99B;--faint:#7C8A7E}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .page{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;gap:16px}
+  .back{width:38px;height:38px;border-radius:99px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .back svg{width:18px;height:18px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .th1{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .tsub{font-size:12px;color:var(--faint);margin-top:2px}
+  .top .spacer{flex:1}
+  .avatar{width:34px;height:34px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--canopy)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:22px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-12{grid-column:span 12}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:12px;font-weight:600;color:var(--faint)}
+  /* hero */
+  .herocard{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring{position:relative;width:168px;height:168px;margin-top:6px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num{font-size:48px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .ring .lab{font-size:12px;font-weight:600;color:var(--muted);margin-top:4px}
+  .cap{font-size:14px;font-weight:600;color:#7FBE5E;margin-top:16px}
+  /* composition */
+  .segbar{display:flex;height:24px;border-radius:8px;overflow:hidden;margin-top:16px;gap:2px}
+  .segbar div{height:100%}
+  .crows{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+  .cr{display:flex;align-items:center;gap:10px}
+  .chip{width:11px;height:11px;border-radius:3px}
+  .cn{font-size:13px;font-weight:600;color:#C7D2C0}
+  .cp{font-size:13px;color:var(--faint);margin-left:auto}
+  .cv{font-size:13px;font-weight:700;width:64px;text-align:right}
+  /* contributors */
+  .item{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+  .irow{display:flex;justify-content:space-between;align-items:baseline}
+  .name{font-size:13px;font-weight:600;color:#C7D2C0}
+  .track{height:8px;border-radius:99px;background:var(--mint);overflow:hidden}
+  .fill{height:100%;width:100%;border-radius:99px}
+  .state{font-size:12px;font-weight:600;white-space:nowrap}
+  /* hypnogram */
+  .hypno{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .lane{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:12px}
+  .lbl{font-size:11px;font-weight:700;color:var(--muted);text-align:right}
+  .segs{display:flex;gap:3px;height:20px}
+  .seg{border-radius:5px}
+  .axis{display:flex;justify-content:space-between;margin-top:12px;padding-left:64px;font-size:11px;color:var(--faint)}
+  /* hr */
+  .bignum{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+  .bignum b{font-size:34px;font-weight:700;letter-spacing:-.02em}
+  .bignum small{font-size:16px;color:var(--muted)}
+  .caxis{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--faint)}
+
+  .tipdot{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1px solid var(--line);background:var(--mint);color:var(--canopy);font-size:9px;font-weight:700;font-style:italic;vertical-align:1px;margin-left:5px;cursor:help}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div><div class="th1">Sleep</div><div class="tsub">Last night · Tuesday, July 7</div></div>
+      <div class="spacer"></div>
+      <span class="avatar">M</span>
+    </div>
+    <div class="grid">
+      <!-- hero -->
+      <div class="card col-4 herocard">
+        <div class="k" style="align-self:flex-start">Sleep quality</div>
+        <div class="ring">
+          <svg width="168" height="168" viewBox="0 0 168 168">
+            <circle cx="84" cy="84" r="72" fill="none" stroke="var(--mint)" stroke-width="14"/>
+            <circle cx="84" cy="84" r="72" fill="none" stroke="#5B9146" stroke-width="14" stroke-linecap="round" stroke-dasharray="452" stroke-dashoffset="23"/>
+          </svg>
+          <div class="center"><div class="num">95</div><div class="lab">quality</div></div>
+        </div>
+        <div class="cap">Protective night · 7h 36m asleep</div>
+      </div>
+      <!-- composition -->
+      <div class="card col-4">
+        <div class="head"><div class="k">Composition</div><div class="headnote">healthy balance</div></div>
+        <div class="segbar">
+          <div style="flex:16;background:var(--canopy)"></div>
+          <div style="flex:54;background:var(--moss);opacity:.8"></div>
+          <div style="flex:20;background:var(--moss);opacity:.55"></div>
+          <div style="flex:10;background:var(--sage)"></div>
+        </div>
+        <div class="crows">
+          <div class="cr"><span class="chip" style="background:var(--canopy)"></span><span class="cn">Deep</span><span class="cp">16%</span><span class="cv">1h 12m</span></div>
+          <div class="cr"><span class="chip" style="background:var(--moss);opacity:.8"></span><span class="cn">Light</span><span class="cp">54%</span><span class="cv">4h 05m</span></div>
+          <div class="cr"><span class="chip" style="background:var(--moss);opacity:.55"></span><span class="cn">REM</span><span class="cp">20%</span><span class="cv">1h 34m</span></div>
+          <div class="cr"><span class="chip" style="background:var(--sage)"></span><span class="cn">Awake</span><span class="cp">10%</span><span class="cv">45m</span></div>
+        </div>
+      </div>
+      <!-- contributors -->
+      <div class="card col-4">
+        <div class="k">Contributors</div>
+        <div class="item"><div class="irow"><span class="name">Total sleep</span><span class="state" style="color:#7FBE5E">optimal</span></div><div class="track"><div class="fill" style="background:#5B9146"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Efficiency<span class="tipdot" title="Share of time in bed actually spent asleep. Above 85% is typical; one restless night barely moves it.">i</span></span><span class="state" style="color:#7FBE5E">optimal</span></div><div class="track"><div class="fill" style="background:#5B9146"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Restfulness<span class="tipdot" title="How still the night was. Wake-ups and tossing lower it — most nights have a few, and that is normal.">i</span></span><span class="state" style="color:#9CB255">good</span></div><div class="track"><div class="fill" style="background:#7C9A4C"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Latency<span class="tipdot" title="How long it took to fall asleep. 10–20 minutes is common; longer often follows late screens or caffeine.">i</span></span><span class="state" style="color:#C7A24F">a bit long</span></div><div class="track"><div class="fill" style="background:#B29B52"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Timing<span class="tipdot" title="How close sleep sat to your usual window. Consistent timing does more for recovery than extra minutes.">i</span></span><span class="state" style="color:#7FBE5E">on rhythm</span></div><div class="track"><div class="fill" style="background:#5B9146"></div></div></div>
+      </div>
+      <!-- stages -->
+      <div class="card col-12">
+        <div class="head"><div class="k">Sleep stages</div><div class="headnote">7h 36m in bed · Deep 1h 12m · Light 4h 05m · REM 1h 34m · Awake 45m</div></div>
+        <div class="hypno">
+          <div class="lane"><div class="lbl">Awake</div><div class="segs"><div class="seg" style="flex:4;background:var(--sage)"></div><div class="seg" style="flex:38;background:transparent"></div><div class="seg" style="flex:3;background:var(--sage)"></div><div class="seg" style="flex:33;background:transparent"></div><div class="seg" style="flex:2;background:var(--sage)"></div></div></div>
+          <div class="lane"><div class="lbl">REM</div><div class="segs"><div class="seg" style="flex:20;background:transparent"></div><div class="seg" style="flex:9;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:22;background:transparent"></div><div class="seg" style="flex:12;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:17;background:transparent"></div></div></div>
+          <div class="lane"><div class="lbl">Light</div><div class="segs"><div class="seg" style="flex:7;background:transparent"></div><div class="seg" style="flex:16;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:14;background:transparent"></div><div class="seg" style="flex:20;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:23;background:var(--moss);opacity:.8"></div></div></div>
+          <div class="lane"><div class="lbl">Deep</div><div class="segs"><div class="seg" style="flex:4;background:transparent"></div><div class="seg" style="flex:11;background:var(--canopy)"></div><div class="seg" style="flex:36;background:transparent"></div><div class="seg" style="flex:9;background:var(--canopy)"></div><div class="seg" style="flex:20;background:transparent"></div></div></div>
+        </div>
+        <div class="axis"><span>11:20p</span><span>1:00a</span><span>3:00a</span><span>5:00a</span><span>6:56a</span></div>
+      </div>
+      <!-- overnight HR -->
+      <div class="card col-6">
+        <div class="head"><div class="k">Overnight heart rate</div><div class="headnote">lowest 3:48a</div></div>
+        <div class="bignum"><b>51</b><small>bpm · resting low, fully recovered</small></div>
+        <svg width="100%" height="150" viewBox="0 0 520 150" preserveAspectRatio="none" style="margin-top:12px">
+          <line x1="0" y1="40" x2="520" y2="40" stroke="rgba(232,238,226,.07)"/>
+          <line x1="0" y1="80" x2="520" y2="80" stroke="rgba(232,238,226,.07)"/>
+          <line x1="0" y1="120" x2="520" y2="120" stroke="rgba(232,238,226,.07)"/>
+          <polygon points="0,150 0,42 58,58 116,50 174,72 232,90 290,104 348,96 406,78 464,60 520,50 520,150" fill="rgba(143,181,106,.14)"/>
+          <polyline points="0,42 58,58 116,50 174,72 232,90 290,104 348,96 406,78 464,60 520,50" fill="none" stroke="var(--canopy)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="290" cy="104" r="5" fill="var(--canopy)"/>
+        </svg>
+        <div class="caxis"><span>11p</span><span>1a</span><span>3a</span><span>5a</span><span>7a</span></div>
+      </div>
+      <!-- HRV -->
+      <div class="card col-6">
+        <div class="head"><div class="k">Nighttime HRV<span class="tipdot" title="The tiny timing differences between heartbeats. Higher usually means your system is rested; dips after a stressful day are normal.">i</span></div><div class="headnote">avg 48 ms</div></div>
+        <div class="bignum"><b>52</b><small>ms · balanced range</small></div>
+        <svg width="100%" height="150" viewBox="0 0 520 150" preserveAspectRatio="none" style="margin-top:12px">
+          <line x1="0" y1="40" x2="520" y2="40" stroke="rgba(232,238,226,.07)"/>
+          <line x1="0" y1="80" x2="520" y2="80" stroke="rgba(232,238,226,.07)"/>
+          <line x1="0" y1="120" x2="520" y2="120" stroke="rgba(232,238,226,.07)"/>
+          <polygon points="0,150 0,92 87,78 173,88 260,54 347,60 433,40 520,48 520,150" fill="rgba(127,164,94,.16)"/>
+          <polyline points="0,92 87,78 173,88 260,54 347,60 433,40 520,48" fill="none" stroke="var(--moss)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="433" cy="40" r="5" fill="var(--moss)"/>
+        </svg>
+        <div class="caxis"><span>12a</span><span>2a</span><span>4a</span><span>6a</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

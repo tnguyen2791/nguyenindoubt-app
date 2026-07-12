@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sleep trend bars</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:560px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .title{font-size:16px;font-weight:700}
+  .note{font-size:12px;color:#54635a}
+  .chart{display:flex;align-items:flex-end;gap:12px;height:170px;margin-top:20px}
+  .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:12px;font-weight:700;color:var(--canopy);margin-bottom:6px}
+  .bar{width:100%;border-radius:9px 9px 6px 6px}
+  .day{font-size:11px;color:#7a887f;margin-top:8px}
+  .base{border-top:1px solid var(--line)}
+  .scale{display:flex;align-items:center;gap:12px;margin-top:18px}
+  .scale .lo,.scale .hi{font-size:11px;font-weight:600;white-space:nowrap}
+  .scale .lo{color:#C25A3A}
+  .scale .hi{color:#4F7A3C}
+  .ramp{flex:1;height:8px;border-radius:99px;background:linear-gradient(90deg,#C25A3A 0%,#C0784A 22%,#B58F47 42%,#94904A 60%,#6E8544 80%,#4F7A3C 100%)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="title">Sleep trend · 7 nights</div>
+      <div class="note">color = hours slept</div>
+    </div>
+    <div class="chart">
+      <div class="col"><div class="hrs">7.4h</div><div class="bar" style="height:78%;background:#74863F"></div><div class="day">Mon</div></div>
+      <div class="col"><div class="hrs">6.1h</div><div class="bar" style="height:64%;background:#C0784A"></div><div class="day">Tue</div></div>
+      <div class="col"><div class="hrs">6.8h</div><div class="bar" style="height:71%;background:#A08B48"></div><div class="day">Wed</div></div>
+      <div class="col"><div class="hrs">7.9h</div><div class="bar" style="height:92%;background:#537B3D"></div><div class="day">Thu</div></div>
+      <div class="col"><div class="hrs">5.7h</div><div class="bar" style="height:52%;background:#C4633E"></div><div class="day">Fri</div></div>
+      <div class="col"><div class="hrs">7.1h</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">Sat</div></div>
+      <div class="col"><div class="hrs">7.6h</div><div class="bar" style="height:84%;background:#688343"></div><div class="day">Sun</div></div>
+    </div>
+    <div class="base"></div>
+    <div class="scale">
+      <span class="lo">5h short</span>
+      <div class="ramp"></div>
+      <span class="hi">8h+ optimal</span>
+    </div>
+  </div>
+</body>
+</html>

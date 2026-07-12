@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative">
+    <div style="position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-size:15px;font-weight:700;letter-spacing:-.01em">Sharing</div>
+  </div>
+  <div style="flex:1;padding:0 16px 28px">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;margin-top:14px">
+      <div style="width:44px;height:44px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">DN</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:700">Dr. Nguyen</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">{{ statusLine }}</div>
+      </div>
+      <sc-if value="{{ isWaiting }}" hint-placeholder-val="{{ true }}">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--faint);white-space:nowrap"><span style="width:8px;height:8px;border-radius:99px;background:var(--sage)"></span>waiting</span>
+      </sc-if>
+      <sc-if value="{{ isAccepted }}" hint-placeholder-val="{{ false }}">
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--moss);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M5 13l4 4L19 7"></path></svg>sharing</span>
+      </sc-if>
+      <sc-if value="{{ isDeclined }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:11px;font-weight:700;color:var(--faint);white-space:nowrap">not accepted</span>
+      </sc-if>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 10px">What you offered</div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:15px 16px">
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Scores &amp; trends</div><div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Readiness, sleep, and activity summaries</div></div>
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--moss);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M5 13l4 4L19 7"></path></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-top:1px solid var(--line)">
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Sleep detail</div><div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Stages, heart rate, and HRV overnight</div></div>
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--moss);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M5 13l4 4L19 7"></path></svg>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-top:1px solid var(--line)">
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Journal tags</div><div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Not offered — your tags stay private</div></div>
+        <span style="font-size:11px;font-weight:700;color:var(--faint);white-space:nowrap">off</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:15px 16px;border-top:1px solid var(--line)">
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Journal notes</div><div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Not offered — your notes stay private</div></div>
+        <span style="font-size:11px;font-weight:700;color:var(--faint);white-space:nowrap">off</span>
+      </div>
+    </div>
+
+    <div style="background:var(--mint);border-radius:14px;padding:15px 17px;margin-top:14px">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--moss)">{{ noteTitle }}</div>
+      <p style="font-size:13px;color:var(--ink);line-height:1.55;margin:5px 0 0">{{ noteBody }}</p>
+    </div>
+
+    <button type="button" style="display:block;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ember);font-family:var(--font-sans);font-size:14px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:22px">{{ actionLabel }}</button>
+    <p style="font-size:12px;color:var(--faint);line-height:1.6;margin:14px 0 0;text-align:center;padding:0 12px">{{ footNote }}</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;status&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;waiting&quot;,&quot;accepted&quot;,&quot;declined&quot;],&quot;default&quot;:&quot;waiting&quot;,&quot;tsType&quot;:&quot;'waiting' | 'accepted' | 'declined'&quot;,&quot;section&quot;:&quot;State&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  renderVals() {
+    const status = this.props.status ?? 'waiting';
+    const copy = {
+      waiting: {
+        statusLine: 'Request sent today, 7:20a',
+        noteTitle: 'While you wait',
+        noteBody: "Nothing is shared yet. If Dr. Nguyen accepts, sharing starts with your next morning reading — and you'll see a note here when it does.",
+        actionLabel: 'Cancel request',
+        footNote: 'Canceling is quiet — no notice goes out, and you can opt in again anytime.',
+      },
+      accepted: {
+        statusLine: 'Sharing since this morning',
+        noteTitle: 'Now sharing',
+        noteBody: "Dr. Nguyen sees exactly what you chose — nothing more. You can widen, narrow, or pause it here anytime.",
+        actionLabel: 'Pause sharing',
+        footNote: 'Pausing hides everything at once — no notice goes out, and you can resume anytime.',
+      },
+      declined: {
+        statusLine: 'Request declined yesterday',
+        noteTitle: 'Not accepted, for now',
+        noteBody: 'Nothing was ever shared. You can ask again anytime, or check with their office first.',
+        actionLabel: 'Ask again',
+        footNote: 'Your choices are saved — asking again sends the same offer unless you change it.',
+      },
+    }[status];
+    return {
+      isWaiting: status === 'waiting',
+      isAccepted: status === 'accepted',
+      isDeclined: status === 'declined',
+      ...copy,
+    };
+  }
+}
+</script>
+</body>
+</html>

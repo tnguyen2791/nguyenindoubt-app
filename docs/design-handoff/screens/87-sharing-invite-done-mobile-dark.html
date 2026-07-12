@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharing invite · done</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0B120F;--ember:#E08A63;--line:rgba(232,238,226,.12);--muted:#9DA99B;--faint:#7C8A7E;--surface:#18211A;--onaccent:#0B120F;--desk:#050806;--knob:#E8EEE2}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .mark{width:88px;height:88px;border-radius:99px;background:var(--mint);display:flex;align-items:center;justify-content:center;margin-top:110px}
+  .mark svg{width:40px;height:40px;stroke:var(--canopy);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:26px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.6;margin-top:12px;max-width:300px}
+  .chips{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;justify-content:center}
+  .chip{font-size:12px;font-weight:600;color:var(--canopy);background:var(--mint);border-radius:99px;padding:8px 14px}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="scroll">
+      <div class="mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>Request sent to<br>Dr. Nguyen</h1>
+      <p class="sub">If Dr. Nguyen accepts, sharing starts with your next morning reading — read-only, and you'll always see exactly what they see. Cancel anytime.</p>
+      <div class="chips">
+        <span class="chip">scores &amp; trends</span>
+        <span class="chip">sleep detail</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='19-dashboard-mobile-dark.html'">Done</button>
+      <a href="103-sharing-request-status-mobile-dark.html" class="skip">Review sharing settings</a>
+    </div>
+  </div>
+</body>
+</html>

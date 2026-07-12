@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Share with provider · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative}
+  .back{position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .scroll{flex:1;padding:0 16px 28px}
+  .prov{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;margin-top:14px}
+  .pava{width:44px;height:44px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pt{flex:1}
+  .pt .n{font-size:15px;font-weight:700}
+  .pt .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .ver{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap}
+  .ver svg{width:14px;height:14px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 10px}
+  .group{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:15px 16px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .rl{font-size:14px;font-weight:600}
+  .rd{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0;margin-left:auto}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:var(--knob,#fff);box-shadow:0 1px 3px rgba(23,33,27,.25)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .fine{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin-top:14px;padding:0 6px}
+  .fine svg{width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+  .pause{display:block;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ember);font:inherit;font-size:14px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:22px}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:14px;text-align:center;padding:0 12px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='31-profile-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Share with your provider</div>
+    </div>
+    <div class="scroll">
+      <div class="prov">
+        <div class="pava">DN</div>
+        <div class="pt">
+          <div class="n">Dr. Nguyen</div>
+          <div class="d">Sharing since Jun 2026</div>
+        </div>
+        <span class="ver"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>verified</span>
+      </div>
+
+      <div class="k">What Dr. Nguyen can see</div>
+      <div class="group">
+        <div class="row"><div><div class="rl">Scores &amp; trends</div><div class="rd">Readiness, sleep, and activity summaries</div></div><div class="sw on"></div></div>
+        <div class="row"><div><div class="rl">Sleep detail</div><div class="rd">Stages, heart rate, and HRV overnight</div></div><div class="sw on"></div></div>
+        <div class="row"><div><div class="rl">Journal tags</div><div class="rd">The tags you log — caffeine, stress, and the rest</div></div><div class="sw"></div></div>
+        <div class="row"><div><div class="rl">Journal notes</div><div class="rd">Your written notes stay yours unless you choose this</div></div><div class="sw"></div></div>
+      </div>
+
+      <p class="fine">
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/></svg>
+        Sharing is read-only and one provider only. Changes apply immediately, and you'll see everything they see.
+      </p>
+
+      <button class="pause">Pause sharing</button>
+      <p class="note">Pausing hides everything at once — no notice goes to your provider, and you can resume anytime.</p>
+    </div>
+  </div>
+</body>
+</html>

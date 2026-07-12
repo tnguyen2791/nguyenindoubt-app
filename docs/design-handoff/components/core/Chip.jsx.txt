@@ -1,0 +1,40 @@
+export function Chip({ selected = false, flagged = false, dot = true, children, onClick }) {
+  const bg = selected ? (flagged ? 'var(--accent-flag)' : 'var(--accent)') : 'var(--surface-card)';
+  const fg = selected ? 'var(--onaccent)' : 'var(--text-muted)';
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 7,
+        border: '1px solid ' + (selected ? 'transparent' : 'var(--border-hairline)'),
+        background: bg,
+        color: fg,
+        borderRadius: 'var(--r-pill)',
+        padding: '9px 14px',
+        fontFamily: 'var(--font-sans)',
+        fontSize: 'var(--fs-body)',
+        fontWeight: 'var(--fw-semibold)',
+        cursor: 'pointer',
+        lineHeight: 1,
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+      }}
+    >
+      {dot && (
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 'var(--r-pill)',
+            background: selected ? 'var(--onaccent)' : flagged ? 'var(--accent-flag)' : 'var(--sage)',
+            flexShrink: 0,
+          }}
+        />
+      )}
+      {children}
+    </button>
+  );
+}

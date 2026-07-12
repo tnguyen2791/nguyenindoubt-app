@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Goals · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative}
+  .back{position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .scroll{flex:1;padding:0 16px 28px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 10px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .goal{display:flex;align-items:center;justify-content:space-between}
+  .gv{font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--canopy)}
+  .gv small{font-size:15px;font-weight:600;color:var(--muted)}
+  .gl{font-size:12px;color:var(--muted);margin-top:4px}
+  .step{display:flex;gap:8px}
+  .sbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--fog);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--canopy);cursor:pointer}
+  .sbtn.plus{background:var(--canopy);color:var(--onaccent);border-color:var(--canopy)}
+  .hint{display:block;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.5}
+  .hint b{color:var(--moss)}
+  .group{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:12px;padding:15px 16px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .rl{font-size:14px;font-weight:600}
+  .rd{font-size:12px;color:var(--muted);margin-top:2px}
+  .rv{margin-left:auto;font-size:13px;color:var(--faint);white-space:nowrap}
+  .chev{width:16px;height:16px;stroke:var(--faint);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;margin-left:6px;flex-shrink:0}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0;margin-left:auto}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:var(--knob,#fff);box-shadow:0 1px 3px rgba(23,33,27,.25)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:18px;text-align:center;padding:0 12px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='31-profile-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Goals &amp; targets</div>
+    </div>
+    <div class="scroll">
+      <div class="k">Sleep</div>
+      <div class="card">
+        <div class="goal">
+          <div>
+            <div class="gv">8<small>h</small> 00<small>m</small></div>
+            <div class="gl">nightly sleep goal</div>
+          </div>
+          <div class="step">
+            <div class="sbtn">−</div>
+            <div class="sbtn plus">+</div>
+          </div>
+        </div>
+        <div class="hint">Your last 30 nights average <b>7h 12m</b>. Small, steady increases stick better than big jumps.</div>
+      </div>
+      <div class="group" style="margin-top:10px">
+        <div class="row"><div><div class="rl">Bedtime window</div><div class="rd">Guidance aims for this window</div></div><span class="rv">10:30–11:30p</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+      </div>
+
+      <div class="k">Activity</div>
+      <div class="card">
+        <div class="goal">
+          <div>
+            <div class="gv">9,000</div>
+            <div class="gl">daily step target</div>
+          </div>
+          <div class="step">
+            <div class="sbtn">−</div>
+            <div class="sbtn plus">+</div>
+          </div>
+        </div>
+        <div class="hint">You've hit this on <b>5 of the last 7</b> days — a good stretch without being out of reach.</div>
+      </div>
+      <div class="group" style="margin-top:10px">
+        <div class="row"><div><div class="rl">Rest days</div><div class="rd">Lower the target on recovery days</div></div><div class="sw on"></div></div>
+        <div class="row"><div><div class="rl">Inactivity nudges</div><div class="rd">A gentle note after long still stretches</div></div><div class="sw"></div></div>
+      </div>
+
+      <p class="note">Goals shape guidance only — they never change your scores.</p>
+    </div>
+  </div>
+</body>
+</html>

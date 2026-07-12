@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Baseline range band</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:460px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .metric .top{display:flex;align-items:baseline;justify-content:space-between;margin-top:8px}
+  .name{font-size:15px;font-weight:700}
+  .now{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .now small{font-size:13px;color:#54635a;font-weight:600}
+  .band{position:relative;height:10px;border-radius:99px;background:var(--mint);margin-top:14px}
+  .norm{position:absolute;top:0;bottom:0;background:var(--sage);opacity:.55;border-radius:99px}
+  .mark{position:absolute;top:-4px;width:4px;height:18px;border-radius:3px;background:#4F7A3C}
+  .mark.flag{background:#C4633E}
+  .scale{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:#7a887f}
+  .tag{font-size:12px;font-weight:600;color:#4F7A3C;margin-top:8px}
+  .tag.flag{color:#C4633E}
+  hr{border:0;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="metric">
+      <div class="k">Resting heart rate vs baseline</div>
+      <div class="top"><div class="name">Resting HR</div><div class="now">51<small> bpm</small></div></div>
+      <div class="band">
+        <div class="norm" style="left:32%;right:20%"></div>
+        <div class="mark" style="left:38%"></div>
+      </div>
+      <div class="scale"><span>44</span><span>58 baseline</span><span>72</span></div>
+      <div class="tag">within your normal range</div>
+    </div>
+    <hr />
+    <div class="metric">
+      <div class="k">Body temperature vs baseline</div>
+      <div class="top"><div class="name">Skin temp</div><div class="now">+0.6<small> °C</small></div></div>
+      <div class="band">
+        <div class="norm" style="left:30%;right:30%"></div>
+        <div class="mark flag" style="left:78%"></div>
+      </div>
+      <div class="scale"><span>-1.0</span><span>baseline</span><span>+1.0</span></div>
+      <div class="tag flag">elevated — monitor</div>
+    </div>
+  </div>
+</body>
+</html>

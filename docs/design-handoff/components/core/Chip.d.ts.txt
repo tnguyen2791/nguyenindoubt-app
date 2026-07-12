@@ -1,0 +1,11 @@
+export interface ChipProps {
+  /** filled canopy (or ember when flagged) when selected */
+  selected?: boolean;
+  /** flagged tags (Alcohol, Stressed) render ember when selected */
+  flagged?: boolean;
+  /** leading 8px dot; on for journal tags, off for plain filter chips */
+  dot?: boolean;
+  children?: React.ReactNode;
+  onClick?: () => void;
+}
+export declare function Chip(props: ChipProps): JSX.Element;

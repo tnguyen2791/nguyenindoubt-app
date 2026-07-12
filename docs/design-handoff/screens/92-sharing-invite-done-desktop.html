@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharing invite · done · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:28px 40px}
+  .brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .mid{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:440px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:44px 36px;text-align:center}
+  .mark{width:84px;height:84px;border-radius:99px;background:var(--mint);display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .mark svg{width:38px;height:38px;stroke:var(--canopy);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.015em;color:var(--canopy);margin-top:22px;line-height:1.25}
+  .sub{font-size:13px;color:var(--muted);line-height:1.6;margin-top:10px}
+  .chips{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+  .chip{font-size:12px;font-weight:600;color:var(--canopy);background:var(--mint);border-radius:99px;padding:8px 14px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:26px}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+  .foot{text-align:center;font-size:11px;color:var(--faint);padding:20px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+  </div>
+  <div class="mid">
+    <div class="card">
+      <div class="mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h1>Request sent to<br>Dr. Nguyen</h1>
+      <p class="sub">If Dr. Nguyen accepts, sharing starts with your next morning reading — read-only, and you'll always see exactly what they see. Cancel anytime.</p>
+      <div class="chips">
+        <span class="chip">scores &amp; trends</span>
+        <span class="chip">sleep detail</span>
+      </div>
+      <button class="cta" onclick="location.href='38-profile-desktop.html'">Done</button>
+      <a href="#" class="skip">Review sharing settings</a>
+    </div>
+  </div>
+  <p class="foot">Change or pause sharing anytime in Profile · never a diagnosis</p>
+</body>
+</html>

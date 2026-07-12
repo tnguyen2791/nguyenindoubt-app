@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notification settings · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px;min-height:100vh}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .page{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .crumb{font-size:13px;font-weight:600;color:var(--faint);margin-top:26px}
+  .crumb a{text-decoration:none;font-weight:600}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.015em;margin-top:8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-bottom:6px}
+  .row{display:flex;align-items:center;gap:12px;padding:15px 2px;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0}
+  .rl{font-size:14px;font-weight:600}
+  .rd{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .rv{margin-left:auto;font-size:13px;color:var(--faint);white-space:nowrap}
+  .chev{width:16px;height:16px;stroke:var(--faint);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;margin-left:8px;flex-shrink:0}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0;margin-left:auto}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:var(--knob,#fff);box-shadow:0 1px 3px rgba(23,33,27,.25)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .qh{display:flex;align-items:center;gap:12px}
+  .qic{width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .qic svg{width:18px;height:18px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .qt{font-size:15px;font-weight:700}
+  .qs{font-size:12px;color:var(--muted);margin-top:2px}
+  .qtimes{display:flex;gap:10px;margin-top:16px}
+  .tpill{flex:1;background:var(--fog);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+  .tpill .tl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .tpill .tv{font-size:17px;font-weight:700;color:var(--canopy);margin-top:3px}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+    </div>
+    <div class="crumb"><a href="38-profile-desktop.html">Profile</a> / Notifications</div>
+    <h1>Notifications</h1>
+    <div class="grid">
+      <div class="col">
+        <div class="card">
+          <div class="k">Daily</div>
+          <div class="row"><div><div class="rl">Morning reading</div><div class="rd">One note when your scores are ready</div></div><div class="sw on"></div></div>
+          <div class="row"><div><div class="rl">Evening wind-down</div><div class="rd">A reminder ahead of your bedtime window</div></div><span class="rv">9:45p</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="row"><div><div class="rl">Weekly report</div><div class="rd">Sunday summary of the week's trends</div></div><div class="sw on"></div></div>
+        </div>
+        <div class="card">
+          <div class="k">Signals</div>
+          <div class="row"><div><div class="rl">Out-of-range alerts</div><div class="rd">Heart rate or temperature outside your range</div></div><div class="sw on"></div></div>
+          <div class="row"><div><div class="rl">Goal milestones</div><div class="rd">When you reach a target early</div></div><div class="sw"></div></div>
+          <div class="row"><div><div class="rl">Ring battery &amp; sync</div><div class="rd">Low charge or a missed sync</div></div><div class="sw on"></div></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="qh">
+            <div class="qic"><svg viewBox="0 0 24 24"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/></svg></div>
+            <div style="flex:1"><div class="qt">Do not disturb</div><div class="qs">Nothing arrives during these hours</div></div>
+            <div class="sw on" style="margin-left:0"></div>
+          </div>
+          <div class="qtimes">
+            <div class="tpill"><div class="tl">From</div><div class="tv">10:00p</div></div>
+            <div class="tpill"><div class="tl">Until</div><div class="tv">7:00a</div></div>
+          </div>
+        </div>
+        <p class="note">We only write when there's something worth knowing — never streaks, never guilt.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

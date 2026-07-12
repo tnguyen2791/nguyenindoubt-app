@@ -1,0 +1,27 @@
+export function Button({ variant = 'primary', size = 'md', fullWidth = false, disabled = false, children, onClick }) {
+  const base = {
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 'var(--fw-bold)',
+    fontSize: size === 'lg' ? 'var(--fs-title)' : 'var(--fs-control)',
+    padding: size === 'lg' ? '15px 22px' : '11px 18px',
+    borderRadius: 'var(--r-control)',
+    border: '1.5px solid transparent',
+    cursor: disabled ? 'default' : 'pointer',
+    opacity: disabled ? 0.45 : 1,
+    display: fullWidth ? 'block' : 'inline-block',
+    width: fullWidth ? '100%' : 'auto',
+    textAlign: 'center',
+    lineHeight: 1.2,
+  };
+  const variants = {
+    primary: { background: 'var(--accent)', color: 'var(--onaccent)' },
+    ghost: { background: 'transparent', color: 'var(--accent)', borderColor: 'var(--accent)' },
+    quiet: { background: 'var(--mint)', color: 'var(--accent)' },
+    danger: { background: 'transparent', color: 'var(--accent-flag)', borderColor: 'var(--border-hairline)' },
+  };
+  return (
+    <button type="button" style={{ ...base, ...(variants[variant] || variants.primary) }} disabled={disabled} onClick={onClick}>
+      {children}
+    </button>
+  );
+}

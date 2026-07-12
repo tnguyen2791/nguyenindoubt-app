@@ -1,0 +1,51 @@
+/* NguyenInDoubt color tokens.
+   Light is the default; dark applies under [data-theme="dark"]. */
+:root{
+  /* base palette */
+  --ink:#17211B;          /* primary text */
+  --canopy:#1E4A34;       /* brand green, accents, filled controls */
+  --moss:#5D7F43;         /* secondary green */
+  --sage:#A9BA92;         /* tertiary green, quiet chart fills */
+  --mint:#E4EDDD;         /* tinted fills, track backgrounds */
+  --fog:#F6F7F1;          /* app background */
+  --desk:#E9ECE3;         /* page/desk behind the app frame */
+  --ember:#C56844;        /* flagged state + wordmark accent. never decoration */
+  --surface:#ffffff;      /* cards */
+  --onaccent:#ffffff;     /* text/icons on canopy fills */
+  --line:rgba(30,74,52,.14);
+  --muted:#54635a;        /* secondary text */
+  --faint:#7a887f;        /* tertiary text, axis labels */
+  --knob:#ffffff;         /* toggle knob */
+
+  /* metric state colors (charts, contributor bars) */
+  --state-optimal:#4F7A3C;
+  --state-good:#6E8544;
+  --state-fair:#A08B48;
+  --state-attention:#C4633E;
+
+  /* semantic aliases */
+  --text-body:var(--ink);
+  --text-muted:var(--muted);
+  --text-faint:var(--faint);
+  --surface-card:var(--surface);
+  --surface-app:var(--fog);
+  --accent:var(--canopy);
+  --accent-flag:var(--ember);
+  --border-hairline:var(--line);
+}
+[data-theme="dark"]{
+  --ink:#E8EEE2;
+  --canopy:#8FB56A;
+  --moss:#7FA45E;
+  --sage:#A9BA92;
+  --mint:#26332A;
+  --fog:#0B120F;
+  --desk:#050806;
+  --ember:#E08A63;
+  --surface:#18211A;
+  --onaccent:#0B120F;
+  --line:rgba(232,238,226,.12);
+  --muted:#9DA99B;
+  --faint:#7C8A7E;
+  --knob:#E8EEE2;
+}

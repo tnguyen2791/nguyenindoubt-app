@@ -1,0 +1,30 @@
+/* NguyenInDoubt type tokens. Inter only; numbers are the heroes. */
+:root{
+  --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+
+  /* scale (px) */
+  --fs-micro:10px;      /* axis labels, tiny captions */
+  --fs-label:11px;      /* uppercase section labels (.k) */
+  --fs-caption:12px;    /* descriptions, notes */
+  --fs-body:13px;       /* body copy */
+  --fs-control:14px;    /* row labels, buttons secondary */
+  --fs-title:15px;      /* nav titles, CTAs */
+  --fs-h2:18px;
+  --fs-h1:26px;         /* page titles */
+  --fs-greeting:30px;
+  --fs-score:34px;      /* hero readouts */
+
+  /* weight */
+  --fw-body:400; /* @kind font */
+  --fw-medium:500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:700; /* @kind font */
+
+  /* tracking: tighten large sizes only */
+  --ls-tight:-0.02em;
+  --ls-display:-0.03em;
+  --ls-label:0.09em;    /* with uppercase labels */
+
+  --lh-body:1.5; /* @kind font */
+  --lh-tight:1.15; /* @kind font */
+}

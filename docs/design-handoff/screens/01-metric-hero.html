@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Metric hero tiles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    --moss:#7FA45E; --canopy:#8FB56A; --ember:#E08A63;
+    --track:rgba(255,255,255,.10); --ink:#EEF2EA; --muted:#9AA69C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;color:var(--ink);
+    min-height:100vh;padding:40px 22px;
+    background-color:#0B120F;
+    background-image:
+      radial-gradient(1.4px 1.4px at 24px 40px, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 130px 90px, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.2px 1.2px at 210px 30px, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 70px 140px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.3px 1.3px at 300px 120px, rgba(255,255,255,.55), transparent),
+      radial-gradient(1px 1px at 360px 60px, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 180px 170px, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.1px 1.1px at 20px 180px, rgba(255,255,255,.5), transparent);
+    background-size:400px 220px;
+  }
+  .row{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;max-width:640px;margin:0 auto}
+  .tile{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .disc{position:relative;width:126px;height:126px}
+  .disc .bg{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(2px)}
+  .disc svg.ring{position:absolute;inset:0;transform:rotate(-90deg)}
+  .content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+  .content svg.ic{width:26px;height:26px;stroke:var(--ink);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
+  .val{font-size:29px;font-weight:600;letter-spacing:-.02em;line-height:1}
+  .val small{font-size:14px;font-weight:500;color:var(--muted);margin-left:1px}
+  .val.na{color:var(--muted);font-weight:500}
+  .label{font-size:14px;font-weight:500;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="row">
+    <!-- Readiness -->
+    <div class="tile">
+      <div class="disc">
+        <div class="bg"></div>
+        <svg class="ring" width="126" height="126" viewBox="0 0 126 126">
+          <circle cx="63" cy="63" r="59" fill="none" stroke="var(--track)" stroke-width="3"/>
+          <circle cx="63" cy="63" r="59" fill="none" stroke="#86AC5A" stroke-width="3" stroke-linecap="round" stroke-dasharray="371" stroke-dashoffset="67"/>
+        </svg>
+        <div class="content">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 21v-8"/>
+            <path d="M12 13c0-3-2.4-5.2-5.6-5.2C6.4 11 8.6 13 12 13Z"/>
+            <path d="M12 13c0-2.6 2-4.6 4.8-4.6C16.8 11.2 15 13 12 13Z"/>
+          </svg>
+          <div class="val">82</div>
+        </div>
+      </div>
+      <div class="label">Readiness</div>
+    </div>
+
+    <!-- Sleep -->
+    <div class="tile">
+      <div class="disc">
+        <div class="bg"></div>
+        <svg class="ring" width="126" height="126" viewBox="0 0 126 126">
+          <circle cx="63" cy="63" r="59" fill="none" stroke="var(--track)" stroke-width="3"/>
+          <circle cx="63" cy="63" r="59" fill="none" stroke="#6FA24E" stroke-width="3" stroke-linecap="round" stroke-dasharray="371" stroke-dashoffset="19"/>
+        </svg>
+        <div class="content">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/>
+          </svg>
+          <div class="val">95</div>
+        </div>
+      </div>
+      <div class="label">Sleep</div>
+    </div>
+
+    <!-- Activity -->
+    <div class="tile">
+      <div class="disc">
+        <div class="bg"></div>
+        <svg class="ring" width="126" height="126" viewBox="0 0 126 126">
+          <circle cx="63" cy="63" r="59" fill="none" stroke="var(--track)" stroke-width="3"/>
+          <circle cx="63" cy="63" r="59" fill="none" stroke="#78A554" stroke-width="3" stroke-linecap="round" stroke-dasharray="371" stroke-dashoffset="45"/>
+        </svg>
+        <div class="content">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 3c2 3 5 4.6 5 8.6a5 5 0 0 1-10 0c0-1.6.7-2.9 1.6-3.9.2 1.4.9 2.2 1.9 2.4C10.2 8 11 5.6 12 3Z"/>
+          </svg>
+          <div class="val">88</div>
+        </div>
+      </div>
+      <div class="label">Activity</div>
+    </div>
+
+    <!-- Heart rate (flagged / off-target) -->
+    <div class="tile">
+      <div class="disc">
+        <div class="bg"></div>
+        <svg class="ring" width="126" height="126" viewBox="0 0 126 126">
+          <circle cx="63" cy="63" r="59" fill="none" stroke="var(--track)" stroke-width="3"/>
+          <circle cx="63" cy="63" r="59" fill="none" stroke="#D9744A" stroke-width="3" stroke-linecap="round" stroke-dasharray="371" stroke-dashoffset="130"/>
+        </svg>
+        <div class="content">
+          <svg class="ic" viewBox="0 0 24 24">
+            <path d="M12 20C12 20 4 15.2 4 9.2 4 6.4 6.2 5 8.5 6.2 10 7 12 8.8 12 8.8 12 8.8 14 7 15.5 6.2 17.8 5 20 6.4 20 9.2 20 15.2 12 20 12 20Z"/>
+          </svg>
+          <div class="val">78<small>bpm</small></div>
+        </div>
+      </div>
+      <div class="label">Heart rate</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Score ring</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;width:230px;text-align:center}
+  .ring{position:relative;width:150px;height:150px;margin:0 auto}
+  .ring svg{transform:rotate(-90deg)}
+  .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .num{font-size:42px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .num small{font-size:15px;color:#54635a}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-top:14px}
+  .cap{font-size:13px;font-weight:600;margin-top:4px}
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="var(--mint)" stroke-width="14"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#4F7A3C" stroke-width="14"
+                  stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="20"/>
+        </svg>
+        <div class="center"><div class="num">95</div><div class="num"><small>quality</small></div></div>
+      </div>
+      <div class="k">Sleep quality</div>
+      <div class="cap" style="color:#4F7A3C">protective range</div>
+    </div>
+    <div class="card">
+      <div class="ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="var(--mint)" stroke-width="14"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#A08B48" stroke-width="14"
+                  stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="129"/>
+        </svg>
+        <div class="center"><div class="num">68</div><div class="num"><small>quality</small></div></div>
+      </div>
+      <div class="k">Sleep quality</div>
+      <div class="cap" style="color:#A08B48">fair — room to improve</div>
+    </div>
+    <div class="card">
+      <div class="ring">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="var(--mint)" stroke-width="14"/>
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#C4633E" stroke-width="14"
+                  stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="245"/>
+        </svg>
+        <div class="center"><div class="num">39</div><div class="num"><small>quality</small></div></div>
+      </div>
+      <div class="k">Sleep quality</div>
+      <div class="cap" style="color:#C4633E">below target</div>
+    </div>
+  </div>
+</body>
+</html>

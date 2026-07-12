@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative">
+    <div style="position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-size:15px;font-weight:700;letter-spacing:-.01em">Journal</div>
+    <div style="position:absolute;right:16px;width:32px;height:32px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--onaccent);stroke-width:2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"></path></svg>
+    </div>
+  </div>
+  <div style="flex:1;padding:0 16px 28px">
+    <div style="display:flex;gap:8px;margin-top:6px;overflow-x:auto;padding-bottom:2px">
+      <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" selected="{{ true }}" dot="{{ false }}" hint-size="76px,32px">All tags</x-import>
+      <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" dot="{{ false }}" hint-size="84px,32px">Caffeine</x-import>
+      <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" dot="{{ false }}" hint-size="78px,32px">Alcohol</x-import>
+      <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" dot="{{ false }}" hint-size="96px,32px">Meditation</x-import>
+    </div>
+
+    <sc-if value="{{ showInsight }}" hint-placeholder-val="{{ true }}">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)">This week</div>
+          <div style="font-size:11px;font-weight:600;color:var(--faint)">11 tags · 3 notes</div>
+        </div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.TrendBars" data="{{ freq }}" height="{{ 64 }}" show-values="{{ false }}" hint-size="100%,64px"></x-import>
+        <p style="font-size:12px;color:var(--muted);line-height:1.45;margin:12px 0 0">Days you tag <b style="color:var(--ink)">alcohol</b>, your sleep score averages 9 points lower the next morning.</p>
+      </div>
+    </sc-if>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 0">Today</div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:10px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+        <div style="font-size:14px;font-weight:700">Friday, Jul 11</div>
+        <div style="font-size:11px;font-weight:600;color:var(--faint)">readiness <b style="color:var(--moss)">82</b></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:11px">
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" hint-size="64px,30px">Nap</x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" hint-size="104px,30px">Meditation</x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" flagged="{{ true }}" hint-size="86px,30px">Alcohol</x-import>
+      </div>
+      <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:11px 0 0;padding-left:10px;border-left:2px solid var(--mint)">One glass of wine with dinner — early night planned.</p>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 0">Earlier this week</div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:10px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+        <div style="font-size:14px;font-weight:700">Thursday, Jul 10</div>
+        <div style="font-size:11px;font-weight:600;color:var(--faint)">readiness <b style="color:var(--moss)">78</b></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:11px">
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" hint-size="88px,30px">Caffeine</x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" flagged="{{ true }}" hint-size="94px,30px">Late meal</x-import>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:10px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+        <div style="font-size:14px;font-weight:700">Wednesday, Jul 9</div>
+        <div style="font-size:11px;font-weight:600;color:var(--faint)">readiness <b style="color:var(--moss)">85</b></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:11px">
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" hint-size="104px,30px">Meditation</x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Chip" hint-size="72px,30px">Sauna</x-import>
+      </div>
+      <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:11px 0 0;padding-left:10px;border-left:2px solid var(--mint)">Best sleep in weeks after the sauna session.</p>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:var(--faint);margin-top:24px;line-height:1.5">Tags help explain your scores —<br />they never change them.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showInsight&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  renderVals() {
+    return {
+      showInsight: this.props.showInsight ?? true,
+      freq: [
+        { percent: 45, label: 'M', color: 'var(--sage)' },
+        { percent: 70, label: 'T', color: 'var(--sage)' },
+        { percent: 24, label: 'W', color: 'var(--sage)' },
+        { percent: 70, label: 'T', color: 'var(--sage)' },
+        { percent: 100, label: 'F', color: 'var(--moss)' },
+        { percent: 45, label: 'S', color: 'var(--sage)' },
+        { percent: 24, label: 'S', color: 'var(--sage)' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

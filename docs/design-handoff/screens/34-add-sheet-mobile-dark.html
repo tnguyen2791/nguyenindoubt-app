@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0F150F;--ember:#E08A63;--line:rgba(232,238,226,.12);--surface:#18211A;--muted:#9DA99B;--faint:#7C8A7E}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#050806;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;height:844px;margin:0 auto;background:var(--fog);position:relative;overflow:hidden}
+  /* dimmed backdrop showing a hint of the day behind */
+  .backdrop{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.4),rgba(0,0,0,.62))}
+  .peek{padding:20px 16px;filter:blur(1px);opacity:.5}
+  .peek h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .peek .sub{font-size:13px;color:var(--muted);margin-top:6px}
+  /* sheet */
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#111A13;border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.5);padding:10px 18px 26px;max-height:78%;display:flex;flex-direction:column}
+  .grab{width:38px;height:4px;border-radius:99px;background:var(--line);margin:6px auto 14px}
+  .shead{display:flex;align-items:center;justify-content:space-between}
+  .shead h2{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .close{width:30px;height:30px;border-radius:99px;background:var(--surface);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .close svg{width:15px;height:15px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-top:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:9px 14px;font-size:13px;font-weight:600;color:#C7D2C0;cursor:pointer}
+  .chip .d{width:8px;height:8px;border-radius:99px;background:var(--sage)}
+  .chip.on{background:var(--canopy);color:#0F150F;border-color:var(--canopy)}
+  .chip.on .d{background:#0F150F}
+  .chip.flag.on{background:var(--ember);border-color:var(--ember);color:#0F150F}
+  .chip.flag.on .d{background:#0F150F}
+  .note{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:13px 14px;font:inherit;font-size:14px;color:var(--ink);margin-top:12px;resize:none}
+  .note::placeholder{color:var(--faint)}
+  .save{border:0;background:var(--canopy);color:#0F150F;font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;margin-top:18px;cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="peek">
+      <h1>Good morning, Minh</h1>
+      <div class="sub">Ready to take on the day</div>
+    </div>
+    <div class="backdrop"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <div class="shead">
+        <h2>Add to today</h2>
+        <a href="51-journal-mobile-dark.html" style="font-size:12px;font-weight:600;color:var(--moss);text-decoration:none;margin-left:auto;margin-right:10px">History</a>
+        <button class="close" onclick="location.href='19-dashboard-mobile-dark.html'"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+
+      <div class="k">Lifestyle</div>
+      <div class="chips">
+        <span class="chip on"><span class="d"></span>Nap</span>
+        <span class="chip"><span class="d"></span>Caffeine</span>
+        <span class="chip flag on"><span class="d"></span>Alcohol</span>
+        <span class="chip"><span class="d"></span>Late meal</span>
+        <span class="chip on"><span class="d"></span>Meditation</span>
+        <span class="chip"><span class="d"></span>Sauna</span>
+        <span class="chip"><span class="d"></span>Travel</span>
+      </div>
+
+      <div class="k">How you feel</div>
+      <div class="chips">
+        <span class="chip"><span class="d"></span>Energized</span>
+        <span class="chip"><span class="d"></span>Relaxed</span>
+        <span class="chip flag"><span class="d"></span>Stressed</span>
+        <span class="chip flag"><span class="d"></span>Sick</span>
+        <span class="chip"><span class="d"></span>Sore</span>
+      </div>
+
+      <textarea class="note" rows="2" placeholder="Add a note (optional)"></textarea>
+      <button class="save">Save 3 tags</button>
+    </div>
+  </div>
+</body>
+</html>

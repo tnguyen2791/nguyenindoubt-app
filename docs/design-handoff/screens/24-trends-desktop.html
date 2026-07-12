@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trends · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .page{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .top .right{display:flex;align-items:center;gap:14px}
+  .date{font-size:13px;font-weight:600;color:var(--muted)}
+  .avatar{width:34px;height:34px;border-radius:99px;background:var(--mint);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--canopy)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;margin-top:26px;flex-wrap:wrap;gap:14px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.015em}
+  .controls{display:flex;align-items:center;gap:12px}
+  .seg{display:flex;background:var(--mint);border-radius:99px;padding:3px}
+  .seg button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:8px 18px;border-radius:99px;cursor:pointer}
+  .seg button.on{background:#fff;color:var(--canopy);box-shadow:0 1px 3px rgba(30,74,52,.12)}
+  .range{display:flex;gap:8px}
+  .range button{border:1px solid var(--line);background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--muted);padding:7px 15px;border-radius:99px;cursor:pointer}
+  .range button.on{background:var(--canopy);color:#fff;border-color:var(--canopy)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:20px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+  .col-4{grid-column:span 4}.col-5{grid-column:span 5}.col-7{grid-column:span 7}.col-8{grid-column:span 8}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:12px;font-weight:600;color:var(--faint)}
+  .caxis{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--faint)}
+  /* summary stat rows */
+  .srow{display:flex;align-items:baseline;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}
+  .srow:first-of-type{border-top:0}
+  .sl{font-size:13px;font-weight:600;color:#33413a}
+  .sn{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .sn small{font-size:13px;color:var(--muted);font-weight:600}
+  /* weekly bars */
+  .bars{display:flex;align-items:flex-end;gap:16px;height:180px;margin-top:18px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:12px;font-weight:700;color:var(--canopy);margin-bottom:6px}
+  .bar{width:100%;border-radius:9px 9px 6px 6px}
+  .day{font-size:11px;color:var(--faint);margin-top:8px}
+  /* heatmap */
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px;font-size:11px;color:var(--faint);text-align:center}
+  .hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+  .cell{aspect-ratio:1;border-radius:6px;background:var(--mint)}
+  .l1{background:#D7E4C9}.l2{background:var(--sage)}.l3{background:var(--moss)}.l4{background:var(--canopy)}
+  .cell.flag{background:#C4633E}.cell.empty{background:transparent}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <div class="right"><span class="date">Tuesday, July 7</span><span class="avatar">M</span></div>
+    </div>
+    <div class="hrow">
+      <h1>Trends</h1>
+      <div class="controls">
+        <div class="seg"><button class="on">Sleep</button><button>Readiness</button><button>Activity</button></div>
+        <div class="range"><button>Week</button><button class="on">Month</button><button>Quarter</button></div>
+      </div>
+    </div>
+    <div class="grid">
+      <!-- score trend -->
+      <div class="card col-8">
+        <div class="head"><div class="k">Sleep score · 30 days</div><div class="headnote">trending up · +11 vs last month</div></div>
+        <svg width="100%" height="240" viewBox="0 0 760 240" preserveAspectRatio="none" style="margin-top:14px">
+          <line x1="0" y1="50" x2="760" y2="50" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="120" x2="760" y2="120" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="190" x2="760" y2="190" stroke="rgba(30,74,52,.07)"/>
+          <polygon points="0,240 0,150 63,160 127,124 190,136 253,100 317,112 380,80 443,108 507,72 570,92 633,60 697,78 760,54 760,240" fill="rgba(93,127,67,.12)"/>
+          <polyline points="0,150 63,160 127,124 190,136 253,100 317,112 380,80 443,108 507,72 570,92 633,60 697,78 760,54" fill="none" stroke="var(--moss)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="760" cy="54" r="5" fill="var(--moss)"/>
+        </svg>
+        <div class="caxis"><span>Jun 8</span><span>Jun 15</span><span>Jun 22</span><span>Jun 29</span><span>Jul 7</span></div>
+      </div>
+      <!-- summary -->
+      <div class="card col-4">
+        <div class="k" style="margin-bottom:4px">30-day summary</div>
+        <div class="srow"><span class="sl">Average score</span><span class="sn">84</span></div>
+        <div class="srow"><span class="sl">Best night</span><span class="sn">95</span></div>
+        <div class="srow"><span class="sl">Average sleep</span><span class="sn">6.9<small>h</small></span></div>
+        <div class="srow"><span class="sl">Consistency</span><span class="sn">86<small>%</small></span></div>
+        <div class="srow"><span class="sl">Short nights</span><span class="sn">4</span></div>
+      </div>
+      <!-- weekly bars -->
+      <div class="card col-7">
+        <div class="head"><div class="k">Weekly sleep average</div><div class="headnote">hours · color = amount</div></div>
+        <div class="bars">
+          <div class="bcol"><div class="hrs">6.4h</div><div class="bar" style="height:64%;background:#A08B48"></div><div class="day">Week 1</div></div>
+          <div class="bcol"><div class="hrs">6.9h</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">Week 2</div></div>
+          <div class="bcol"><div class="hrs">7.3h</div><div class="bar" style="height:84%;background:#688343"></div><div class="day">Week 3</div></div>
+          <div class="bcol"><div class="hrs">7.5h</div><div class="bar" style="height:90%;background:#537B3D"></div><div class="day">Week 4</div></div>
+        </div>
+      </div>
+      <!-- consistency -->
+      <div class="card col-5">
+        <div class="head"><div class="k">Consistency · June</div><div class="headnote">24 / 30 on target</div></div>
+        <div class="dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="hgrid">
+          <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell l3"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+          <div class="cell l4"></div><div class="cell l3"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell l4"></div>
+          <div class="cell l3"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l3"></div><div class="cell l4"></div>
+          <div class="cell l4"></div><div class="cell l3"></div><div class="cell l3"></div><div class="cell l1"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+          <div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Readiness detail · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#E9ECE3;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);position:relative;display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 16px 32px}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px}
+  .back,.more{width:34px;height:34px;border-radius:99px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center}
+  .back svg,.more svg{width:18px;height:18px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;text-align:center}
+  .tsub{font-size:11px;color:var(--faint);text-align:center}
+  .hero{text-align:center;padding:6px 0 2px}
+  .ring{position:relative;width:150px;height:150px;margin:8px auto 0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num{font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .ring .lab{font-size:12px;font-weight:600;color:var(--muted);margin-top:4px}
+  .cap{font-size:14px;font-weight:600;color:#4F7A3C;margin-top:12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .item{display:flex;flex-direction:column;gap:5px;margin-top:12px}
+  .irow{display:flex;justify-content:space-between;align-items:baseline}
+  .name{font-size:12px;font-weight:600;color:#33413a;white-space:nowrap}
+  .state{font-size:11px;font-weight:600;white-space:nowrap}
+  .track{height:7px;border-radius:99px;background:var(--mint);overflow:hidden}
+  .fill{height:100%;width:100%;border-radius:99px}
+  /* baseline band */
+  .btop{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px}
+  .bn{font-size:20px;font-weight:700}
+  .bn small{font-size:12px;color:var(--muted);font-weight:600}
+  .band{position:relative;height:9px;border-radius:99px;background:var(--mint);margin-top:12px}
+  .norm{position:absolute;top:0;bottom:0;background:var(--sage);opacity:.55;border-radius:99px}
+  .mark{position:absolute;top:-4px;width:4px;height:17px;border-radius:3px;background:#4F7A3C}
+  .bscale{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;color:var(--faint)}
+  .bignum{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+  .bignum b{font-size:28px;font-weight:700;letter-spacing:-.02em}
+  .bignum small{font-size:13px;color:var(--muted)}
+  .caxis{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--faint)}
+
+  .tipdot{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1px solid var(--line);background:var(--mint);color:var(--canopy);font-size:9px;font-weight:700;font-style:italic;vertical-align:1px;margin-left:5px;cursor:help}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='18-dashboard-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div><div class="ttl">Readiness</div><div class="tsub">Today · Jul 7</div></div>
+      <div class="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></div>
+    </div>
+    <div class="scroll">
+      <div class="hero">
+        <div class="ring">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="64" fill="none" stroke="var(--mint)" stroke-width="14"/>
+            <circle cx="75" cy="75" r="64" fill="none" stroke="#537B3D" stroke-width="14" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="72"/>
+          </svg>
+          <div class="center"><div class="num">82</div><div class="lab">balanced</div></div>
+        </div>
+        <div class="cap">Balanced · one contributor to watch</div>
+      </div>
+
+      <!-- contributors -->
+      <div class="card">
+        <div class="k">Contributors</div>
+        <div class="item"><div class="irow"><span class="name">Resting HR</span><span class="state" style="color:#4F7A3C">optimal</span></div><div class="track"><div class="fill" style="background:#4F7A3C"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">HRV balance<span class="tipdot" title="The tiny timing differences between heartbeats, vs your norm. Higher usually means rested; dips after stress recover with rest.">i</span></span><span class="state" style="color:#6E8544">good</span></div><div class="track"><div class="fill" style="background:#6E8544"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Body temp<span class="tipdot" title="Overnight skin temperature vs your baseline. Small drifts are normal; sustained rises can flag strain or oncoming illness.">i</span></span><span class="state" style="color:#8C8E49">good</span></div><div class="track"><div class="fill" style="background:#8C8E49"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Recovery index<span class="tipdot" title="How quickly your heart rate settled overnight. A slow settle often follows a late meal, alcohol, or a hard day.">i</span></span><span class="state" style="color:#C4633E">pay attention</span></div><div class="track"><div class="fill" style="background:#C4633E"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Sleep balance<span class="tipdot" title="Your recent sleep vs what your body typically needs — a two-week view, so one short night will not sink it.">i</span></span><span class="state" style="color:#4F7A3C">optimal</span></div><div class="track"><div class="fill" style="background:#4F7A3C"></div></div></div>
+        <div class="item"><div class="irow"><span class="name">Previous night</span><span class="state" style="color:#74863F">good</span></div><div class="track"><div class="fill" style="background:#74863F"></div></div></div>
+      </div>
+
+      <!-- resting HR baseline -->
+      <div class="card">
+        <div class="head"><div class="k">Resting HR vs baseline</div><div class="headnote">within range</div></div>
+        <div class="btop"><span class="name">Resting HR</span><span class="bn">51<small> bpm</small></span></div>
+        <div class="band"><div class="norm" style="left:32%;right:20%"></div><div class="mark" style="left:38%"></div></div>
+        <div class="bscale"><span>44</span><span>58 baseline</span><span>72</span></div>
+      </div>
+
+      <!-- HRV trend -->
+      <div class="card">
+        <div class="head"><div class="k">HRV balance · 2 weeks</div><div class="headnote">avg 46 ms</div></div>
+        <div class="bignum"><b>52</b><small>ms · balanced</small></div>
+        <svg width="100%" height="100" viewBox="0 0 340 100" preserveAspectRatio="none" style="margin-top:12px">
+          <line x1="0" y1="26" x2="340" y2="26" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="55" x2="340" y2="55" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="84" x2="340" y2="84" stroke="rgba(30,74,52,.07)"/>
+          <polygon points="0,100 0,60 43,66 85,52 128,58 170,44 213,50 255,36 297,46 340,32 340,100" fill="rgba(93,127,67,.12)"/>
+          <polyline points="0,60 43,66 85,52 128,58 170,44 213,50 255,36 297,46 340,32" fill="none" stroke="var(--moss)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="340" cy="32" r="4" fill="var(--moss)"/>
+        </svg>
+        <div class="caxis"><span>Jun 23</span><span>Jun 30</span><span>Jul 7</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+export interface ToggleProps {
+  on?: boolean;
+  disabled?: boolean;
+  onChange?: (on: boolean) => void;
+  ariaLabel?: string;
+}
+export declare function Toggle(props: ToggleProps): JSX.Element;

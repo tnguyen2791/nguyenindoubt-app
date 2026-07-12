@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Weekly report · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative}
+  .back{position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .scroll{flex:1;padding:0 16px 28px}
+  .range{font-size:12px;font-weight:600;color:var(--faint);margin-top:16px}
+  .take{font-size:28px;font-weight:700;letter-spacing:-.025em;line-height:1.15;color:var(--canopy);margin-top:6px}
+  .tsub{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:18px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+  .stat .n{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--canopy)}
+  .stat .n small{font-size:12px;font-weight:600;color:var(--muted)}
+  .stat .l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);margin-top:4px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:12px}
+  .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:100px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:10px;font-weight:700;color:var(--canopy);margin-bottom:5px}
+  .bar{width:100%;border-radius:7px 7px 4px 4px}
+  .day{font-size:10px;color:var(--faint);margin-top:6px}
+  .helped{display:grid;gap:11px}
+  .hrow{display:flex;gap:11px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.5}
+  .hrow b{color:var(--ink);font-weight:600}
+  .hrow .d{width:8px;height:8px;border-radius:99px;background:var(--moss);flex-shrink:0;margin-top:5px}
+  .hrow .d.warm{background:var(--ember)}
+  .try{background:var(--mint);border-radius:14px;padding:15px 17px;margin-top:12px}
+  .try .tt{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--moss)}
+  .try p{font-size:13px;color:var(--ink);line-height:1.55;margin-top:5px}
+  .share{display:block;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--canopy);font:inherit;font-size:14px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:18px}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:12px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='18-dashboard-mobile.html'"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Your week</div>
+    </div>
+    <div class="scroll">
+      <div class="range">Jul 6 – 12 · week 28</div>
+      <div class="take">A steadier week</div>
+      <p class="tsub">Bedtimes tightened up and it showed — readiness climbed through the back half of the week.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="n">78</div><div class="l">avg readiness</div></div>
+        <div class="stat"><div class="n">7<small>h</small> 06<small>m</small></div><div class="l">avg sleep</div></div>
+        <div class="stat"><div class="n">5<small>/7</small></div><div class="l">days on target</div></div>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">Sleep · 7 nights</div><div class="headnote">color = hours</div></div>
+        <div class="bars">
+          <div class="bcol"><div class="hrs">6.8</div><div class="bar" style="height:71%;background:#A08B48"></div><div class="day">M</div></div>
+          <div class="bcol"><div class="hrs">6.4</div><div class="bar" style="height:64%;background:#C0784A"></div><div class="day">T</div></div>
+          <div class="bcol"><div class="hrs">7.1</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">W</div></div>
+          <div class="bcol"><div class="hrs">7.3</div><div class="bar" style="height:78%;background:#74863F"></div><div class="day">T</div></div>
+          <div class="bcol"><div class="hrs">7.0</div><div class="bar" style="height:72%;background:#8C8E49"></div><div class="day">F</div></div>
+          <div class="bcol"><div class="hrs">7.6</div><div class="bar" style="height:84%;background:#688343"></div><div class="day">S</div></div>
+          <div class="bcol"><div class="hrs">7.4</div><div class="bar" style="height:78%;background:#74863F"></div><div class="day">S</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">What lined up</div><div class="headnote">from your tags</div></div>
+        <div class="helped">
+          <div class="hrow"><span class="d"></span><span><b>Meditation, 3 evenings</b> — each was followed by an above-average sleep score.</span></div>
+          <div class="hrow"><span class="d"></span><span><b>Sauna on Wednesday</b> — your best deep-sleep night of the week came after it.</span></div>
+          <div class="hrow"><span class="d warm"></span><span><b>Tuesday's late caffeine</b> — the week's only short night followed it.</span></div>
+        </div>
+      </div>
+
+      <div class="try">
+        <div class="tt">One thing to try</div>
+        <p>Your Sunday bedtime drifts latest. A wind-down that starts 30 minutes earlier tonight would set up the week gently.</p>
+      </div>
+
+      <button class="share">Share this week</button>
+      <p class="note">Patterns, not grades — a week is data, not a verdict.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+export interface TrendBarEntry {
+  /** bar height 0–100 when percent is absent */
+  value?: number;
+  /** explicit height percent 0–100 */
+  percent?: number;
+  /** value shown above the bar, e.g. "7.4" */
+  display?: string | number;
+  /** axis label under the bar, e.g. "M" */
+  label?: string;
+  /** bar fill; state or ramp color */
+  color?: string;
+}
+export interface TrendBarsProps {
+  data: TrendBarEntry[];
+  /** px, default 120 */
+  height?: number;
+  showValues?: boolean;
+}
+export declare function TrendBars(props: TrendBarsProps): JSX.Element;

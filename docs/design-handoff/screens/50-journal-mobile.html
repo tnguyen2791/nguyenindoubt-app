@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Journal · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:18px 16px 12px;position:relative}
+  .back{position:absolute;left:16px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .addbtn{position:absolute;right:16px;width:32px;height:32px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center}
+  .addbtn svg{width:16px;height:16px;stroke:var(--onaccent);stroke-width:2;fill:none;stroke-linecap:round}
+  .scroll{flex:1;padding:0 16px 28px}
+  /* filter chips */
+  .filters{display:flex;gap:8px;margin-top:6px;overflow-x:auto;padding-bottom:2px}
+  .fchip{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted)}
+  .fchip.on{background:var(--canopy);color:var(--onaccent);border-color:var(--canopy)}
+  /* frequency strip */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .freq{display:flex;align-items:flex-end;gap:6px;height:52px;margin-top:14px}
+  .fcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px}
+  .fbar{width:100%;border-radius:5px 5px 3px 3px;background:var(--sage)}
+  .fday{font-size:10px;color:var(--faint)}
+  .fcap{font-size:12px;color:var(--muted);line-height:1.45;margin-top:12px}
+  /* day entries */
+  .sect{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 0}
+  .entry{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:10px}
+  .erow{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .eday{font-size:14px;font-weight:700}
+  .escore{font-size:11px;font-weight:600;color:var(--faint)}
+  .escore b{color:var(--moss);font-weight:700}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .tag{display:inline-flex;align-items:center;gap:6px;background:var(--mint);border-radius:99px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--canopy)}
+  .tag .d{width:7px;height:7px;border-radius:99px;background:var(--moss)}
+  .tag.flag{background:rgba(197,104,68,.13);color:var(--ember)}
+  .tag.flag .d{background:var(--ember)}
+  .enote{font-size:12px;color:var(--muted);line-height:1.5;margin-top:11px;padding-left:10px;border-left:2px solid var(--mint)}
+  .quiet{text-align:center;font-size:12px;color:var(--faint);margin-top:24px;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='18-dashboard-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Journal</div>
+      <div class="addbtn" onclick="location.href='30-add-sheet-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+    </div>
+    <div class="scroll">
+      <div class="filters">
+        <span class="fchip on">All tags</span>
+        <span class="fchip">Caffeine</span>
+        <span class="fchip">Alcohol</span>
+        <span class="fchip">Meditation</span>
+        <span class="fchip">Stressed</span>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">This week</div><div class="headnote">11 tags · 3 notes</div></div>
+        <div class="freq">
+          <div class="fcol"><div class="fbar" style="height:45%"></div><div class="fday">M</div></div>
+          <div class="fcol"><div class="fbar" style="height:70%"></div><div class="fday">T</div></div>
+          <div class="fcol"><div class="fbar" style="height:24%"></div><div class="fday">W</div></div>
+          <div class="fcol"><div class="fbar" style="height:70%"></div><div class="fday">T</div></div>
+          <div class="fcol"><div class="fbar" style="height:100%;background:var(--moss)"></div><div class="fday">F</div></div>
+          <div class="fcol"><div class="fbar" style="height:45%"></div><div class="fday">S</div></div>
+          <div class="fcol"><div class="fbar" style="height:24%"></div><div class="fday">S</div></div>
+        </div>
+        <p class="fcap">Days you tag <b>alcohol</b>, your sleep score averages 9 points lower the next morning.</p>
+      </div>
+
+      <div class="sect">Today</div>
+      <div class="entry">
+        <div class="erow"><div class="eday">Friday, Jul 11</div><div class="escore">readiness <b>82</b></div></div>
+        <div class="tags">
+          <span class="tag"><span class="d"></span>Nap</span>
+          <span class="tag"><span class="d"></span>Meditation</span>
+          <span class="tag flag"><span class="d"></span>Alcohol</span>
+        </div>
+        <p class="enote">One glass of wine with dinner — early night planned.</p>
+      </div>
+
+      <div class="sect">Earlier this week</div>
+      <div class="entry">
+        <div class="erow"><div class="eday">Thursday, Jul 10</div><div class="escore">readiness <b>78</b></div></div>
+        <div class="tags">
+          <span class="tag"><span class="d"></span>Caffeine</span>
+          <span class="tag flag"><span class="d"></span>Late meal</span>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="erow"><div class="eday">Wednesday, Jul 9</div><div class="escore">readiness <b>85</b></div></div>
+        <div class="tags">
+          <span class="tag"><span class="d"></span>Meditation</span>
+          <span class="tag"><span class="d"></span>Sauna</span>
+        </div>
+        <p class="enote">Best sleep in weeks after the sauna session.</p>
+      </div>
+      <div class="entry">
+        <div class="erow"><div class="eday">Tuesday, Jul 8</div><div class="escore">readiness <b>71</b></div></div>
+        <div class="tags">
+          <span class="tag flag"><span class="d"></span>Stressed</span>
+          <span class="tag"><span class="d"></span>Caffeine</span>
+          <span class="tag"><span class="d"></span>Travel</span>
+        </div>
+        <p class="enote">Red-eye back from Denver. Expecting a rough reading tomorrow.</p>
+      </div>
+
+      <p class="quiet">Tags help explain your scores —<br>they never change them.</p>
+    </div>
+  </div>
+</body>
+</html>

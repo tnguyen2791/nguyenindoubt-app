@@ -1,0 +1,46 @@
+export function BaselineBand({ name, value, display, min = 0, max = 100, bandStart, bandEnd, minLabel, maxLabel, baselineLabel, flagged = false }) {
+  const pct = (v) => `${Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100))}%`;
+  return (
+    <div style={{ fontFamily: 'var(--font-sans)' }}>
+      {(name || display != null) && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
+          {name && <span style={{ fontSize: 'var(--fs-caption)', fontWeight: 'var(--fw-semibold)', color: 'var(--text-body)' }}>{name}</span>}
+          {display != null && (
+            <span style={{ fontSize: 'var(--fs-h2)', fontWeight: 'var(--fw-bold)', color: flagged ? 'var(--accent-flag)' : 'var(--text-body)' }}>{display}</span>
+          )}
+        </div>
+      )}
+      <div style={{ position: 'relative', height: 12, borderRadius: 'var(--r-pill)', background: 'var(--mint)' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: pct(bandStart),
+            width: `calc(${pct(bandEnd)} - ${pct(bandStart)})`,
+            background: 'var(--sage)',
+            opacity: 0.55,
+            borderRadius: 'var(--r-pill)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: -3,
+            bottom: -3,
+            left: pct(value),
+            width: 4,
+            marginLeft: -2,
+            borderRadius: 2,
+            background: flagged ? 'var(--accent-flag)' : 'var(--accent)',
+          }}
+        />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 'var(--fs-micro)', color: 'var(--text-faint)' }}>
+        <span>{minLabel != null ? minLabel : min}</span>
+        {baselineLabel && <span>{baselineLabel}</span>}
+        <span>{maxLabel != null ? maxLabel : max}</span>
+      </div>
+    </div>
+  );
+}

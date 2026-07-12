@@ -1,0 +1,11 @@
+export interface ButtonProps {
+  /** 'primary' | 'ghost' | 'quiet' | 'danger' */
+  variant?: 'primary' | 'ghost' | 'quiet' | 'danger';
+  /** 'md' | 'lg' — lg is the full-width sheet CTA size */
+  size?: 'md' | 'lg';
+  fullWidth?: boolean;
+  disabled?: boolean;
+  children?: React.ReactNode;
+  onClick?: () => void;
+}
+export declare function Button(props: ButtonProps): JSX.Element;

@@ -1,0 +1,10 @@
+export interface InfoTipProps {
+  /** the marker being explained, e.g. "HRV" — becomes the tooltip title and aria-label */
+  term: string;
+  /** plain-language explanation, 1–2 sentences */
+  children?: React.ReactNode;
+  defaultOpen?: boolean;
+  /** popover width in px, default 230 */
+  width?: number;
+}
+export declare function InfoTip(props: InfoTipProps): JSX.Element;

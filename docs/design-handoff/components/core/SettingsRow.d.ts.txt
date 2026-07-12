@@ -1,0 +1,14 @@
+export interface SettingsRowProps {
+  label: string;
+  description?: string;
+  /** right-aligned faint value, e.g. "10:30–11:30p" */
+  value?: string;
+  /** 'chevron' (navigates) or 'toggle' */
+  control?: 'chevron' | 'toggle';
+  /** set on the first row in a group to suppress its top hairline */
+  first?: boolean;
+  on?: boolean;
+  onToggle?: (on: boolean) => void;
+  onClick?: () => void;
+}
+export declare function SettingsRow(props: SettingsRowProps): JSX.Element;

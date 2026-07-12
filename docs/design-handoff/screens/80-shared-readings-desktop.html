@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Thao's readings · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px;min-height:100vh}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .page{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .crumb{font-size:13px;font-weight:600;color:var(--faint);margin-top:26px}
+  .crumb a{text-decoration:none;font-weight:600}
+  .head{display:flex;align-items:center;gap:16px;margin-top:10px}
+  .ava{width:52px;height:52px;border-radius:99px;background:var(--mint);color:var(--canopy);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.015em}
+  .hsub{font-size:13px;color:var(--muted);margin-top:4px}
+  .scopes{display:flex;gap:8px;margin-left:auto}
+  .scope{font-size:11px;font-weight:600;color:var(--canopy);background:var(--mint);border-radius:99px;padding:6px 12px;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;align-items:start}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .ck{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .rd{display:flex;gap:22px;align-items:center}
+  .ring{position:relative;width:120px;height:120px;flex-shrink:0}
+  .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .num{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .lab{font-size:11px;font-weight:600;color:var(--muted);margin-top:3px}
+  .contrib{flex:1;display:grid;gap:10px}
+  .item{display:grid;gap:5px}
+  .irow{display:flex;justify-content:space-between;align-items:baseline}
+  .name{font-size:12px;font-weight:600}
+  .state{font-size:11px;font-weight:600}
+  .track{height:7px;border-radius:99px;background:var(--mint);overflow:hidden}
+  .fill{height:100%;width:100%;border-radius:99px}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:110px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:10px;font-weight:700;color:var(--canopy);margin-bottom:5px}
+  .bar{width:100%;border-radius:7px 7px 4px 4px}
+  .day{font-size:10px;color:var(--faint);margin-top:6px}
+  .pattern{background:var(--mint);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--ink);line-height:1.55;margin-top:16px}
+  .pattern b{color:var(--canopy)}
+  .tags{display:flex;flex-wrap:wrap;gap:7px}
+  .tag{display:inline-flex;align-items:center;gap:6px;background:var(--mint);border-radius:99px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--canopy)}
+  .tag .d{width:7px;height:7px;border-radius:99px;background:var(--moss)}
+  .tag.flag{background:rgba(197,104,68,.13);color:var(--ember)}
+  .tag.flag .d{background:var(--ember)}
+  .trow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px}
+  .tday{font-size:12px;font-weight:600;color:var(--muted)}
+  .private{font-size:12px;color:var(--faint);line-height:1.5;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:20px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);background:var(--mint);border-radius:99px;padding:6px 14px">Shared with you</span>
+    </div>
+    <div class="crumb"><a href="76-provider-dashboard-desktop.html">People</a> / Thao</div>
+    <div class="head">
+      <div class="ava">TP</div>
+      <div>
+        <h1>Thao's readings</h1>
+        <div class="hsub">Sharing with you since May · last synced this morning</div>
+      </div>
+      <div class="scopes">
+        <span class="scope">scores &amp; trends</span>
+        <span class="scope">sleep</span>
+        <span class="scope">journal tags</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="ck"><div class="k">This morning</div><div class="headnote">not a diagnosis</div></div>
+        <div class="rd">
+          <div class="ring">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="51" fill="none" stroke="var(--mint)" stroke-width="12"/>
+              <circle cx="60" cy="60" r="51" fill="none" stroke="#A08B48" stroke-width="12" stroke-linecap="round" stroke-dasharray="320" stroke-dashoffset="115" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="center"><div class="num">64</div><div class="lab">take it easy</div></div>
+          </div>
+          <div class="contrib">
+            <div class="item"><div class="irow"><span class="name">Resting HR</span><span class="state" style="color:#6E8544">good</span></div><div class="track"><div class="fill" style="background:#6E8544"></div></div></div>
+            <div class="item"><div class="irow"><span class="name">HRV balance</span><span class="state" style="color:#C4633E">pay attention</span></div><div class="track"><div class="fill" style="background:#C4633E;width:55%"></div></div></div>
+            <div class="item"><div class="irow"><span class="name">Sleep balance</span><span class="state" style="color:#A08B48">fair</span></div><div class="track"><div class="fill" style="background:#A08B48;width:70%"></div></div></div>
+          </div>
+        </div>
+        <div class="pattern"><b>A pattern, not an alarm:</b> three flatter HRV nights alongside later bedtimes. Her week looks busy — the kind of stretch that usually resolves with a couple of earlier nights.</div>
+      </div>
+
+      <div class="card">
+        <div class="ck"><div class="k">Sleep · 7 nights</div><div class="headnote">color = hours</div></div>
+        <div class="bars">
+          <div class="bcol"><div class="hrs">7.1</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">M</div></div>
+          <div class="bcol"><div class="hrs">6.4</div><div class="bar" style="height:64%;background:#A08B48"></div><div class="day">T</div></div>
+          <div class="bcol"><div class="hrs">6.0</div><div class="bar" style="height:56%;background:#C0784A"></div><div class="day">W</div></div>
+          <div class="bcol"><div class="hrs">6.6</div><div class="bar" style="height:68%;background:#A08B48"></div><div class="day">T</div></div>
+          <div class="bcol"><div class="hrs">5.9</div><div class="bar" style="height:54%;background:#C4633E"></div><div class="day">F</div></div>
+          <div class="bcol"><div class="hrs">7.3</div><div class="bar" style="height:78%;background:#74863F"></div><div class="day">S</div></div>
+          <div class="bcol"><div class="hrs">6.2</div><div class="bar" style="height:60%;background:#C0784A"></div><div class="day">S</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ck"><div class="k">Journal · this week</div><div class="headnote">tags only</div></div>
+        <div class="trow"><span class="tday">Friday</span></div>
+        <div class="tags" style="margin-bottom:14px">
+          <span class="tag flag"><span class="d"></span>Stressed</span>
+          <span class="tag"><span class="d"></span>Caffeine</span>
+        </div>
+        <div class="trow"><span class="tday">Tuesday</span></div>
+        <div class="tags">
+          <span class="tag flag"><span class="d"></span>Stressed</span>
+          <span class="tag"><span class="d"></span>Late meal</span>
+          <span class="tag"><span class="d"></span>Travel</span>
+        </div>
+        <p class="private">Her written notes stay private — you see tags only, exactly as she chose.</p>
+      </div>
+
+      <div class="card">
+        <div class="ck"><div class="k">Where this helps</div></div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.65">This is the same view Thao sees at home, scoped to what she shares. It's context for a conversation — "your week looked heavy, how are you sleeping?" — not something to act on by itself.</p>
+        <p style="font-size:13px;color:var(--muted);line-height:1.65;margin-top:10px">If something looks off for more than a few days, the most useful next step is usually just asking about it.</p>
+      </div>
+    </div>
+
+    <p class="note">Thao controls what appears here and can pause it anytime · readings are context, never a diagnosis.</p>
+  </div>
+</body>
+</html>

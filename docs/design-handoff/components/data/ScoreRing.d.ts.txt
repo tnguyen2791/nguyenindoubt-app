@@ -1,0 +1,12 @@
+export interface ScoreRingProps {
+  /** 0–100 */
+  score: number;
+  /** qualitative caption under the number, e.g. "balanced" */
+  label?: string;
+  /** px, default 120 */
+  size?: number;
+  /** stroke color; use a --state-* token */
+  color?: string;
+  strokeWidth?: number;
+}
+export declare function ScoreRing(props: ScoreRingProps): JSX.Element;

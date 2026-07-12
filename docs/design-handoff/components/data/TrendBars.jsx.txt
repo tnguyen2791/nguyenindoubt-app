@@ -1,0 +1,24 @@
+export function TrendBars({ data = [], height = 120, showValues = true }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height, fontFamily: 'var(--font-sans)' }}>
+      {data.map((d, i) => (
+        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}>
+          {showValues && (
+            <div style={{ fontSize: 'var(--fs-micro)', fontWeight: 'var(--fw-bold)', color: 'var(--accent)', marginBottom: 5 }}>
+              {d.display != null ? d.display : d.value}
+            </div>
+          )}
+          <div
+            style={{
+              width: '100%',
+              height: `${Math.max(4, Math.min(100, d.percent != null ? d.percent : d.value))}%`,
+              borderRadius: '7px 7px 4px 4px',
+              background: d.color || 'var(--sage)',
+            }}
+          />
+          {d.label && <div style={{ fontSize: 'var(--fs-micro)', color: 'var(--text-faint)', marginTop: 6 }}>{d.label}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}

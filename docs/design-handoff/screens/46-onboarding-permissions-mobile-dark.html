@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Permissions · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0B120F;--ember:#E08A63;--line:rgba(232,238,226,.12);--muted:#9DA99B;--faint:#7C8A7E;--surface:#18211A;--onaccent:#0B120F;--desk:#050806}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative}
+  .back{position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .dots{display:flex;gap:6px}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--mint)}
+  .dot.on{width:18px;background:var(--canopy)}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:22px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 18px;margin-top:10px}
+  .sect{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:18px 4px 0}
+  .row{display:flex;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .ic{width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ic svg{width:19px;height:19px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .rt{flex:1;min-width:0}
+  .rt .t{font-size:14px;font-weight:700}
+  .rt .d{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:#E8EEE2;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .req{font-size:11px;font-weight:700;color:var(--faint);flex-shrink:0}
+  .fine{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin-top:14px;padding:0 4px}
+  .fine svg{width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="dots"><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div>
+    </div>
+    <div class="scroll">
+      <h1>Choose what to share</h1>
+      <p class="sub">Only what you allow. You can change any of this later in Profile.</p>
+      <div class="sect">Body signals</div>
+      <div class="card">
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/></svg></div>
+          <div class="rt"><div class="t">Sleep &amp; rest</div><div class="d">Bedtimes, stages, and overnight recovery</div></div>
+          <div class="sw on"></div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20C12 20 4 15.2 4 9.2 4 6.4 6.2 5 8.5 6.2 10 7 12 8.8 12 8.8 12 8.8 14 7 15.5 6.2 17.8 5 20 6.4 20 9.2 20 15.2 12 20 12 20Z"/></svg></div>
+          <div class="rt"><div class="t">Heart rate &amp; HRV</div><div class="d">Resting heart rate and variability, day and night</div></div>
+          <div class="sw on"></div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 4v10"/><circle cx="12" cy="17.5" r="3.5"/><path d="M9 4h6"/></svg></div>
+          <div class="rt"><div class="t">Skin temperature</div><div class="d">Overnight variation from your baseline</div></div>
+          <div class="sw on"></div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 2.5-6.8 6-11Z"/></svg></div>
+          <div class="rt"><div class="t">Blood oxygen</div><div class="d">Overnight SpO₂ sampling</div></div>
+          <div class="sw"></div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c2 3 5 4.6 5 8.6a5 5 0 0 1-10 0c0-1.6.7-2.9 1.6-3.9.2 1.4.9 2.2 1.9 2.4C10.2 8 11 5.6 12 3Z"/></svg></div>
+          <div class="rt"><div class="t">Movement &amp; workouts</div><div class="d">Steps, sessions, and daily activity</div></div>
+          <div class="sw on"></div>
+        </div>
+      </div>
+
+      <div class="sect">On this phone</div>
+      <div class="card">
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 7l12 10-6 5V2l6 5L6 17"/></svg></div>
+          <div class="rt"><div class="t">Bluetooth</div><div class="d">Stays connected to your ring to sync readings</div></div>
+          <div class="req">Required</div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 9a8 8 0 0 1 14-3M20 15a8 8 0 0 1-14 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></div>
+          <div class="rt"><div class="t">Health app sync</div><div class="d">Share readings with the Health app on this phone</div></div>
+          <div class="sw on"></div>
+        </div>
+        <div class="row">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></div>
+          <div class="rt"><div class="t">Morning reminders</div><div class="d">One gentle note when your reading is ready</div></div>
+          <div class="sw"></div>
+        </div>
+      </div>
+      <p class="fine">
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/></svg>
+        Processed on your device. Never sold, never shared with advertisers.
+      </p>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='65-onboarding-pairing-mobile-dark.html'">Allow &amp; continue</button>
+      <a href="#" class="skip">Not now</a>
+    </div>
+  </div>
+</body>
+</html>

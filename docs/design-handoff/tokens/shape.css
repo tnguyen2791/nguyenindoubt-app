@@ -1,0 +1,16 @@
+/* NguyenInDoubt shape + spacing tokens. Soft, roomy, calm. */
+:root{
+  --r-card:16px;
+  --r-card-lg:18px;
+  --r-control:14px;    /* buttons, inputs */
+  --r-tile:11px;       /* icon tiles */
+  --r-pill:99px;       /* chips, toggles, rings */
+
+  --sp-card:18px;      /* card padding */
+  --sp-gap:14px;       /* card-to-card gap */
+  --sp-row:15px;       /* settings row vertical padding */
+  --sp-page:16px;      /* mobile page gutter */
+
+  --shadow-knob:0 1px 3px rgba(23,33,27,.25);
+  --shadow-sheet:0 -12px 40px rgba(23,33,27,.25);
+}

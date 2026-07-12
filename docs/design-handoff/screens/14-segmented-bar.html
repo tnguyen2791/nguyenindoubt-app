@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sleep composition bar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:460px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .hero{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+  .big{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .big small{font-size:18px;color:#54635a}
+  .cap{font-size:13px;font-weight:600;color:var(--moss)}
+  .segbar{display:flex;height:26px;border-radius:8px;overflow:hidden;margin-top:20px;gap:2px}
+  .segbar div{height:100%}
+  .rows{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+  .r{display:flex;align-items:center;gap:10px}
+  .chip{width:11px;height:11px;border-radius:3px}
+  .rn{font-size:13px;font-weight:600;color:#33413a}
+  .rp{font-size:13px;color:#7a887f;margin-left:auto}
+  .rv{font-size:13px;font-weight:700;width:64px;text-align:right}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="k">Sleep composition</div>
+    <div class="hero"><div class="big">7.6<small>h</small></div><div class="cap">healthy balance</div></div>
+    <div class="segbar">
+      <div style="flex:16;background:var(--canopy)"></div>
+      <div style="flex:54;background:var(--moss);opacity:.8"></div>
+      <div style="flex:20;background:var(--moss);opacity:.55"></div>
+      <div style="flex:10;background:var(--sage)"></div>
+    </div>
+    <div class="rows">
+      <div class="r"><span class="chip" style="background:var(--canopy)"></span><span class="rn">Deep</span><span class="rp">16%</span><span class="rv">1h 12m</span></div>
+      <div class="r"><span class="chip" style="background:var(--moss);opacity:.8"></span><span class="rn">Light</span><span class="rp">54%</span><span class="rv">4h 05m</span></div>
+      <div class="r"><span class="chip" style="background:var(--moss);opacity:.55"></span><span class="rn">REM</span><span class="rp">20%</span><span class="rv">1h 34m</span></div>
+      <div class="r"><span class="chip" style="background:var(--sage)"></span><span class="rn">Awake</span><span class="rp">10%</span><span class="rv">45m</span></div>
+    </div>
+  </div>
+</body>
+</html>

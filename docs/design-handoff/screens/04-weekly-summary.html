@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Weekly summary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:500px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .head{display:flex;align-items:flex-start;justify-content:space-between}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .hero{display:flex;align-items:baseline;gap:10px;margin-top:8px}
+  .big{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .big small{font-size:18px;color:#54635a}
+  .range{font-size:13px;color:#54635a;margin-bottom:4px}
+  .legend{display:flex;gap:14px;font-size:12px;color:#54635a;text-align:right}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:26px;height:8px;border-radius:99px;background:linear-gradient(90deg,#C25A3A,#B58F47,#6E8544,#4F7A3C)}
+  .linekey{width:16px;height:0;border-top:2px solid var(--canopy);position:relative}
+  .linekey::after{content:"";position:absolute;left:5px;top:-3px;width:6px;height:6px;border-radius:99px;background:var(--canopy)}
+  .chart{margin-top:20px}
+  .days{display:flex;justify-content:space-between;padding:0 6px;margin-top:8px;font-size:11px;color:#7a887f}
+  .days span{flex:1;text-align:center}
+  .foot{display:flex;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  .stat .n{font-size:20px;font-weight:700}
+  .stat .l{font-size:12px;color:#54635a}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div>
+        <div class="k">7-day sleep</div>
+        <div class="hero"><div class="big">6.9<small>h</small></div><div class="range">avg · 5.7–7.9h range</div></div>
+      </div>
+      <div class="legend">
+        <span><span class="swatch"></span>hours</span>
+        <span><span class="linekey"></span>efficiency</span>
+      </div>
+    </div>
+    <div class="chart">
+      <svg width="100%" height="180" viewBox="0 0 480 180" preserveAspectRatio="none">
+        <!-- gridlines -->
+        <line x1="20" y1="45" x2="460" y2="45" stroke="rgba(30,74,52,.07)"/>
+        <line x1="20" y1="97" x2="460" y2="97" stroke="rgba(30,74,52,.07)"/>
+        <line x1="20" y1="150" x2="460" y2="150" stroke="var(--line)"/>
+        <!-- bars: nightly hours -->
+        <rect x="30" y="61.6" width="30" height="88.4" rx="6" fill="#74863F"/>
+        <rect x="95" y="95.4" width="30" height="54.6" rx="6" fill="#C0784A"/>
+        <rect x="160" y="77.2" width="30" height="72.8" rx="6" fill="#A08B48"/>
+        <rect x="225" y="48.6" width="30" height="101.4" rx="6" fill="#537B3D"/>
+        <rect x="290" y="105.8" width="30" height="44.2" rx="6" fill="#C4633E"/>
+        <rect x="355" y="69.4" width="30" height="80.6" rx="6" fill="#8C8E49"/>
+        <rect x="420" y="56.4" width="30" height="93.6" rx="6" fill="#688343"/>
+        <!-- line: efficiency % -->
+        <polyline points="45,51.2 110,92.8 175,66.8 240,30.4 305,129.2 370,61.6 435,40.8"
+                  fill="none" stroke="var(--canopy)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="45" cy="51.2" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="110" cy="92.8" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="175" cy="66.8" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="240" cy="30.4" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="305" cy="129.2" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="370" cy="61.6" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+        <circle cx="435" cy="40.8" r="4" fill="#fff" stroke="var(--canopy)" stroke-width="2.5"/>
+      </svg>
+      <div class="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    </div>
+    <div class="foot">
+      <div class="stat"><div class="n">1</div><div class="l">short night</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">on target</div></div>
+      <div class="stat"><div class="n">86%</div><div class="l">avg efficiency</div></div>
+    </div>
+  </div>
+</body>
+</html>

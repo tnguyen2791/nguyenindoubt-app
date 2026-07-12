@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>First run · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#E9ECE3;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);position:relative;display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 16px 24px;display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px}
+  .brand{display:flex;align-items:center;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .avatar{width:32px;height:32px;border-radius:99px;background:var(--mint);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--canopy)}
+  .intro{text-align:center;padding:14px 6px 2px}
+  .intro .ghello{font-size:13px;font-weight:600;color:var(--muted)}
+  .intro h1{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-top:8px}
+  .intro .sub{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.45;max-width:280px;margin-left:auto;margin-right:auto}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+  .tile{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .disc{position:relative;width:120px;height:120px}
+  .disc .bg{position:absolute;inset:0;border-radius:99px;background:#fff;border:1px solid var(--line)}
+  .disc .track{position:absolute;inset:0;border-radius:99px;border:5px dashed var(--mint)}
+  .content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+  .content svg{width:24px;height:24px;stroke:var(--sage);stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .dash{font-size:26px;font-weight:700;color:#B7C2AF;line-height:1}
+  .label{font-size:14px;font-weight:600;color:var(--muted)}
+  .spacer{flex:1;min-height:20px}
+  .synccard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;margin-top:22px}
+  .ringdot{width:44px;height:44px;border-radius:99px;border:3px solid var(--canopy);flex-shrink:0;position:relative}
+  .ringdot::after{content:"";position:absolute;inset:7px;border-radius:99px;background:var(--mint)}
+  .sc-t{font-size:14px;font-weight:700}
+  .sc-s{font-size:12px;color:var(--muted);margin-top:2px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:#fff;font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;margin-top:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <span class="avatar">M</span>
+    </div>
+    <div class="scroll">
+      <div class="intro">
+        <div class="ghello">Welcome, Minh</div>
+        <h1>Let's get your first reading</h1>
+        <div class="sub">Your metrics fill in as you share sleep and recovery data over time.</div>
+      </div>
+      <div class="tiles">
+        <div class="tile">
+          <div class="disc"><div class="bg"></div><div class="track"></div>
+            <div class="content"><svg viewBox="0 0 24 24"><path d="M12 21v-8"/><path d="M12 13c0-3-2.4-5.2-5.6-5.2C6.4 11 8.6 13 12 13Z"/><path d="M12 13c0-2.6 2-4.6 4.8-4.6C16.8 11.2 15 13 12 13Z"/></svg><div class="dash">—</div></div>
+          </div>
+          <div class="label">Readiness</div>
+        </div>
+        <div class="tile">
+          <div class="disc"><div class="bg"></div><div class="track"></div>
+            <div class="content"><svg viewBox="0 0 24 24"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/></svg><div class="dash">—</div></div>
+          </div>
+          <div class="label">Sleep</div>
+        </div>
+        <div class="tile">
+          <div class="disc"><div class="bg"></div><div class="track"></div>
+            <div class="content"><svg viewBox="0 0 24 24"><path d="M12 3c2 3 5 4.6 5 8.6a5 5 0 0 1-10 0c0-1.6.7-2.9 1.6-3.9.2 1.4.9 2.2 1.9 2.4C10.2 8 11 5.6 12 3Z"/></svg><div class="dash">—</div></div>
+          </div>
+          <div class="label">Activity</div>
+        </div>
+        <div class="tile">
+          <div class="disc"><div class="bg"></div><div class="track"></div>
+            <div class="content"><svg viewBox="0 0 24 24"><path d="M12 20C12 20 4 15.2 4 9.2 4 6.4 6.2 5 8.5 6.2 10 7 12 8.8 12 8.8 12 8.8 14 7 15.5 6.2 17.8 5 20 6.4 20 9.2 20 15.2 12 20 12 20Z"/></svg><div class="dash">—</div></div>
+          </div>
+          <div class="label">Heart rate</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <button class="cta">Continue</button>
+      <a href="#" class="skip">Explore the app first</a>
+    </div>
+  </div>
+</body>
+</html>

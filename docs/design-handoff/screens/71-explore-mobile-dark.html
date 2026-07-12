@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Explore · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0B120F;--ember:#E08A63;--line:rgba(232,238,226,.12);--muted:#9DA99B;--faint:#7C8A7E;--surface:#18211A;--onaccent:#0B120F;--desk:#050806}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 16px 16px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:26px}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:6px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 4px 10px}
+  /* featured practice */
+  .feat{background:var(--mint);border-radius:18px;padding:20px;margin-top:18px}
+  .fk{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--moss)}
+  .ft{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--canopy);margin-top:6px}
+  .fd{font-size:13px;color:var(--muted);line-height:1.5;margin-top:6px}
+  .fbtn{display:inline-block;background:var(--canopy);color:var(--onaccent);font-size:13px;font-weight:700;border-radius:99px;padding:9px 18px;margin-top:14px}
+  /* marker explainer card */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .mrow{display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;font-weight:600}
+  .mrow:last-of-type{border-bottom:0;padding-bottom:0}
+  .mrow:first-of-type{padding-top:0}
+  .mrow .abbr{color:var(--faint);font-size:12px;font-weight:600;margin-left:auto}
+  .tipdot{width:16px;height:16px;border-radius:99px;border:1px solid var(--line);background:var(--mint);color:var(--canopy);font-size:10px;font-weight:700;font-style:italic;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+  .tipdot.open{background:var(--canopy);color:var(--onaccent);border-color:var(--canopy)}
+  .tip{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.45);margin:8px 0 4px}
+  .tip::before{content:"";position:absolute;top:-6px;left:26px;width:10px;height:10px;background:var(--surface);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+  .tip .tt{font-size:12px;font-weight:700}
+  .tip .tx{font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px}
+  /* article rows */
+  .art{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 16px;display:flex;gap:13px;align-items:center;margin-bottom:9px}
+  .aic{width:40px;height:40px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .aic svg{width:20px;height:20px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .at{flex:1;min-width:0}
+  .at .t{font-size:14px;font-weight:700;line-height:1.3}
+  .at .m{font-size:11px;font-weight:600;color:var(--faint);margin-top:3px}
+  .chev{width:16px;height:16px;stroke:var(--faint);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .disc{font-size:12px;color:var(--faint);line-height:1.6;margin:18px 8px 14px;text-align:center}
+  .disc b{color:var(--muted)}
+  /* tab bar */
+  .tabbar{position:sticky;bottom:0;background:rgba(24,33,26,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding:10px 8px 22px}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)}
+  .tab.active{color:var(--canopy)}
+  .tab svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tab .add{width:38px;height:38px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center}
+  .tab .add svg{stroke:#0B120F;width:20px;height:20px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="scroll">
+      <h1>Explore</h1>
+      <p class="sub">Short reads and practices — learn what your body is telling you.</p>
+
+      <div class="feat">
+        <div class="fk">Practice · 4 min</div>
+        <div class="ft">Box breathing</div>
+        <p class="fd">A steady four-count in, hold, out, hold. One round settles a spiking moment; four rounds settle an evening.</p>
+        <span class="fbtn">Begin</span>
+      </div>
+
+      <div class="k">Your markers, explained</div>
+      <div class="card">
+        <div class="mrow">Heart rate variability <span class="tipdot open">i</span><span class="abbr">HRV</span></div>
+        <div class="tip">
+          <div class="tt">Heart rate variability</div>
+          <p class="tx">The tiny timing differences between heartbeats. Higher usually means your system is rested; a dip after a stressful day is normal and recovers with rest.</p>
+        </div>
+        <div class="mrow">Resting heart rate <span class="tipdot">i</span><span class="abbr">RHR</span></div>
+        <div class="mrow">Temperature deviation <span class="tipdot">i</span><span class="abbr">°</span></div>
+        <div class="mrow">Readiness <span class="tipdot">i</span><span class="abbr">0–100</span></div>
+      </div>
+
+      <div class="k">Mind &amp; mood</div>
+      <div class="art" onclick="location.href='73-article-mobile-dark.html'" style="cursor:pointer">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 1 7 7c0 2.4-1.2 3.9-2.4 5.3-.9 1.1-1.6 2-1.6 3.7h-6c0-1.7-.7-2.6-1.6-3.7C6.2 13.9 5 12.4 5 10a7 7 0 0 1 7-7Z"/><path d="M10 22h4"/></svg></div>
+        <div class="at"><div class="t">Stress leaves a signature</div><div class="m">Read · 3 min — how tension shows up in HRV before you feel it</div></div>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="art">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"/></svg></div>
+        <div class="at"><div class="t">Anxiety and sleep: breaking the loop</div><div class="m">Read · 5 min — why worried nights compound, and where to interrupt</div></div>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="art">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M12 20C12 20 4 15.2 4 9.2 4 6.4 6.2 5 8.5 6.2 10 7 12 8.8 12 8.8 12 8.8 14 7 15.5 6.2 17.8 5 20 6.4 20 9.2 20 15.2 12 20 12 20Z"/></svg></div>
+        <div class="at"><div class="t">Low days are data, not verdicts</div><div class="m">Read · 4 min — reading a rough patch without spiraling on it</div></div>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="art">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M4 9a8 8 0 0 1 14-3M20 15a8 8 0 0 1-14 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></div>
+        <div class="at"><div class="t">A wind-down that actually works</div><div class="m">Practice · 10 min — body scan for racing-mind evenings</div></div>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+
+      <p class="disc">Educational, not medical advice — and never a diagnosis.<br><b>If things feel heavy, talking helps.</b> In the US, call or text <b>988</b> anytime.</p>
+    </div>
+
+    <div class="tabbar">
+      <div class="tab" onclick="location.href='19-dashboard-mobile-dark.html'" style="cursor:pointer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+        Today
+      </div>
+      <div class="tab" onclick="location.href='22-trends-mobile-dark.html'" style="cursor:pointer">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        Trends
+      </div>
+      <div class="tab" onclick="location.href='34-add-sheet-mobile-dark.html'" style="cursor:pointer">
+        <div class="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+      </div>
+      <div class="tab active" onclick="location.href='71-explore-mobile-dark.html'" style="cursor:pointer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+        Explore
+      </div>
+      <div class="tab" onclick="location.href='35-profile-mobile-dark.html'" style="cursor:pointer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+        Profile
+      </div>
+    </div>
+  </div>
+</body>
+</html>

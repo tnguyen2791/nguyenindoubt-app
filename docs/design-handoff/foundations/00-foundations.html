@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oura north star — data-display principles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#17211B; --canopy:#1E4A34; --moss:#5D7F43; --sage:#A9BA92;
+    --mint:#E4EDDD; --fog:#F6F7F1; --ember:#C56844; --line:rgba(30,74,52,.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .wrap{max-width:720px;margin:0 auto}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.01em}
+  .sub{color:var(--moss);font-weight:600;margin-top:6px;font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+  .p{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--canopy)}
+  .p p{margin-top:8px;font-size:14px;line-height:1.5;color:#33413a}
+  .swatches{display:flex;gap:8px;margin-top:14px}
+  .sw{flex:1;height:34px;border-radius:8px;border:1px solid var(--line)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .word{font-weight:700;letter-spacing:-.03em;color:var(--canopy);line-height:1}
+  .word .in{color:var(--ember)}
+  .nid{font-weight:700;letter-spacing:-.04em;color:var(--canopy);line-height:1}
+  .nid .i{color:var(--ember);font-style:normal}
+  .bdg{width:44px;height:44px;border-radius:26%;background:var(--canopy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .bdg .nid{color:#fff;font-size:17px}
+  .brandrow{display:flex;align-items:center;gap:22px;margin-top:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Data displays — Oura as the north star</h1>
+    <div class="sub">Calm · health-grade · legible. Model every graph and metric on the Oura app.</div>
+    <div class="grid">
+      <div class="p"><div class="k">Hero readout</div>
+        <p>One big number per metric with a small unit and a short qualitative caption ("protective", "short night") — not a wall of stats.</p></div>
+      <div class="p"><div class="k">One accent per metric</div>
+        <p>Muted, low-saturation base. A single accent carries the metric; a second, warmer tone only marks an off-target state.</p></div>
+      <div class="p"><div class="k">Color encodes state</div>
+        <p>Green = on target, ember = flagged. Color is meaning, never decoration. Same rule across rings, bars, and lines.</p></div>
+      <div class="p"><div class="k">Rings &amp; rounded bars</div>
+        <p>0–100 summaries as soft gauges/rings; trends as rounded bars with the value labeled above and minimal gridlines.</p></div>
+      <div class="p"><div class="k">Generous whitespace</div>
+        <p>Roomy padding, large radii, soft edges. Nothing crowded, nothing boxed-in. Let the number breathe.</p></div>
+      <div class="p"><div class="k">Gentle motion</div>
+        <p>Values ease in; nothing pops abruptly. Transitions feel restful, matching a sleep/recovery context.</p></div>
+    </div>
+    <div class="p" style="margin-top:14px">
+      <div class="k">Wordmark</div>
+      <div class="brandrow">
+        <div class="word" style="font-size:26px">Nguyen<span class="in">In</span>Doubt</div>
+        <div class="nid" style="font-size:24px">N<span class="i">i</span>D</div>
+        <div class="bdg"><div class="nid">N<span class="i">i</span>D</div></div>
+      </div>
+      <p>Type-only: Inter Bold, one solid word, "In" in ember. NiD is the compact form for icon-sized contexts. Full rules in the <a href="01-logo-explorations.html">wordmark spec</a>.</p>
+    </div>
+    <div class="p" style="margin-top:14px">
+      <div class="k">Palette (NguyenInDoubt tokens)</div>
+      <div class="swatches">
+        <div class="sw" style="background:#1E4A34" title="canopy"></div>
+        <div class="sw" style="background:#5D7F43" title="moss"></div>
+        <div class="sw" style="background:#A9BA92" title="sage"></div>
+        <div class="sw" style="background:#E4EDDD" title="mint"></div>
+        <div class="sw" style="background:#C56844" title="ember (flagged)"></div>
+        <div class="sw" style="background:#F6F7F1" title="fog"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

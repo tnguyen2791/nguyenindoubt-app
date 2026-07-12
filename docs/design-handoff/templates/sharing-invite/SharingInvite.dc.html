@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative">
+    <div style="position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="font-size:15px;font-weight:700;letter-spacing:-.01em">Share with a provider</div>
+  </div>
+
+  <!-- Step 1: find provider & opt in -->
+  <sc-if value="{{ stepCode }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;padding:0 24px 28px;display:flex;flex-direction:column">
+      <h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin:22px 0 0;color:var(--canopy)">Choose who to share with</h1>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0 0">Find your provider and opt in. You pick exactly what's shared — and they can accept or decline.</p>
+      <div style="display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--canopy);border-radius:14px;padding:14px 16px;margin-top:24px">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <span style="font-size:15px;font-weight:600">Nguyen</span><span style="display:inline-block;width:2px;height:18px;background:var(--canopy)"></span>
+      </div>
+      <div onClick="{{ toChoose }}" style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-top:12px;cursor:pointer">
+        <span style="width:44px;height:44px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">DN</span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:700">Dr. Nguyen</span><span style="display:block;font-size:12px;color:var(--muted);margin-top:2px">Accepting share requests</span></span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"></path><path d="M9 12l2 2 4-4"></path></svg>verified</span>
+      </div>
+      <p style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin:18px 0 0;padding:0 4px">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"></path></svg>
+        <span>Nothing is shared until you choose what — and you can stop anytime.</span>
+      </p>
+      <div style="flex:1;min-height:18px"></div>
+      <button type="button" onClick="{{ toChoose }}" style="display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font-family:var(--font-sans);font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center">Continue</button>
+      <a href="#" style="display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none">My provider isn't here yet</a>
+    </div>
+  </sc-if>
+
+  <!-- Step 2: choose what to share -->
+  <sc-if value="{{ stepChoose }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;padding:0 24px 28px;display:flex;flex-direction:column">
+      <h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin:22px 0 0;color:var(--canopy)">Choose what to share</h1>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0 0">Your request goes to them first. Start small — you can add or remove anything later.</p>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-top:20px">
+        <div style="width:44px;height:44px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">DN</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700">Dr. Nguyen</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">Accepting share requests</div>
+        </div>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"></path><path d="M9 12l2 2 4-4"></path></svg>verified</span>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 4px 10px">They'll see</div>
+      <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Card" padding="4px 16px" hint-size="100%,250px">
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.SettingsRow" first="{{ true }}" label="Scores &amp; trends" description="Readiness, sleep, and activity summaries" control="toggle" on="{{ true }}" hint-size="100%,62px"></x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.SettingsRow" label="Sleep detail" description="Stages, heart rate, and HRV overnight" control="toggle" on="{{ true }}" hint-size="100%,62px"></x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.SettingsRow" label="Journal tags" description="The tags you log — caffeine, stress, and the rest" control="toggle" on="{{ false }}" hint-size="100%,62px"></x-import>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.SettingsRow" label="Journal notes" description="Your written notes stay yours unless you choose this" control="toggle" on="{{ false }}" hint-size="100%,62px"></x-import>
+      </x-import>
+      <p style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin:14px 0 0;padding:0 4px">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"></path></svg>
+        <span>Read-only, one provider, and you see everything they see. They can accept or decline — and you can cancel anytime.</span>
+      </p>
+      <div style="flex:1;min-height:18px"></div>
+      <button type="button" onClick="{{ toDone }}" style="display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font-family:var(--font-sans);font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center">Send request</button>
+      <a href="#" style="display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none">Not now</a>
+    </div>
+  </sc-if>
+
+  <!-- Step 3: confirmation -->
+  <sc-if value="{{ stepDone }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;padding:0 24px 28px;display:flex;flex-direction:column;align-items:center;text-align:center">
+      <div style="width:88px;height:88px;border-radius:99px;background:var(--mint);display:flex;align-items:center;justify-content:center;margin-top:110px">
+        <svg viewBox="0 0 24 24" style="width:40px;height:40px;stroke:var(--canopy);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M5 13l4 4L19 7"></path></svg>
+      </div>
+      <h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin:26px 0 0;color:var(--canopy)">Request sent to<br />Dr. Nguyen</h1>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:12px 0 0;max-width:300px">If they accept, sharing starts with your next morning reading — read-only, and you'll always see exactly what they see. Cancel anytime.</p>
+      <div style="display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;justify-content:center">
+        <span style="font-size:12px;font-weight:600;color:var(--canopy);background:var(--mint);border-radius:99px;padding:8px 14px">scores &amp; trends</span>
+        <span style="font-size:12px;font-weight:600;color:var(--canopy);background:var(--mint);border-radius:99px;padding:8px 14px">sleep detail</span>
+      </div>
+      <div style="flex:1;min-height:18px"></div>
+      <button type="button" onClick="{{ toCode }}" style="display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font-family:var(--font-sans);font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center">Done</button>
+      <a href="#" style="display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none">Review sharing settings</a>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;step&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;code&quot;,&quot;choose&quot;,&quot;done&quot;],&quot;default&quot;:&quot;code&quot;,&quot;tsType&quot;:&quot;'code' | 'choose' | 'done'&quot;,&quot;section&quot;:&quot;Flow&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = { step: null };
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate(prevProps) {
+    this.applyTheme();
+    if (prevProps && prevProps.step !== this.props.step && this.state.step !== null) {
+      this.setState({ step: null }); // tweak change wins over clicked-through state
+    }
+  }
+  renderVals() {
+    const step = this.state.step ?? this.props.step ?? 'code';
+    return {
+      stepCode: step === 'code',
+      stepChoose: step === 'choose',
+      stepDone: step === 'done',
+      toChoose: () => this.setState({ step: 'choose' }),
+      toDone: () => this.setState({ step: 'done' }),
+      toCode: () => this.setState({ step: 'code' }),
+    };
+  }
+}
+</script>
+</body>
+</html>
