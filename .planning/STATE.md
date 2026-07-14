@@ -1,20 +1,20 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-current_phase: 7
-current_phase_name: Production Deployment Posture
-status: complete
-stopped_at: Phase 7 executed and verified
-last_updated: "2026-07-06T16:22:30Z"
-last_activity: 2026-07-06
-last_activity_desc: Phase 7 complete; v1 roadmap phases complete
+milestone: v1.1
+milestone_name: — Experience and Insight
+current_phase: 11
+current_phase_name: insightful-data-displays
+status: executing
+stopped_at: v1.1 roadmap defined from 5-lens design critique; Phase 8 ready to plan
+last_updated: "2026-07-12T03:41:22.651Z"
+last_activity: 2026-07-12
+last_activity_desc: Phase 11 execution started
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_phases: 13
+  completed_phases: 10
+  total_plans: 19
+  completed_plans: 16
+  percent: 77
 ---
 
 # Project State
@@ -24,16 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** Patients can explore sleep context and private reflection while clinicians see only consented sleep summaries, never journal content.
-**Current focus:** v1 roadmap phases complete; ready for ship/review workflow
+**Current focus:** Phase 11 — insightful-data-displays
 
 ## Current Position
 
-Phase: 7 of 7 (Production Deployment Posture)
-Plan: 1/1 complete
-Status: Complete
-Last activity: 2026-07-06 — Phase 7 complete; v1 roadmap phases complete
+Phase: 11 (insightful-data-displays) — EXECUTING
+Plan: 1 of 3
+Status: Executing Phase 11
+Last activity: 2026-07-12 — Phase 11 execution started
 
-Progress: [##########] 100%
+Progress: [#####-----] 54% (7/13 phases)
 
 ## Performance Metrics
 

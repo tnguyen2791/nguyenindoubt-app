@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Activity detail · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0B120F;--ember:#E08A63;--line:rgba(232,238,226,.12);--muted:#9DA99B;--faint:#7C8A7E}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#050806;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);position:relative;display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 16px 32px}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px}
+  .back,.more{width:34px;height:34px;border-radius:99px;border:1px solid var(--line);background:#18211A;display:flex;align-items:center;justify-content:center}
+  .back svg,.more svg{width:18px;height:18px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;text-align:center}
+  .tsub{font-size:11px;color:var(--faint);text-align:center}
+  .hero{text-align:center;padding:6px 0 2px}
+  .ring{position:relative;width:150px;height:150px;margin:8px auto 0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num{font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .ring .lab{font-size:12px;font-weight:600;color:var(--muted);margin-top:4px}
+  .cap{font-size:14px;font-weight:600;color:#537B3D;margin-top:12px}
+  .card{background:#18211A;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+  .stat{background:var(--fog);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+  .stat .n{font-size:18px;font-weight:700;letter-spacing:-.01em;color:var(--canopy)}
+  .stat .n small{font-size:11px;font-weight:600;color:var(--muted)}
+  .stat .l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-top:3px}
+  /* hourly movement */
+  .hours{display:flex;align-items:flex-end;gap:3px;height:76px;margin-top:14px}
+  .hcol{flex:1;border-radius:3px 3px 2px 2px;background:var(--sage)}
+  .hcol.still{background:var(--mint)}
+  .hcol.hot{background:var(--moss)}
+  .caxis{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--faint)}
+  .nudge{display:flex;gap:10px;align-items:flex-start;background:var(--mint);border-radius:12px;padding:12px 14px;margin-top:14px}
+  .nudge svg{width:16px;height:16px;stroke:var(--moss);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+  .nudge p{font-size:12.5px;color:var(--ink);line-height:1.5}
+  /* sessions */
+  .sess{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line)}
+  .sess:first-of-type{border-top:0;padding-top:4px}
+  .sic{width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .sic svg{width:19px;height:19px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .st1{flex:1;min-width:0}
+  .st1 .t{font-size:14px;font-weight:700}
+  .st1 .d{font-size:11px;color:var(--faint);margin-top:2px}
+  .sv{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .tipdot{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1px solid var(--line);background:var(--mint);color:var(--canopy);font-size:9px;font-weight:700;font-style:italic;vertical-align:1px;margin-left:5px;cursor:help}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:16px;text-align:center;padding:0 10px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='19-dashboard-mobile-dark.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div><div class="ttl">Activity</div><div class="tsub">Today · Jul 7</div></div>
+      <div class="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></div>
+    </div>
+    <div class="scroll">
+      <div class="hero">
+        <div class="ring">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="64" fill="none" stroke="var(--mint)" stroke-width="14"/>
+            <circle cx="75" cy="75" r="64" fill="none" stroke="#78A554" stroke-width="14" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="48"/>
+          </svg>
+          <div class="center"><div class="num">88</div><div class="lab">move</div></div>
+        </div>
+        <div class="cap">Well paced · goal within reach</div>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">Today so far</div><div class="headnote">goal 9,000 steps</div></div>
+        <div class="stats">
+          <div class="stat"><div class="n">7,842</div><div class="l">steps</div></div>
+          <div class="stat"><div class="n">312<small> kcal</small></div><div class="l">active burn</div></div>
+          <div class="stat"><div class="n">41<small> min</small></div><div class="l">moving</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">Movement · by hour</div><div class="headnote">stillest 1–3p</div></div>
+        <div class="hours">
+          <div class="hcol still" style="height:8%"></div>
+          <div class="hcol still" style="height:6%"></div>
+          <div class="hcol" style="height:30%"></div>
+          <div class="hcol hot" style="height:78%"></div>
+          <div class="hcol" style="height:44%"></div>
+          <div class="hcol" style="height:36%"></div>
+          <div class="hcol still" style="height:10%"></div>
+          <div class="hcol still" style="height:8%"></div>
+          <div class="hcol" style="height:26%"></div>
+          <div class="hcol hot" style="height:92%"></div>
+          <div class="hcol" style="height:52%"></div>
+          <div class="hcol" style="height:34%"></div>
+          <div class="hcol" style="height:24%"></div>
+          <div class="hcol still" style="height:9%"></div>
+        </div>
+        <div class="caxis"><span>6a</span><span>10a</span><span>2p</span><span>8p</span></div>
+        <div class="nudge">
+          <svg viewBox="0 0 24 24"><path d="M12 3c3.5 4.2 6 7.2 6 11a6 6 0 0 1-12 0c0-3.8 2.5-6.8 6-11Z"/></svg>
+          <p>Long still stretch early afternoon. A five-minute walk around 2p usually keeps the evening reading steady.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="head"><div class="k">Sessions</div><div class="headnote">auto-detected<span class="tipdot" title="The ring notices sustained movement and logs it as a session. You can rename or remove any of them.">i</span></div></div>
+        <div class="sess">
+          <div class="sic"><svg viewBox="0 0 24 24"><path d="M13 4a2 2 0 1 0 2-2M6 21l4-6 1-4 3 3 4 1"/><path d="M9 11l2-4 4-1"/></svg></div>
+          <div class="st1"><div class="t">Morning run</div><div class="d">7:12a · 28 min</div></div>
+          <span class="sv">avg 142 bpm</span>
+        </div>
+        <div class="sess">
+          <div class="sic"><svg viewBox="0 0 24 24"><path d="M5 20h14M7 20V9l5-4 5 4v11"/></svg></div>
+          <div class="st1"><div class="t">Afternoon walk</div><div class="d">4:36p · 18 min</div></div>
+          <span class="sv">1.2 mi</span>
+        </div>
+      </div>
+
+      <p class="note">Rest days count too — recovery is part of the plan, not a break from it.</p>
+    </div>
+  </div>
+</body>
+</html>

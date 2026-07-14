@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);min-height:100vh;position:relative}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  /* faint dashboard behind */
+  .behind{padding:32px 28px;filter:blur(2px);opacity:.4;pointer-events:none}
+  .behind .brand{font-weight:700;font-size:15px}
+  .behind h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin-top:24px}
+  .behind .cards{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+  .behind .c{background:#fff;border:1px solid var(--line);border-radius:18px;height:220px}
+  .scrim{position:fixed;inset:0;background:rgba(23,33,27,.42);display:flex;align-items:center;justify-content:center;padding:24px}
+  .dialog{width:560px;max-width:100%;background:var(--fog);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 70px rgba(23,33,27,.28);padding:24px 26px 26px;max-height:88vh;overflow:auto}
+  .dhead{display:flex;align-items:center;justify-content:space-between}
+  .dhead h2{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .dsub{font-size:13px;color:var(--muted);margin-top:3px}
+  .close{width:34px;height:34px;border-radius:99px;background:var(--mint);border:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .close svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-top:22px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:10px 16px;font-size:13px;font-weight:600;color:#33413a;cursor:pointer}
+  .chip .d{width:8px;height:8px;border-radius:99px;background:var(--sage)}
+  .chip.on{background:var(--canopy);color:#fff;border-color:var(--canopy)}
+  .chip.on .d{background:#fff}
+  .chip.flag.on{background:var(--ember);border-color:var(--ember)}
+  .note{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;font:inherit;font-size:14px;color:var(--ink);margin-top:14px;resize:none}
+  .note::placeholder{color:var(--faint)}
+  .actions{display:flex;gap:12px;margin-top:22px;justify-content:flex-end}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:700;padding:12px 22px;border-radius:12px;cursor:pointer}
+  .btn.primary{background:var(--canopy);color:#fff;border-color:var(--canopy)}
+</style>
+</head>
+<body>
+  <div class="behind">
+    <div class="brand">NguyenInDoubt</div>
+    <h1>Good morning, Minh</h1>
+    <div class="cards"><div class="c"></div><div class="c"></div></div>
+  </div>
+  <div class="scrim">
+    <div class="dialog">
+      <div class="dhead">
+        <div><h2>Add to today</h2><div class="dsub">Tag what may affect your recovery — Tuesday, July 7</div></div>
+        <button class="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+
+      <div class="k">Lifestyle</div>
+      <div class="chips">
+        <span class="chip on"><span class="d"></span>Nap</span>
+        <span class="chip"><span class="d"></span>Caffeine</span>
+        <span class="chip flag on"><span class="d"></span>Alcohol</span>
+        <span class="chip"><span class="d"></span>Late meal</span>
+        <span class="chip on"><span class="d"></span>Meditation</span>
+        <span class="chip"><span class="d"></span>Sauna</span>
+        <span class="chip"><span class="d"></span>Travel</span>
+        <span class="chip"><span class="d"></span>Workout</span>
+      </div>
+
+      <div class="k">How you feel</div>
+      <div class="chips">
+        <span class="chip"><span class="d"></span>Energized</span>
+        <span class="chip"><span class="d"></span>Relaxed</span>
+        <span class="chip flag"><span class="d"></span>Stressed</span>
+        <span class="chip flag"><span class="d"></span>Sick</span>
+        <span class="chip"><span class="d"></span>Sore</span>
+      </div>
+
+      <textarea class="note" rows="2" placeholder="Add a note (optional)"></textarea>
+      <div class="actions">
+        <button class="btn">Cancel</button>
+        <button class="btn primary">Save 3 tags</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

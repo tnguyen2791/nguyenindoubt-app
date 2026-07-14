@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet>
+  <script src="./ds-base.js"></script>
+  <script src="./doc-page.js"></script>
+  <style>doc-page:not(:defined){visibility:hidden}</style>
+</helmet>
+<doc-page size="letter" margin="0.7in" style="font-family:var(--font-sans);color:var(--ink)">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--canopy);padding-bottom:14px">
+    <div style="font-weight:700;letter-spacing:-.03em;color:var(--canopy);line-height:1;font-size:28px">Nguyen<span style="color:var(--ember)">In</span>Doubt</div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--faint)">Welcome · getting started</div>
+  </div>
+
+  <p style="font-size:15px;line-height:1.65;color:var(--muted);margin:16px 0 0"><b style="color:var(--ink)">When in doubt, check in — don't freak out.</b> NguyenInDoubt reads your body's quiet signals — sleep, heart rate, temperature — and tells you what they mean in plain words. Every reading compares you to <b style="color:var(--ink)">your own typical range</b>, never to anyone else. No streaks, no guilt, no alarms.</p>
+
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 0 10px">Getting started</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;break-inside:avoid">
+    <div style="background:var(--fog);border:1px solid var(--line);border-radius:14px;padding:16px">
+      <div style="width:26px;height:26px;border-radius:99px;background:var(--canopy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">1</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px">Wear the ring</div>
+      <p style="font-size:12px;margin:5px 0 0;line-height:1.55;color:var(--muted)">Snug on your index or middle finger, sensor on the palm side. Charge it every few days — it'll tell you when.</p>
+    </div>
+    <div style="background:var(--fog);border:1px solid var(--line);border-radius:14px;padding:16px">
+      <div style="width:26px;height:26px;border-radius:99px;background:var(--canopy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">2</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px">Let it learn you</div>
+      <p style="font-size:12px;margin:5px 0 0;line-height:1.55;color:var(--muted)">The first two weeks are calibration. Missed days are fine — they just extend it a little.</p>
+    </div>
+    <div style="background:var(--fog);border:1px solid var(--line);border-radius:14px;padding:16px">
+      <div style="width:26px;height:26px;border-radius:99px;background:var(--canopy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">3</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px">One reading a morning</div>
+      <p style="font-size:12px;margin:5px 0 0;line-height:1.55;color:var(--muted)">That's the whole habit. Open the app, read the note, get on with your day.</p>
+    </div>
+  </div>
+
+  <sc-if value="{{ showSharing }}" hint-placeholder-val="{{ true }}">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 0 10px">Sharing — entirely optional</div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px;background:var(--mint);border-radius:16px;padding:20px 22px;break-inside:avoid">
+      <div>
+        <h3 style="font-size:15px;font-weight:700;color:var(--canopy);margin:0">You choose what's seen, if anything</h3>
+        <p style="font-size:12.5px;margin:8px 0 0;line-height:1.65;color:var(--muted)">If you'd like to share your readings, open <b style="color:var(--ink)">Profile → Request to share</b> and find your provider. You pick exactly what's shared — summaries, sleep detail, journal tags — and your written notes always stay yours.</p>
+        <p style="font-size:12.5px;margin:8px 0 0;line-height:1.65;color:var(--muted)">Sharing is read-only, you see everything they see, and you can pause it anytime. No notice goes out when you do.</p>
+      </div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;align-self:center">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--faint)">How it works</div>
+        <p style="font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.7;text-align:left"><b style="color:var(--ink)">1.</b> You opt in and choose what to share<br /><b style="color:var(--ink)">2.</b> Your provider accepts the request<br /><b style="color:var(--ink)">3.</b> Pause or change it anytime — no notice goes out</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 28px;break-inside:avoid">
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 0 10px">Learn as you go</div>
+      <ul style="margin:0;padding-left:18px">
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">Tap any ⓘ dot</b> to get a plain-language explanation of a marker — HRV, readiness, temperature drift.</li>
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">The Explore tab</b> has short reads and practices — stress, sleep, and low days included.</li>
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">Box breathing</b> (4 minutes) is a good first practice for a racing evening.</li>
+      </ul>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 0 10px">Good to know</div>
+      <ul style="margin:0;padding-left:18px">
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">Ember-colored flags</b> mean "worth watching," never "panic." One odd reading is noise; three is a pattern.</li>
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">Tags explain your scores</b> — they never change them.</li>
+        <li style="font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px"><b style="color:var(--ink)">Your data stays yours.</b> Processed on your device, never sold, never shared with advertisers.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="margin:24px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.6;text-align:center">NguyenInDoubt is educational — it never diagnoses, and it's not a substitute for care.<br /><b style="color:var(--muted)">If things feel heavy, talking helps.</b> In the US, call or text <b style="color:var(--muted)">988</b> anytime.</p>
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:850,&quot;height&quot;:1100},&quot;showSharing&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showSharing: this.props.showSharing ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -112,6 +112,24 @@ service cloud.firestore {
       allow update, delete: if ownsDoc();
     }
 
+    match /readinessSummaries/{summaryId} {
+      // Patient-owned only. Readiness is deliberately NOT exposed to
+      // clinicians — the clinician surface stays sleep-summaries-only per the
+      // standing privacy contract (readiness-sharing is a separate future
+      // owner ruling, not assumed here).
+      allow read, update, delete: if ownsDoc();
+      allow create: if willOwnDoc();
+    }
+
+    match /userPreferences/{userId} {
+      // Patient-owned goals + notification preferences. Never exposed to a
+      // clinician — the sleep-summaries-only privacy contract is unaffected.
+      // The doc id is the patient's uid, and the doc carries a matching
+      // userId field, so ownsDoc()/willOwnDoc() both bind to the patient.
+      allow read, update, delete: if ownsDoc() && userId == resource.data.userId;
+      allow create: if willOwnDoc() && userId == request.resource.data.userId;
+    }
+
     match /journalEntries/{entryId} {
       allow read, update, delete: if ownsDoc();
       allow create: if willOwnDoc();

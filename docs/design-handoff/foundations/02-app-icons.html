@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NiD · App icons</title>
+<link rel="icon" sizes="32x32" href="icons/favicon-32.png" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .wrap{max-width:660px;margin:0 auto}
+  h1{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .sub{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .grid{display:flex;gap:22px;align-items:flex-end;margin-top:24px;flex-wrap:wrap}
+  .cell{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .cell img{display:block}
+  .cell .n{font-size:11px;font-weight:600;color:var(--faint)}
+  .darkstrip{background:#0B120F;border-radius:14px;padding:18px 22px;display:flex;gap:22px;align-items:flex-end;margin-top:18px}
+  .darkstrip .n{color:#7C8A7E}
+  .note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:18px}
+  .note code{font-family:ui-monospace,monospace;font-size:11px;background:var(--mint);padding:2px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>App icons &amp; favicons</h1>
+    <p class="sub">Canopy tile, 26% radius, NiD in Inter Bold with the ember "i". Below 48px the mark simplifies to N with an ember tittle.</p>
+    <div class="grid">
+      <div class="cell"><img src="icons/app-icon-512.png" width="96" height="96" alt="512 app icon" /><span class="n">512</span></div>
+      <div class="cell"><img src="icons/app-icon-192.png" width="64" height="64" alt="192 app icon" /><span class="n">192</span></div>
+      <div class="cell"><img src="icons/app-icon-180.png" width="60" height="60" alt="180 apple touch icon" /><span class="n">180 · apple-touch</span></div>
+      <div class="cell"><img src="icons/favicon-32.png" width="32" height="32" alt="32 favicon" /><span class="n">32</span></div>
+      <div class="cell"><img src="icons/favicon-16.png" width="16" height="16" alt="16 favicon" /><span class="n">16</span></div>
+    </div>
+    <div class="darkstrip">
+      <div class="cell"><img src="icons/app-icon-512-dark.png" width="96" height="96" alt="512 dark app icon" /><span class="n">512 · dark UI contexts</span></div>
+    </div>
+    <p class="note">All files live in <code>foundations/icons/</code>. Reference: <code>favicon-16/32.png</code> for browser tabs, <code>app-icon-180.png</code> as apple-touch-icon, <code>192/512</code> for the web manifest.</p>
+  </div>
+</body>
+</html>

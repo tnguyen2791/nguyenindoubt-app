@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative">
+    <div style="position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <div style="display:flex;gap:6px">
+      <sc-for list="{{ dots }}" as="d" hint-placeholder-count="3">
+        <sc-if value="{{ d.on }}" hint-placeholder-val="{{ false }}">
+          <span style="display:inline-block;height:6px;border-radius:99px;width:18px;background:var(--canopy)"></span>
+        </sc-if>
+        <sc-if value="{{ d.off }}" hint-placeholder-val="{{ true }}">
+          <span style="display:inline-block;height:6px;border-radius:99px;width:6px;background:var(--mint)"></span>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+  <div style="flex:1;padding:0 24px 28px;display:flex;flex-direction:column">
+    <h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin:22px 0 0;color:var(--canopy)">Choose what to share</h1>
+    <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0 0">Only what you allow. You can change any of this later in Profile.</p>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 4px 0">Example section</div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 18px;margin-top:10px">
+      <div style="display:flex;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)">
+        <div style="width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"></path></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700">Sleep &amp; rest</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Bedtimes, stages, and overnight recovery</div>
+        </div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Toggle" on="{{ true }}" aria-label="Sleep and rest" hint-size="44px,26px"></x-import>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;padding:15px 0">
+        <div style="width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M12 20C12 20 4 15.2 4 9.2 4 6.4 6.2 5 8.5 6.2 10 7 12 8.8 12 8.8 12 8.8 14 7 15.5 6.2 17.8 5 20 6.4 20 9.2 20 15.2 12 20 12 20Z"></path></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700">Heart rate &amp; HRV</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4">Resting heart rate and variability, day and night</div>
+        </div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.Toggle" on="{{ false }}" aria-label="Heart rate and HRV" hint-size="44px,26px"></x-import>
+      </div>
+    </div>
+
+    <p style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin:14px 0 0;padding:0 4px">
+      <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"></path></svg>
+      <span>Processed on your device. Never sold, never shared with advertisers.</span>
+    </p>
+
+    <div style="flex:1;min-height:18px"></div>
+    <button type="button" style="display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font-family:var(--font-sans);font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center">Allow &amp; continue</button>
+    <sc-if value="{{ showSkip }}" hint-placeholder-val="{{ true }}">
+      <a href="#" style="display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none">Not now</a>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;step&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:1,&quot;max&quot;:3,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Flow&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showSkip&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Flow&quot;}}">
+class Component extends DCLogic {
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  renderVals() {
+    const step = Math.max(1, Math.min(3, this.props.step ?? 2));
+    return {
+      dots: [1, 2, 3].map((i) => ({ on: i === step, off: i !== step })),
+      showSkip: this.props.showSkip ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

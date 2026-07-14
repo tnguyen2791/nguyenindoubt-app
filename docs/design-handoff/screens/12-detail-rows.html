@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Metric detail rows</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:420px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);padding:16px 0 4px}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0}
+  .left{display:flex;align-items:center;gap:12px}
+  .dot{width:9px;height:9px;border-radius:99px;background:#4F7A3C}
+  .dot.flag{background:#A08B48}
+  .name{font-size:14px;font-weight:600;color:#33413a}
+  .sub{font-size:12px;color:#7a887f;margin-top:2px}
+  .right{text-align:right}
+  .v{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .v small{font-size:12px;color:#54635a;font-weight:600}
+  .delta{font-size:12px;font-weight:600;color:#4F7A3C;margin-top:2px}
+  .delta.flag{color:#A08B48}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="k">Last night · detail</div>
+    <div class="row"><div class="left"><span class="dot"></span><div><div class="name">Total sleep</div><div class="sub">time asleep</div></div></div><div class="right"><div class="v">7<small>h</small> 36<small>m</small></div><div class="delta">+42m vs avg</div></div></div>
+    <div class="row"><div class="left"><span class="dot"></span><div><div class="name">Efficiency</div><div class="sub">asleep / in bed</div></div></div><div class="right"><div class="v">91<small>%</small></div><div class="delta">optimal</div></div></div>
+    <div class="row"><div class="left"><span class="dot flag"></span><div><div class="name">Sleep latency</div><div class="sub">time to fall asleep</div></div></div><div class="right"><div class="v">28<small>m</small></div><div class="delta flag">longer than usual</div></div></div>
+    <div class="row"><div class="left"><span class="dot"></span><div><div class="name">Restfulness</div><div class="sub">wake-ups &amp; movement</div></div></div><div class="right"><div class="v">Good</div><div class="delta">3 brief wakes</div></div></div>
+    <div class="row"><div class="left"><span class="dot"></span><div><div class="name">Timing</div><div class="sub">midpoint alignment</div></div></div><div class="right"><div class="v">3:08<small>a</small></div><div class="delta">on rhythm</div></div></div>
+  </div>
+</body>
+</html>

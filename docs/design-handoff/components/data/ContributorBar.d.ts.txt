@@ -1,0 +1,11 @@
+export interface ContributorBarProps {
+  /** e.g. "Resting HR" */
+  name: string;
+  /** 'optimal' | 'good' | 'fair' | 'pay attention' — sets the color */
+  state?: string;
+  /** track fill percent, default 100 */
+  fill?: number;
+  /** override the state color */
+  color?: string;
+}
+export declare function ContributorBar(props: ContributorBarProps): JSX.Element;

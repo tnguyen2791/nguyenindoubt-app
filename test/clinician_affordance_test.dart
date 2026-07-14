@@ -1,0 +1,165 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:nguyenindoubt_app/main.dart';
+import 'package:nguyenindoubt_app/repositories/app_repository.dart';
+import 'package:nguyenindoubt_app/services/health_data_provider.dart';
+import 'package:nguyenindoubt_app/state/app_state.dart';
+
+/// SAFE-02 affordance truth: the clinician invite rows must tell the truth
+/// about tappability. Only accepted rows (which open a sleep summary) present
+/// as tappable — enabled InkWell + chevron. Pending/revoked/expired rows are
+/// muted (reduced opacity), carry no ink ripple or chevron, and never absorb a
+/// tap. Lifecycle-label coverage lives in test/widget_test.dart; this test is
+/// focused purely on the actionable/inert affordance split.
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('only the accepted invite row exposes a tappable affordance', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("I'm a clinician"));
+    await tester.pumpAndSettle();
+
+    // Seeded links: NID-8274 accepted, NID-1138 pending, NID-4455 expired.
+    // Exactly one row is actionable, so exactly one chevron is present.
+    expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+
+    // The inert pending row is wrapped in a reduced-opacity layer.
+    final inertOpacities = tester.widgetList<Opacity>(
+      find.ancestor(
+        of: find.text('NID-1138 - pending'),
+        matching: find.byType(Opacity),
+      ),
+    );
+    expect(
+      inertOpacities.any((opacity) => opacity.opacity < 1.0),
+      isTrue,
+      reason: 'Inert (pending) rows must be muted with Opacity < 1.0.',
+    );
+
+    // The inert row has NO enabled InkWell tap target.
+    expect(
+      find.ancestor(
+        of: find.text('NID-1138 - pending'),
+        matching: find.byType(InkWell),
+      ),
+      findsNothing,
+      reason: 'Inert rows must not present an ink ripple / tap target.',
+    );
+
+    // The accepted row IS reachable through an enabled InkWell.
+    final acceptedInkWell = tester.widget<InkWell>(
+      find.ancestor(
+        of: find.text('NID-8274 - accepted'),
+        matching: find.byType(InkWell),
+      ),
+    );
+    expect(
+      acceptedInkWell.onTap,
+      isNotNull,
+      reason: 'Accepted rows must expose a real onTap.',
+    );
+
+    // Clinician mode auto-selects the first linked patient on entry.
+    final bundleBeforeInertTap = state.selectedPatientBundle;
+    expect(bundleBeforeInertTap, isNotNull);
+
+    // Tapping an inert row absorbs nothing — the selected bundle is untouched
+    // (identity unchanged, no selectPatient call, no privacy path hit).
+    await tester.tap(find.text('NID-1138 - pending'));
+    await tester.pumpAndSettle();
+    expect(state.selectedPatientBundle, same(bundleBeforeInertTap));
+
+    // Tapping the accepted row DOES select the patient — a fresh bundle is
+    // fetched, proving the affordance responds.
+    await tester.tap(find.text('NID-8274 - accepted'));
+    await tester.pumpAndSettle();
+    expect(state.selectedPatientBundle, isNotNull);
+    expect(state.selectedPatientBundle, isNot(same(bundleBeforeInertTap)));
+  });
+
+  testWidgets('clinician summary is directional, never a raw sample count', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final state = NguyenInDoubtState(
+      repository: InMemoryAppRepository(),
+      healthDataProvider: MockHealthDataProvider(),
+    );
+
+    await tester.pumpWidget(NguyenInDoubtApp(state: state, showSplash: false));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text("I'm a clinician"));
+    await tester.pumpAndSettle();
+
+    // Clinician mode auto-selects the first linked patient, so the detail
+    // renders the seeded 7-night data (6.2/6.5/7.0/7.2/5.9/6.8/7.6 hours).
+    expect(state.selectedPatientBundle, isNotNull);
+
+    // The old raw-count tile (uppercase 'SAMPLES' label) must not render.
+    expect(find.text('SAMPLES'), findsNothing);
+
+    // The directional stat-delta summary renders deterministically from the
+    // seeded nights: mean 6.74h -> '6.7h'; exactly 7 nights means no prior
+    // week; sd ~0.55h -> steady; all 7 nights carry data.
+    expect(find.text('Avg sleep'), findsOneWidget);
+    expect(find.text('6.7h'), findsOneWidget);
+    expect(find.text('no prior week yet'), findsOneWidget);
+    expect(find.text('±0.5h'), findsOneWidget);
+    expect(find.text('steady nights'), findsOneWidget);
+    expect(find.text('7 of 7 nights'), findsOneWidget);
+
+    // The third row's delta slot carries the positive scope framing.
+    expect(find.text('sleep summaries only'), findsOneWidget);
+
+    // The "worth a look" section label frames the stats as patterns, not
+    // alerts — asserted via its RichText spans (uppercased, ember tail).
+    final worthALook = find.byWidgetPredicate((widget) {
+      if (widget is! RichText) return false;
+      final text = widget.text.toPlainText();
+      return text.contains('WORTH A LOOK') &&
+          text.contains('NOT ALERTS, JUST PATTERNS');
+    });
+    expect(worthALook, findsOneWidget);
+
+    // The closing humility note keeps the clinician framing honest: patient
+    // control + educational-context (never a diagnosis).
+    final humility = find.textContaining(
+      'People control exactly what you see and can pause sharing anytime.',
+    );
+    await tester.scrollUntilVisible(humility, 200);
+    await tester.pumpAndSettle();
+    expect(humility, findsOneWidget);
+    expect(
+      find.textContaining(
+        'Readings are educational context for conversations — never a diagnosis.',
+      ),
+      findsOneWidget,
+    );
+
+    // The consent disclosure stays verbatim on the clinician surface — it is
+    // disclosure, not a metric, and survives the stat rework unchanged.
+    final disclosure = find.textContaining(
+      'Visible: sleep samples, daily summaries, trend flags.',
+    );
+    await tester.scrollUntilVisible(disclosure, 200);
+    await tester.pumpAndSettle();
+    expect(disclosure, findsOneWidget);
+  });
+}

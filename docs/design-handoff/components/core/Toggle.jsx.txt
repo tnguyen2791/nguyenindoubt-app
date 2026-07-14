@@ -1,0 +1,39 @@
+export function Toggle({ on = false, disabled = false, onChange, ariaLabel }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      onClick={() => onChange && onChange(!on)}
+      style={{
+        width: 44,
+        height: 26,
+        borderRadius: 'var(--r-pill)',
+        background: on ? 'var(--accent)' : 'var(--mint)',
+        border: 0,
+        position: 'relative',
+        cursor: disabled ? 'default' : 'pointer',
+        opacity: disabled ? 0.45 : 1,
+        padding: 0,
+        flexShrink: 0,
+        transition: 'background .18s ease',
+      }}
+    >
+      <span
+        style={{
+          position: 'absolute',
+          top: 3,
+          left: on ? 21 : 3,
+          width: 20,
+          height: 20,
+          borderRadius: 'var(--r-pill)',
+          background: 'var(--knob)',
+          boxShadow: 'var(--shadow-knob)',
+          transition: 'left .18s ease',
+        }}
+      />
+    </button>
+  );
+}

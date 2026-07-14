@@ -5,8 +5,7 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 import 'app_repository.dart';
 
-class FirebaseAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+class FirebaseAppRepository implements NidRepository {
   FirebaseAppRepository({required this.firestore, required this.auth});
 
   final FirebaseFirestore firestore;
@@ -20,12 +19,61 @@ class FirebaseAppRepository
       firestore.collection('healthSamples');
   CollectionReference<Map<String, dynamic>> get _summaries =>
       firestore.collection('dailySummaries');
+  CollectionReference<Map<String, dynamic>> get _readiness =>
+      firestore.collection('readinessSummaries');
+  CollectionReference<Map<String, dynamic>> get _preferences =>
+      firestore.collection('userPreferences');
   CollectionReference<Map<String, dynamic>> get _entries =>
       firestore.collection('journalEntries');
   CollectionReference<Map<String, dynamic>> get _resources =>
       firestore.collection('resourceCards');
   CollectionReference<Map<String, dynamic>> get _consentEvents =>
       firestore.collection('consentEvents');
+
+  @override
+  Future<AppUser?> getUser(String uid) async {
+    _requireSignedInAs(uid);
+    final doc = await _users.doc(uid).get();
+    if (!doc.exists) {
+      return null;
+    }
+    return _userFromDoc(doc);
+  }
+
+  @override
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    _requireSignedInAs(uid);
+    final ref = _users.doc(uid);
+    final existing = await ref.get();
+    if (existing.exists) {
+      return _userFromDoc(existing);
+    }
+
+    // A freshly signed-in account has no profile yet. Create a minimal
+    // patient profile — the users/{uid} create rule requires role=='patient'
+    // and isSelf(uid), both satisfied here. Consent starts un-asked; the
+    // patient opts into sharing later through the consent flow.
+    final now = DateTime.now();
+    final safeName = displayName.trim().isEmpty ? 'You' : displayName.trim();
+    await ref.set({
+      'displayName': safeName,
+      'role': UserRole.patient.name,
+      'consentStatus': ConsentStatus.notAsked.name,
+      'clinicCode': null,
+      'createdAt': Timestamp.fromDate(now),
+      'updatedAt': Timestamp.fromDate(now),
+    });
+    return AppUser(
+      id: uid,
+      displayName: safeName,
+      role: UserRole.patient,
+      consentStatus: ConsentStatus.notAsked,
+    );
+  }
 
   @override
   Future<List<ResourceCard>> getResourceCards() async {
@@ -65,6 +113,18 @@ class FirebaseAppRepository
     );
 
     await _entries.doc(entry.id).set(_journalToFirestore(entry));
+  }
+
+  @override
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    // The server-side `ownsDoc()` rule on journalEntries authoritatively
+    // enforces that only the owning patient can delete. Journal stays
+    // patient-only (SAFE-03) — there is deliberately no clinician path.
+    await _entries.doc(entryId).delete();
   }
 
   @override
@@ -131,6 +191,93 @@ class FirebaseAppRepository
         .orderBy('date')
         .get();
     return snapshot.docs.map((doc) => _summaryFromDoc(doc)).toList();
+  }
+
+  @override
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    if (summaries.any((summary) => summary.userId != patientId)) {
+      throw const PrivacyException(
+        'Readiness summaries must belong to the patient.',
+      );
+    }
+
+    final batch = firestore.batch();
+    for (final summary in summaries) {
+      batch.set(
+        _readiness.doc(_readinessId(summary)),
+        _readinessToFirestore(summary),
+      );
+    }
+    await batch.commit();
+  }
+
+  @override
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+
+    final snapshot = await _readiness
+        .where('userId', isEqualTo: patientId)
+        .orderBy('date')
+        .get();
+    return snapshot.docs.map((doc) => _readinessFromDoc(doc)).toList();
+  }
+
+  @override
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+
+    final doc = await _preferences.doc(patientId).get();
+    final data = doc.data();
+    if (data == null) {
+      // Nothing saved yet — sensible defaults so the settings screens render.
+      return const UserPreferences();
+    }
+    return _preferencesFromMap(data);
+  }
+
+  @override
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
+  }) async {
+    _requireSignedInAs(requesterUserId);
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+
+    await _preferences.doc(patientId).set({
+      'userId': patientId,
+      ..._preferencesToMap(preferences),
+    });
   }
 
   @override
@@ -432,11 +579,18 @@ String _docSafe(String value) {
 }
 
 String _summaryId(DailySummary summary) {
-  final date = summary.date;
+  return _dayDocId(summary.userId, summary.date);
+}
+
+String _readinessId(ReadinessSummary summary) {
+  return _dayDocId(summary.userId, summary.date);
+}
+
+String _dayDocId(String userId, DateTime date) {
   final yyyy = date.year.toString().padLeft(4, '0');
   final mm = date.month.toString().padLeft(2, '0');
   final dd = date.day.toString().padLeft(2, '0');
-  return '${summary.userId}_$yyyy$mm$dd';
+  return '${userId}_$yyyy$mm$dd';
 }
 
 final _invitePattern = RegExp(r'^NID-\d{4}$');
@@ -547,6 +701,99 @@ Map<String, Object?> _summaryToFirestore(DailySummary summary) {
     'sleepQualityProxy': summary.sleepQualityProxy,
     'trendFlag': summary.trendFlag,
   };
+}
+
+ReadinessSummary _readinessFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  final data = doc.data()!;
+  final rawContributors = (data['contributors'] as List<dynamic>?) ?? [];
+  return ReadinessSummary(
+    userId: data['userId'] as String,
+    date: _dateTime(data['date']),
+    readinessScore: (data['readinessScore'] as num).toInt(),
+    state: data['state'] as String,
+    contributors: rawContributors
+        .map(
+          (c) =>
+              _readinessContributorFromMap((c as Map).cast<String, Object?>()),
+        )
+        .toList(),
+  );
+}
+
+Map<String, Object?> _readinessToFirestore(ReadinessSummary summary) {
+  return {
+    'userId': summary.userId,
+    'date': Timestamp.fromDate(summary.date),
+    'readinessScore': summary.readinessScore,
+    'state': summary.state,
+    'contributors': summary.contributors
+        .map(_readinessContributorToMap)
+        .toList(),
+  };
+}
+
+Map<String, Object?> _readinessContributorToMap(ReadinessContributor c) {
+  return {
+    'metric': c.metric.name,
+    'name': c.name,
+    'word': c.word,
+    'fraction': c.fraction,
+    'value': c.value,
+    'unit': c.unit,
+  };
+}
+
+ReadinessContributor _readinessContributorFromMap(Map<String, Object?> map) {
+  return ReadinessContributor(
+    metric: MetricType.values.byName(map['metric'] as String),
+    name: map['name'] as String,
+    word: map['word'] as String,
+    fraction: (map['fraction'] as num).toDouble(),
+    value: (map['value'] as num?)?.toDouble(),
+    unit: map['unit'] as String?,
+  );
+}
+
+Map<String, Object?> _preferencesToMap(UserPreferences prefs) {
+  return {
+    'sleepGoalMinutes': prefs.sleepGoalMinutes,
+    'stepTarget': prefs.stepTarget,
+    'morningReading': prefs.morningReading,
+    'eveningWindDown': prefs.eveningWindDown,
+    'weeklyReport': prefs.weeklyReport,
+    'outOfRangeAlerts': prefs.outOfRangeAlerts,
+    'goalMilestones': prefs.goalMilestones,
+    'ringBatterySync': prefs.ringBatterySync,
+    'quietHoursEnabled': prefs.quietHoursEnabled,
+    'quietHoursFromMinutes': prefs.quietHoursFromMinutes,
+    'quietHoursUntilMinutes': prefs.quietHoursUntilMinutes,
+  };
+}
+
+UserPreferences _preferencesFromMap(Map<String, Object?> map) {
+  const defaults = UserPreferences();
+  return UserPreferences(
+    sleepGoalMinutes:
+        (map['sleepGoalMinutes'] as num?)?.toInt() ?? defaults.sleepGoalMinutes,
+    stepTarget: (map['stepTarget'] as num?)?.toInt() ?? defaults.stepTarget,
+    morningReading: map['morningReading'] as bool? ?? defaults.morningReading,
+    eveningWindDown:
+        map['eveningWindDown'] as bool? ?? defaults.eveningWindDown,
+    weeklyReport: map['weeklyReport'] as bool? ?? defaults.weeklyReport,
+    outOfRangeAlerts:
+        map['outOfRangeAlerts'] as bool? ?? defaults.outOfRangeAlerts,
+    goalMilestones: map['goalMilestones'] as bool? ?? defaults.goalMilestones,
+    ringBatterySync:
+        map['ringBatterySync'] as bool? ?? defaults.ringBatterySync,
+    quietHoursEnabled:
+        map['quietHoursEnabled'] as bool? ?? defaults.quietHoursEnabled,
+    quietHoursFromMinutes:
+        (map['quietHoursFromMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursFromMinutes,
+    quietHoursUntilMinutes:
+        (map['quietHoursUntilMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursUntilMinutes,
+  );
 }
 
 ResourceCard _resourceFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {

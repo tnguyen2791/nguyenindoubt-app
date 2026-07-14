@@ -20,7 +20,21 @@ enum InviteValidationStatus {
 
 enum ConsentEventAction { accepted, revoked }
 
-enum MetricType { sleep, steps, heartRate, hrv, mindfulMinutes, medication }
+enum MetricType {
+  sleep,
+  steps,
+  heartRate,
+  hrv,
+  mindfulMinutes,
+  medication,
+  // Wearable-core signals (Phase 13). These widen the pipeline beyond sleep so
+  // readiness can be a real multi-signal score. Existing values are unchanged.
+  restingHeartRate,
+  respiratoryRate,
+  temperature,
+  bloodOxygen,
+  activeEnergy,
+}
 
 enum SessionStage { signedOut, onboarding, patient, clinician }
 
@@ -203,6 +217,164 @@ class DailySummary {
   final String trendFlag;
 }
 
+/// One explainable factor behind a [ReadinessSummary].
+///
+/// Each contributor carries its own observational state word derived from its
+/// own value vs a personal baseline — so the evidence always matches the label.
+/// Plain data by construction: no Flutter, no derivation logic here, so it
+/// serializes cleanly to Firestore and round-trips through the in-memory store.
+@immutable
+class ReadinessContributor {
+  const ReadinessContributor({
+    required this.metric,
+    required this.name,
+    required this.word,
+    required this.fraction,
+    this.value,
+    this.unit,
+  });
+
+  /// The wearable signal this contributor summarizes.
+  final MetricType metric;
+
+  /// Display name matching the design ("Resting HR", "HRV balance", ...).
+  final String name;
+
+  /// The contributor's own observational state word (optimal/good/fair/
+  /// pay attention). Non-diagnostic — describes the metric, never the person.
+  final String word;
+
+  /// Subscore expressed 0.0-1.0 for the contributor track fill.
+  final double fraction;
+
+  /// The raw signal value shown beside the bar (e.g. 51 bpm), when available.
+  final double? value;
+
+  /// Unit for [value] (e.g. 'bpm', 'ms', '°C').
+  final String? unit;
+}
+
+/// A pure, non-diagnostic multi-signal readiness for one day.
+///
+/// Replaces the fake `sleepQualityProxy` with a genuine multi-factor score
+/// computed from HRV, resting HR, respiratory rate, temperature deviation,
+/// prior-day activity, and sleep. Patient-facing only — the clinician surface
+/// stays sleep-summaries-only per the standing privacy contract.
+@immutable
+class ReadinessSummary {
+  const ReadinessSummary({
+    required this.userId,
+    required this.date,
+    required this.readinessScore,
+    required this.state,
+    required this.contributors,
+  });
+
+  final String userId;
+  final DateTime date;
+
+  /// Overall readiness, 0-100.
+  final int readinessScore;
+
+  /// Observational state word for the overall score (protective/balanced/
+  /// fair/pay attention).
+  final String state;
+
+  /// Per-signal contributors behind the score, in display order.
+  final List<ReadinessContributor> contributors;
+}
+
+/// A patient-owned, on-device set of goals and notification preferences.
+///
+/// Plain data (no Flutter dependency) so it serializes cleanly to local
+/// storage and round-trips through the in-memory store. These shape *guidance*
+/// only — they never change scores, and none of it is ever visible to a
+/// clinician (the sleep-summaries-only privacy contract is unaffected).
+///
+/// Notification toggles record a stored *preference* only. This app does not
+/// yet schedule real OS notifications or run any analytics — nothing here
+/// wakes a background job. The toggles simply remember what the patient would
+/// want, so a future delivery layer can honor them.
+@immutable
+class UserPreferences {
+  const UserPreferences({
+    this.sleepGoalMinutes = 480,
+    this.stepTarget = 9000,
+    this.morningReading = true,
+    this.eveningWindDown = true,
+    this.weeklyReport = true,
+    this.outOfRangeAlerts = true,
+    this.goalMilestones = false,
+    this.ringBatterySync = true,
+    this.quietHoursEnabled = true,
+    this.quietHoursFromMinutes = 22 * 60, // 10:00p
+    this.quietHoursUntilMinutes = 7 * 60, // 7:00a
+  });
+
+  /// Nightly sleep goal, in minutes. Steppers move it in 15-minute steps.
+  final int sleepGoalMinutes;
+
+  /// Daily step target. Steppers move it in 500-step steps.
+  final int stepTarget;
+
+  /// "Morning reading" — a note when the day's scores are ready.
+  final bool morningReading;
+
+  /// "Evening wind-down" — a reminder ahead of the bedtime window.
+  final bool eveningWindDown;
+
+  /// "Weekly report" — a Sunday summary of the week's trends.
+  final bool weeklyReport;
+
+  /// "Out-of-range alerts" — heart rate or temperature outside the range.
+  final bool outOfRangeAlerts;
+
+  /// "Goal milestones" — when a target is reached early.
+  final bool goalMilestones;
+
+  /// "Ring battery & sync" — low charge or a missed sync.
+  final bool ringBatterySync;
+
+  /// Whether Do Not Disturb quiet hours are on.
+  final bool quietHoursEnabled;
+
+  /// Quiet-hours start, minutes since midnight.
+  final int quietHoursFromMinutes;
+
+  /// Quiet-hours end, minutes since midnight.
+  final int quietHoursUntilMinutes;
+
+  UserPreferences copyWith({
+    int? sleepGoalMinutes,
+    int? stepTarget,
+    bool? morningReading,
+    bool? eveningWindDown,
+    bool? weeklyReport,
+    bool? outOfRangeAlerts,
+    bool? goalMilestones,
+    bool? ringBatterySync,
+    bool? quietHoursEnabled,
+    int? quietHoursFromMinutes,
+    int? quietHoursUntilMinutes,
+  }) {
+    return UserPreferences(
+      sleepGoalMinutes: sleepGoalMinutes ?? this.sleepGoalMinutes,
+      stepTarget: stepTarget ?? this.stepTarget,
+      morningReading: morningReading ?? this.morningReading,
+      eveningWindDown: eveningWindDown ?? this.eveningWindDown,
+      weeklyReport: weeklyReport ?? this.weeklyReport,
+      outOfRangeAlerts: outOfRangeAlerts ?? this.outOfRangeAlerts,
+      goalMilestones: goalMilestones ?? this.goalMilestones,
+      ringBatterySync: ringBatterySync ?? this.ringBatterySync,
+      quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
+      quietHoursFromMinutes:
+          quietHoursFromMinutes ?? this.quietHoursFromMinutes,
+      quietHoursUntilMinutes:
+          quietHoursUntilMinutes ?? this.quietHoursUntilMinutes,
+    );
+  }
+}
+
 @immutable
 class JournalEntry {
   const JournalEntry({
@@ -243,6 +415,123 @@ class ResourceCard {
   final String disclaimer;
   final bool crisisFlag;
   final int sortOrder;
+}
+
+/// A single "your markers, explained" row in Explore — a wearable signal the
+/// app now reads, paired with its short abbreviation and a plain-language
+/// InfoTip body. Static educational content (no wearable data flows through it),
+/// so it is plain data with no Flutter dependency.
+@immutable
+class ExploreMarker {
+  const ExploreMarker({
+    required this.name,
+    required this.abbr,
+    required this.tip,
+  });
+
+  /// Full signal name shown in the row ("Heart rate variability").
+  final String name;
+
+  /// Compact abbreviation on the row's trailing edge ("HRV", "RHR", "°").
+  final String abbr;
+
+  /// Plain-language InfoTip body: what the signal is and what a change usually
+  /// means, ending reassuring — never a warning, no exclamation marks.
+  final String tip;
+}
+
+/// A short, non-diagnostic article or guided practice surfaced in Explore and
+/// opened in the Article reader (design 72). Static seed content authored in
+/// the brand voice: supportive, educational-not-medical, closing on
+/// reassurance. Plain data — no Flutter dependency — so it stays test-friendly.
+@immutable
+class ExploreArticle {
+  const ExploreArticle({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.readMinutes,
+    required this.rowSummary,
+    required this.section,
+    required this.reviewedBy,
+    required this.updated,
+    required this.lede,
+    required this.body,
+    required this.calloutTitle,
+    required this.calloutBody,
+    required this.practiceTitle,
+    required this.practiceBody,
+    required this.practiceCta,
+    this.featured = false,
+    this.readNextIds = const <String>[],
+  });
+
+  /// Stable id, used for read-next links and featured lookup.
+  final String id;
+
+  /// "Read" or "Practice" — drives the kicker/meta label and the featured
+  /// card's eyebrow.
+  final String kind;
+
+  /// Article title / featured practice name.
+  final String title;
+
+  /// Estimated read/practice time in minutes.
+  final int readMinutes;
+
+  /// One-line summary shown on the Explore row beneath the title.
+  final String rowSummary;
+
+  /// Section eyebrow for the reader kicker ("Mind & mood").
+  final String section;
+
+  /// Reviewer attribution line (byline).
+  final String reviewedBy;
+
+  /// "Updated" recency label ("Jun 2026").
+  final String updated;
+
+  /// Opening lede paragraph.
+  final String lede;
+
+  /// Ordered body blocks — each an [ArticleBlock] (heading or paragraph).
+  final List<ArticleBlock> body;
+
+  /// "Worth knowing" callout heading + body.
+  final String calloutTitle;
+  final String calloutBody;
+
+  /// "Try it now" practice card title, body, and CTA label.
+  final String practiceTitle;
+  final String practiceBody;
+  final String practiceCta;
+
+  /// Whether this is the Explore hero featured practice.
+  final bool featured;
+
+  /// Ids of the "Read next" rows at the foot of the reader.
+  final List<String> readNextIds;
+}
+
+/// One block in an [ExploreArticle] body — either a section heading or a
+/// paragraph. Paragraphs may carry a trailing inline InfoTip term/body.
+@immutable
+class ArticleBlock {
+  const ArticleBlock.heading(this.text)
+    : isHeading = true,
+      tipTerm = null,
+      tipBody = null;
+
+  const ArticleBlock.paragraph(this.text, {this.tipTerm, this.tipBody})
+    : isHeading = false;
+
+  final String text;
+  final bool isHeading;
+
+  /// When non-null, an inline InfoTip is rendered after the paragraph for this
+  /// term (design 72's inline `.tipdot`).
+  final String? tipTerm;
+  final String? tipBody;
 }
 
 @immutable

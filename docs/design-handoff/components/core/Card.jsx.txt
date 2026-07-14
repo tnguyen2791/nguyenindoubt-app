@@ -1,0 +1,35 @@
+export function Card({ label, note, children, padding = 'var(--sp-card)', style }) {
+  return (
+    <div
+      style={{
+        background: 'var(--surface-card)',
+        border: '1px solid var(--border-hairline)',
+        borderRadius: 'var(--r-card)',
+        padding,
+        fontFamily: 'var(--font-sans)',
+        color: 'var(--text-body)',
+        ...style,
+      }}
+    >
+      {(label || note) && (
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: children ? 14 : 0 }}>
+          {label && (
+            <div
+              style={{
+                fontSize: 'var(--fs-label)',
+                fontWeight: 'var(--fw-bold)',
+                textTransform: 'uppercase',
+                letterSpacing: 'var(--ls-label)',
+                color: 'var(--accent)',
+              }}
+            >
+              {label}
+            </div>
+          )}
+          {note && <div style={{ fontSize: 'var(--fs-label)', fontWeight: 'var(--fw-semibold)', color: 'var(--text-faint)' }}>{note}</div>}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}

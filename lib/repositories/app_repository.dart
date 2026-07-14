@@ -7,6 +7,25 @@ import '../models/app_models.dart';
 import '../services/health_data_provider.dart';
 
 abstract class AppRepository {
+  /// Reads the profile for [uid], or null when no profile exists yet.
+  ///
+  /// InMemory: returns the seeded demo user when [uid] matches, else null.
+  /// Firebase: reads `users/{uid}` and maps it to an [AppUser], or null when
+  /// the document is absent (a freshly signed-in account before bootstrap).
+  Future<AppUser?> getUser(String uid);
+
+  /// Ensures a profile exists for [uid], creating a minimal patient profile
+  /// (role=patient, consentStatus=notAsked) when absent, and returns it.
+  ///
+  /// InMemory: a no-op that returns the seeded demo user (tests never create
+  /// real accounts). Firebase: creates `users/{uid}` if missing, then returns
+  /// the current profile. Idempotent — safe to call on every signed-in boot.
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  });
+
   Future<List<ResourceCard>> getResourceCards();
 
   Future<List<JournalEntry>> getJournalEntriesForPatient({
@@ -19,6 +38,11 @@ abstract class AppRepository {
     required JournalEntry entry,
   });
 
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  });
+
   Future<void> saveImportedSleep({
     required String requesterUserId,
     required String patientId,
@@ -28,6 +52,38 @@ abstract class AppRepository {
   Future<List<DailySummary>> getDailySummariesForPatient({
     required String requesterUserId,
     required String patientId,
+  });
+
+  /// Persists the patient's multi-signal readiness summaries (Phase 13).
+  /// Patient-owned only — the clinician surface never reads readiness, keeping
+  /// the sleep-summaries-only contract intact. Idempotent per (patient, date).
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  });
+
+  /// Reads the patient's readiness summaries, date ascending. Patient-owned.
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  });
+
+  /// Reads the patient's goals + notification preferences (Phase 17).
+  /// Patient-owned; never exposed to a clinician. Returns sensible defaults
+  /// when nothing has been saved yet, so the settings screens always render.
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  });
+
+  /// Persists the patient's goals + notification preferences (Phase 17).
+  /// Local-only, patient-owned. These shape guidance and remember toggle
+  /// state; they never schedule OS notifications or run analytics.
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
   });
 }
 
@@ -62,6 +118,13 @@ abstract class ConsentRepository {
   });
 }
 
+/// The full repository surface the app talks to: patient data, clinician
+/// reads, and consent writes. Both [InMemoryAppRepository] (demo/tests) and
+/// [FirebaseAppRepository] (live) satisfy it, so [NguyenInDoubtState] can hold
+/// one field and swap backends behind auth without changing call sites.
+abstract class NidRepository
+    implements AppRepository, ClinicianRepository, ConsentRepository {}
+
 class PrivacyException implements Exception {
   const PrivacyException(this.message);
 
@@ -71,8 +134,7 @@ class PrivacyException implements Exception {
   String toString() => message;
 }
 
-class InMemoryAppRepository
-    implements AppRepository, ClinicianRepository, ConsentRepository {
+class InMemoryAppRepository implements NidRepository {
   InMemoryAppRepository({
     this.preferences,
     this.storageKey = _defaultStorageKey,
@@ -95,6 +157,8 @@ class InMemoryAppRepository
   final List<ClinicianLink> _links = [];
   final List<HealthSample> _samples = [];
   final List<DailySummary> _summaries = [];
+  final List<ReadinessSummary> _readiness = [];
+  final Map<String, UserPreferences> _preferences = {};
   final List<JournalEntry> _entries = [];
   final List<ResourceCard> _resources = [];
   final List<ConsentHistoryEvent> _consentEvents = [];
@@ -118,6 +182,8 @@ class InMemoryAppRepository
     _summaries
       ..clear()
       ..addAll(summarizeSleepSamples(_samples));
+    _readiness.clear();
+    _preferences.clear();
     _entries
       ..clear()
       ..addAll(seedJournalEntries());
@@ -155,6 +221,23 @@ class InMemoryAppRepository
       _summaries
         ..clear()
         ..addAll(summarizeSleepSamples(_samples));
+      _readiness
+        ..clear()
+        ..addAll(
+          ((decoded['readiness'] as List<dynamic>?) ?? []).map(
+            (json) => _readinessFromJson(json as Map<String, Object?>),
+          ),
+        );
+      _preferences
+        ..clear()
+        ..addAll(
+          ((decoded['preferences'] as Map<String, dynamic>?) ?? {}).map(
+            (userId, json) => MapEntry(
+              userId,
+              _preferencesFromJson(json as Map<String, Object?>),
+            ),
+          ),
+        );
       _entries
         ..clear()
         ..addAll(
@@ -176,6 +259,8 @@ class InMemoryAppRepository
       _links.clear();
       _samples.clear();
       _summaries.clear();
+      _readiness.clear();
+      _preferences.clear();
       _entries.clear();
       _consentEvents.clear();
       _session = const AppSession.signedOut();
@@ -192,10 +277,14 @@ class InMemoryAppRepository
     await localPreferences.setString(
       storageKey,
       jsonEncode({
-        'schemaVersion': 2,
+        'schemaVersion': 4,
         'users': _users.map(_userToJson).toList(),
         'links': _links.map(_linkToJson).toList(),
         'samples': _samples.map(_sampleToJson).toList(),
+        'readiness': _readiness.map(_readinessToJson).toList(),
+        'preferences': _preferences.map(
+          (userId, prefs) => MapEntry(userId, _preferencesToJson(prefs)),
+        ),
         'entries': _entries.map(_entryToJson).toList(),
         'consentEvents': _consentEvents.map(_consentEventToJson).toList(),
         'session': _sessionToJson(_session),
@@ -229,6 +318,23 @@ class InMemoryAppRepository
     _users[index] = updated;
     await _persist();
     return updated;
+  }
+
+  @override
+  Future<AppUser?> getUser(String uid) async {
+    return _findUser(uid);
+  }
+
+  @override
+  Future<AppUser> ensureUser({
+    required String uid,
+    required String displayName,
+    required UserRole role,
+  }) async {
+    // Demo/in-memory: never mints real accounts. Return the existing seeded
+    // user when it matches; otherwise fall back to the demo patient so the
+    // demo path stays entirely offline and deterministic (tests rely on this).
+    return _findUser(uid) ?? patientDemo;
   }
 
   @override
@@ -426,6 +532,25 @@ class InMemoryAppRepository
   }
 
   @override
+  Future<void> deleteJournalEntry({
+    required String requesterUserId,
+    required String entryId,
+  }) async {
+    final index = _entries.indexWhere((entry) => entry.id == entryId);
+    if (index < 0) {
+      // Idempotent no-op: nothing to delete, so there is nothing to own.
+      return;
+    }
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: _entries[index].userId,
+      resourceName: 'journal entries',
+    );
+    _entries.removeAt(index);
+    await _persist();
+  }
+
+  @override
   Future<List<DailySummary>> getDailySummariesForPatient({
     required String requesterUserId,
     required String patientId,
@@ -436,6 +561,77 @@ class InMemoryAppRepository
       resourceName: 'daily summaries',
     );
     return _dailySummariesFor(patientId);
+  }
+
+  @override
+  Future<void> saveReadinessSummaries({
+    required String requesterUserId,
+    required String patientId,
+    required List<ReadinessSummary> summaries,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    if (summaries.any((summary) => summary.userId != patientId)) {
+      throw const PrivacyException(
+        'Readiness summaries must belong to the patient.',
+      );
+    }
+    // Upsert per (patient, date): drop any existing rows for the patient's
+    // affected days, then insert the new ones.
+    final affectedDays = summaries
+        .map((summary) => _dayKey(summary.userId, summary.date))
+        .toSet();
+    _readiness.removeWhere(
+      (summary) => affectedDays.contains(_dayKey(summary.userId, summary.date)),
+    );
+    _readiness.addAll(summaries);
+    await _persist();
+  }
+
+  @override
+  Future<List<ReadinessSummary>> getReadinessSummariesForPatient({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'readiness summaries',
+    );
+    return _readiness.where((summary) => summary.userId == patientId).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  @override
+  Future<UserPreferences> getUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+    // Defaults when nothing saved yet — the settings screens always render.
+    return _preferences[patientId] ?? const UserPreferences();
+  }
+
+  @override
+  Future<void> saveUserPreferences({
+    required String requesterUserId,
+    required String patientId,
+    required UserPreferences preferences,
+  }) async {
+    _ensurePatientOwnsData(
+      requesterUserId: requesterUserId,
+      patientId: patientId,
+      resourceName: 'preferences',
+    );
+    _preferences[patientId] = preferences;
+    await _persist();
   }
 
   @override
@@ -635,6 +831,11 @@ class InMemoryAppRepository
       ..sort((a, b) => a.date.compareTo(b.date));
   }
 
+  String _dayKey(String userId, DateTime date) {
+    final day = DateTime(date.year, date.month, date.day);
+    return '$userId|${day.toIso8601String()}';
+  }
+
   List<JournalEntry> _journalEntriesFor(String patientId) {
     return _entries.where((entry) => entry.userId == patientId).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -745,6 +946,95 @@ HealthSample _sampleFromJson(Map<String, Object?> json) {
     value: (json['value'] as num).toDouble(),
     unit: json['unit'] as String,
     createdAt: DateTime.parse(json['createdAt'] as String),
+  );
+}
+
+Map<String, Object?> _readinessToJson(ReadinessSummary summary) {
+  return {
+    'userId': summary.userId,
+    'date': summary.date.toIso8601String(),
+    'readinessScore': summary.readinessScore,
+    'state': summary.state,
+    'contributors': summary.contributors
+        .map(_readinessContributorToJson)
+        .toList(),
+  };
+}
+
+ReadinessSummary _readinessFromJson(Map<String, Object?> json) {
+  return ReadinessSummary(
+    userId: json['userId'] as String,
+    date: DateTime.parse(json['date'] as String),
+    readinessScore: json['readinessScore'] as int,
+    state: json['state'] as String,
+    contributors: ((json['contributors'] as List<dynamic>?) ?? [])
+        .map((c) => _readinessContributorFromJson(c as Map<String, Object?>))
+        .toList(),
+  );
+}
+
+Map<String, Object?> _readinessContributorToJson(ReadinessContributor c) {
+  return {
+    'metric': c.metric.name,
+    'name': c.name,
+    'word': c.word,
+    'fraction': c.fraction,
+    'value': c.value,
+    'unit': c.unit,
+  };
+}
+
+ReadinessContributor _readinessContributorFromJson(Map<String, Object?> json) {
+  return ReadinessContributor(
+    metric: MetricType.values.byName(json['metric'] as String),
+    name: json['name'] as String,
+    word: json['word'] as String,
+    fraction: (json['fraction'] as num).toDouble(),
+    value: (json['value'] as num?)?.toDouble(),
+    unit: json['unit'] as String?,
+  );
+}
+
+Map<String, Object?> _preferencesToJson(UserPreferences prefs) {
+  return {
+    'sleepGoalMinutes': prefs.sleepGoalMinutes,
+    'stepTarget': prefs.stepTarget,
+    'morningReading': prefs.morningReading,
+    'eveningWindDown': prefs.eveningWindDown,
+    'weeklyReport': prefs.weeklyReport,
+    'outOfRangeAlerts': prefs.outOfRangeAlerts,
+    'goalMilestones': prefs.goalMilestones,
+    'ringBatterySync': prefs.ringBatterySync,
+    'quietHoursEnabled': prefs.quietHoursEnabled,
+    'quietHoursFromMinutes': prefs.quietHoursFromMinutes,
+    'quietHoursUntilMinutes': prefs.quietHoursUntilMinutes,
+  };
+}
+
+UserPreferences _preferencesFromJson(Map<String, Object?> json) {
+  const defaults = UserPreferences();
+  return UserPreferences(
+    sleepGoalMinutes:
+        (json['sleepGoalMinutes'] as num?)?.toInt() ??
+        defaults.sleepGoalMinutes,
+    stepTarget: (json['stepTarget'] as num?)?.toInt() ?? defaults.stepTarget,
+    morningReading: json['morningReading'] as bool? ?? defaults.morningReading,
+    eveningWindDown:
+        json['eveningWindDown'] as bool? ?? defaults.eveningWindDown,
+    weeklyReport: json['weeklyReport'] as bool? ?? defaults.weeklyReport,
+    outOfRangeAlerts:
+        json['outOfRangeAlerts'] as bool? ?? defaults.outOfRangeAlerts,
+    goalMilestones: json['goalMilestones'] as bool? ?? defaults.goalMilestones,
+    ringBatterySync:
+        json['ringBatterySync'] as bool? ?? defaults.ringBatterySync,
+    quietHoursEnabled:
+        json['quietHoursEnabled'] as bool? ?? defaults.quietHoursEnabled,
+    quietHoursFromMinutes:
+        (json['quietHoursFromMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursFromMinutes,
+    quietHoursUntilMinutes:
+        (json['quietHoursUntilMinutes'] as num?)?.toInt() ??
+        defaults.quietHoursUntilMinutes,
   );
 }
 

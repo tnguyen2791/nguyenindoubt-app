@@ -1,0 +1,20 @@
+export interface BaselineBandProps {
+  /** metric name shown top-left */
+  name?: string;
+  /** current value on the min–max scale */
+  value: number;
+  /** formatted readout top-right, e.g. "51 bpm" */
+  display?: string;
+  min?: number;
+  max?: number;
+  /** typical-range band, in the same units as value */
+  bandStart: number;
+  bandEnd: number;
+  minLabel?: string;
+  maxLabel?: string;
+  /** center axis label, e.g. "58 baseline" */
+  baselineLabel?: string;
+  /** ember marker + readout when out of range */
+  flagged?: boolean;
+}
+export declare function BaselineBand(props: BaselineBandProps): JSX.Element;

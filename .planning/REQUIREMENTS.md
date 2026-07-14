@@ -61,6 +61,54 @@ Requirements for the next release arc. The existing local MVP is the baseline; t
 - [x] **PROD-03**: Deployment verification includes `flutter analyze`, `flutter test`, and `flutter build web`.
 - [x] **PROD-04**: Production release notes identify privacy-sensitive changes and any remaining compliance blockers.
 
+## v1.1 Requirements (Experience and Insight)
+
+Derived 2026-07-06 from a five-lens senior design critique (visual/brand, IA and affordances, onboarding and splash, data-viz and insights, motion and micro-UX). All preserve the standing constraints: no analytics/telemetry; clinician sleep-only, post-consent, never journals; explicit local/demo disclosure; no emergency-monitoring or clinical-decision-support claims; motion stays gentle (fade/ease, never pop); insights stay observational, never diagnostic.
+
+### Design System (Phase 8)
+
+- [ ] **DS-01**: Typography uses a real hierarchy — a size/weight ladder (headings w700, body w400, labels w500–600) with no w800/w900 pile-up; every referenced text token (e.g. `headlineMedium`) is defined rather than falling back to stock Material.
+- [ ] **DS-02**: Spacing and radius are tokenized (`NidSpace`, `NidRadius`); the freehand magic numbers and one-off logo radii are swept onto the grid.
+- [ ] **DS-03**: `StatusPill` is state-driven (neutral / good / caution / flag / private tones) rather than mint-by-default, so color encodes state.
+- [ ] **DS-04**: The Material `fromSeed` leak is neutralized — dialogs, segmented buttons, navigation, and outline/surface tones use blessed palette values; stray stock colors (e.g. `Colors.red`) are replaced with `NidColors` equivalents.
+- [ ] **DS-05**: A single `BrandMark` widget with a min-size rule and one lockup replaces the three-radii/two-treatment logo usage across app bar, header, and onboarding.
+
+### Safety and Affordance Integrity (Phase 9)
+
+- [ ] **SAFE-01**: Crisis actions (988 call/text, emergency) launch `tel:`/`sms:` directly via `url_launcher` instead of showing a dialog, while staying educational and non-monitoring.
+- [ ] **SAFE-02**: Interactive cards signal tappability; non-actionable / disabled rows are visually distinct (reduced opacity, no ripple) and never silently absorb taps.
+- [ ] **SAFE-03**: Journal has an `EmptyState` and per-entry delete with confirmation, completing the private-journal promise.
+
+### Brand Arrival and Onboarding (Phase 10)
+
+- [ ] **ONB-01**: Cold-start is on-brand — a native web loader plus a gentle animated brand-intro splash (plays once per cold launch, no analytics) replaces the blank boot frame.
+- [ ] **ONB-02**: Welcome leads with a single patient-first primary action; clinician demo access is de-emphasized; the required local-only disclosure moves to calm secondary copy.
+- [ ] **ONB-03**: Onboarding sets expectations (sleep / journal / privacy-by-default) and guards empty or invalid name input.
+- [ ] **ONB-04**: First run is guided — the empty dashboard offers one clear primary action with sleep-only permission priming shown before the OS prompt.
+
+### Insightful Data Displays (Phase 11)
+
+- [ ] **INS-01**: The dashboard establishes hierarchy — one hero readout; the connection state ("clinician link") moves out of the metric row into the sharing surface.
+- [ ] **INS-02**: The 0–100 measure is either retired or made a real, multi-factor, on-device, non-diagnostic score rendered as an Oura-style ring with an explicit scale.
+- [ ] **INS-03**: Trend bars use a fixed hour axis with a target/average reference line and honest heights (no window-max normalization, no 0.25 floor clamp).
+- [ ] **INS-04**: A gentle observational insight line (week-over-week, last-night-vs-baseline) appears — strictly descriptive, never labeling the person.
+- [ ] **INS-05**: Consistency / balance micro-insights and a directional clinician summary (deltas, variability) replace raw counts like "samples".
+
+### Sharing as a First-Class Flow (Phase 12)
+
+- [ ] **SHARE-01**: Consent/sharing is a first-class navigable destination, with a compact status + "Manage sharing →" deep link from the Sleep tab.
+- [ ] **SHARE-02**: One consistent vocabulary ("sharing") replaces the mixed "clinician link / invite / shared sleep" status terms.
+- [ ] **SHARE-03**: Revoke is gated by a confirmation that states the one-way (invite-not-reusable) consequence *before* the action.
+- [ ] **SHARE-04**: The invite flow is an explicit 2-step (validate → confirm sharing) with a single primary action at a time and the shared/hidden scope shown inline.
+- [ ] **SHARE-05**: Casing and dates are normalized (consent history uses the friendly `shortDate`) and the clinician scope is framed positively ("Sleep summaries only").
+
+### Motion and Feedback (Phase 13)
+
+- [ ] **MOT-01**: Screen / tab / role transitions cross-fade (never pop), honoring the gentle-motion rule.
+- [ ] **MOT-02**: Consent accept/revoke and sleep import surface reassuring, non-diagnostic confirmations and calm error handling — no silent success/failure.
+- [ ] **MOT-03**: Sleep bars animate in (gentle staggered grow) and async loads settle via skeleton/opacity rather than blinking into place.
+- [ ] **MOT-04**: Micro-interactions (button icon↔spinner cross-fade, subtle press feedback, softened destructive reset) feel calm and alive.
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in the current roadmap.

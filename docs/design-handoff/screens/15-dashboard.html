@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Today · dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    --ink:#17211B; --canopy:#1E4A34; --moss:#5D7F43; --sage:#A9BA92;
+    --mint:#E4EDDD; --fog:#F6F7F1; --ember:#C56844; --line:rgba(30,74,52,.14);
+    --muted:#54635a; --faint:#7a887f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px}
+  .page{max-width:1120px;margin:0 auto}
+
+  /* top bar */
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .top .right{display:flex;align-items:center;gap:14px}
+  .date{font-size:13px;font-weight:600;color:var(--muted)}
+  .avatar{width:34px;height:34px;border-radius:99px;background:var(--mint);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--canopy)}
+
+  /* greeting */
+  .greet{margin-top:26px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .greet h1{font-size:26px;font-weight:700;letter-spacing:-.015em}
+  .greet .sub{font-size:14px;color:var(--muted);margin-top:6px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--moss)}
+  .pill .dot{width:8px;height:8px;border-radius:99px;background:currentColor}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:20px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:12px;font-weight:600;color:var(--faint)}
+  .cap{font-size:13px;font-weight:600;color:var(--moss)}
+  .cap.flag{color:var(--ember)}
+
+  .col-4{grid-column:span 4}
+  .col-5{grid-column:span 5}
+  .col-6{grid-column:span 6}
+  .col-7{grid-column:span 7}
+  .col-8{grid-column:span 8}
+  .col-12{grid-column:span 12}
+
+  /* readiness hero */
+  .hero{display:flex;gap:28px;align-items:center}
+  .ring{position:relative;width:168px;height:168px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .num{font-size:46px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .ring .lab{font-size:12px;font-weight:600;color:var(--muted);margin-top:4px}
+  .contrib{flex:1;display:flex;flex-direction:column;gap:13px;min-width:0}
+  .item{display:grid;grid-template-columns:110px 1fr 100px;align-items:center;gap:12px}
+  .name{font-size:13px;font-weight:600;color:#33413a}
+  .track{height:8px;border-radius:99px;background:var(--mint);overflow:hidden}
+  .fill{height:100%;border-radius:99px;background:var(--moss)}
+  .fill.flag{background:var(--ember)}
+  .state{font-size:12px;font-weight:600;color:var(--moss);white-space:nowrap;text-align:right}
+  .state.flag{color:var(--ember)}
+
+  /* small score ring */
+  .mini{display:flex;flex-direction:column;height:100%}
+  .miniring{position:relative;width:132px;height:132px;margin:14px auto 0}
+  .miniring svg{transform:rotate(-90deg)}
+  .miniring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .miniring .num{font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .miniring .num small{font-size:13px;color:var(--muted);font-weight:600}
+
+  /* metric mini stats */
+  .stats{display:flex;flex-direction:column;gap:0}
+  .srow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-top:1px solid var(--line)}
+  .srow:first-child{border-top:0}
+  .sname{font-size:14px;font-weight:600;color:#33413a}
+  .ssub{font-size:12px;color:var(--faint);margin-top:2px}
+  .sval{font-size:17px;font-weight:700;letter-spacing:-.01em;text-align:right}
+  .sval small{font-size:12px;color:var(--muted);font-weight:600}
+  .sdelta{font-size:12px;font-weight:600;color:var(--moss);margin-top:2px;text-align:right}
+  .sdelta.flag{color:var(--ember)}
+
+  /* hypnogram */
+  .hypno{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .lane{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:12px}
+  .lbl{font-size:11px;font-weight:700;color:var(--muted);text-align:right}
+  .segs{display:flex;gap:3px;height:20px}
+  .seg{border-radius:5px}
+  .axis{display:flex;justify-content:space-between;margin-top:12px;padding-left:64px;font-size:11px;color:var(--faint)}
+  .legend{display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .chip{width:10px;height:10px;border-radius:3px}
+
+  /* chart shared */
+  .chart{margin-top:16px}
+  .caxis{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--faint)}
+  .bignum{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+  .bignum b{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .bignum small{font-size:16px;color:var(--muted)}
+
+  /* trend bars */
+  .bars{display:flex;align-items:flex-end;gap:10px;height:150px;margin-top:18px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:11px;font-weight:700;color:var(--canopy);margin-bottom:6px}
+  .bar{width:100%;border-radius:8px 8px 5px 5px;background:var(--moss)}
+  .bar.flag{background:var(--ember)}
+  .day{font-size:11px;color:var(--faint);margin-top:8px}
+
+  /* activity rings */
+  .actwrap{display:flex;gap:20px;align-items:center;margin-top:6px}
+  .actrings{position:relative;width:132px;height:132px;flex-shrink:0}
+  .actrings svg{transform:rotate(-90deg)}
+  .actrings .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .actrings .num{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .actrings .num small{font-size:11px;color:var(--muted);display:block;font-weight:600;margin-top:2px}
+  .actleg{display:flex;flex-direction:column;gap:12px;flex:1}
+  .arow{display:flex;align-items:center;gap:10px}
+  .rl{font-size:13px;font-weight:600;color:#33413a}
+  .rv{font-size:12px;color:var(--faint);margin-left:auto}
+
+  /* heatmap */
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px;font-size:11px;color:var(--faint);text-align:center}
+  .hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+  .cell{aspect-ratio:1;border-radius:6px;background:var(--mint)}
+  .l1{background:#D7E4C9}.l2{background:var(--sage)}.l3{background:var(--moss)}.l4{background:var(--canopy)}
+  .cell.flag{background:var(--ember)}.cell.empty{background:transparent}
+</style>
+</head>
+<body>
+  <div class="page">
+    <!-- top bar -->
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <div class="right">
+        <span class="date">Tuesday, July 7</span>
+        <span class="avatar">M</span>
+      </div>
+    </div>
+
+    <!-- greeting -->
+    <div class="greet">
+      <div>
+        <h1>Good morning, Minh</h1>
+        <div class="sub">You recovered well overnight. A protective night of sleep and a low resting heart rate.</div>
+      </div>
+      <span class="pill"><span class="dot"></span>Ready to take on the day</span>
+    </div>
+
+    <div class="grid">
+      <!-- readiness hero -->
+      <div class="card col-8">
+        <div class="head"><div class="k">Readiness</div><div class="headnote">not a diagnosis</div></div>
+        <div class="hero" style="margin-top:14px">
+          <div class="ring">
+            <svg width="168" height="168" viewBox="0 0 168 168">
+              <circle cx="84" cy="84" r="72" fill="none" stroke="var(--mint)" stroke-width="14"/>
+              <circle cx="84" cy="84" r="72" fill="none" stroke="var(--moss)" stroke-width="14" stroke-linecap="round" stroke-dasharray="452" stroke-dashoffset="81"/>
+            </svg>
+            <div class="center"><div class="num">82</div><div class="lab">balanced</div></div>
+          </div>
+          <div class="contrib">
+            <div class="item"><div class="name">Resting HR</div><div class="track"><div class="fill" style="width:100%;background:#4F7A3C"></div></div><div class="state">optimal</div></div>
+            <div class="item"><div class="name">HRV balance</div><div class="track"><div class="fill" style="width:100%;background:#6E8544"></div></div><div class="state">good</div></div>
+            <div class="item"><div class="name">Body temp</div><div class="track"><div class="fill" style="width:100%;background:#8C8E49"></div></div><div class="state">good</div></div>
+            <div class="item"><div class="name">Recovery index</div><div class="track"><div class="fill" style="width:100%;background:#C4633E"></div></div><div class="state flag">pay attention</div></div>
+            <div class="item"><div class="name">Sleep balance</div><div class="track"><div class="fill" style="width:100%;background:#4F7A3C"></div></div><div class="state">optimal</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- sleep score ring -->
+      <div class="card col-4">
+        <div class="mini">
+          <div class="head"><div class="k">Sleep score</div><div class="cap">protective</div></div>
+          <div class="miniring">
+            <svg width="132" height="132" viewBox="0 0 132 132">
+              <circle cx="66" cy="66" r="56" fill="none" stroke="var(--mint)" stroke-width="12"/>
+              <circle cx="66" cy="66" r="56" fill="none" stroke="var(--canopy)" stroke-width="12" stroke-linecap="round" stroke-dasharray="352" stroke-dashoffset="18"/>
+            </svg>
+            <div class="center"><div class="num">95</div><div class="num"><small>quality</small></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- sleep stages hypnogram -->
+      <div class="card col-8">
+        <div class="head"><div class="k">Sleep stages</div><div class="headnote">7h 36m in bed</div></div>
+        <div class="hypno">
+          <div class="lane"><div class="lbl">Awake</div><div class="segs"><div class="seg" style="flex:4;background:var(--sage)"></div><div class="seg" style="flex:38;background:transparent"></div><div class="seg" style="flex:3;background:var(--sage)"></div><div class="seg" style="flex:33;background:transparent"></div><div class="seg" style="flex:2;background:var(--sage)"></div></div></div>
+          <div class="lane"><div class="lbl">REM</div><div class="segs"><div class="seg" style="flex:20;background:transparent"></div><div class="seg" style="flex:9;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:22;background:transparent"></div><div class="seg" style="flex:12;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:17;background:transparent"></div></div></div>
+          <div class="lane"><div class="lbl">Light</div><div class="segs"><div class="seg" style="flex:7;background:transparent"></div><div class="seg" style="flex:16;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:14;background:transparent"></div><div class="seg" style="flex:20;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:23;background:var(--moss);opacity:.8"></div></div></div>
+          <div class="lane"><div class="lbl">Deep</div><div class="segs"><div class="seg" style="flex:4;background:transparent"></div><div class="seg" style="flex:11;background:var(--canopy)"></div><div class="seg" style="flex:36;background:transparent"></div><div class="seg" style="flex:9;background:var(--canopy)"></div><div class="seg" style="flex:20;background:transparent"></div></div></div>
+        </div>
+        <div class="axis"><span>11:20p</span><span>2:00a</span><span>4:40a</span><span>6:56a</span></div>
+        <div class="legend">
+          <span><span class="chip" style="background:var(--canopy)"></span>Deep 1h 12m</span>
+          <span><span class="chip" style="background:var(--moss);opacity:.8"></span>Light 4h 05m</span>
+          <span><span class="chip" style="background:var(--moss);opacity:.55"></span>REM 1h 34m</span>
+          <span><span class="chip" style="background:var(--sage)"></span>Awake 45m</span>
+        </div>
+      </div>
+
+      <!-- last night detail -->
+      <div class="card col-4">
+        <div class="k" style="margin-bottom:6px">Last night</div>
+        <div class="stats">
+          <div class="srow"><div><div class="sname">Total sleep</div><div class="ssub">time asleep</div></div><div><div class="sval">7<small>h</small> 36<small>m</small></div><div class="sdelta">+42m vs avg</div></div></div>
+          <div class="srow"><div><div class="sname">Efficiency</div><div class="ssub">asleep / in bed</div></div><div><div class="sval">91<small>%</small></div><div class="sdelta">optimal</div></div></div>
+          <div class="srow"><div><div class="sname">Latency</div><div class="ssub">time to fall asleep</div></div><div><div class="sval">28<small>m</small></div><div class="sdelta flag">longer than usual</div></div></div>
+          <div class="srow"><div><div class="sname">Timing</div><div class="ssub">midpoint</div></div><div><div class="sval">3:08<small>a</small></div><div class="sdelta">on rhythm</div></div></div>
+        </div>
+      </div>
+
+      <!-- overnight HR -->
+      <div class="card col-6">
+        <div class="head"><div class="k">Overnight heart rate</div><div class="headnote">lowest 3:48a</div></div>
+        <div class="bignum"><b>51</b><small>bpm · resting low</small></div>
+        <div class="chart">
+          <svg width="100%" height="130" viewBox="0 0 520 130" preserveAspectRatio="none">
+            <line x1="0" y1="34" x2="520" y2="34" stroke="rgba(30,74,52,.08)"/>
+            <line x1="0" y1="68" x2="520" y2="68" stroke="rgba(30,74,52,.08)"/>
+            <line x1="0" y1="102" x2="520" y2="102" stroke="rgba(30,74,52,.08)"/>
+            <polygon points="0,130 0,36 58,50 116,44 174,64 232,80 290,92 348,84 406,68 464,52 520,44 520,130" fill="rgba(30,74,52,.10)"/>
+            <polyline points="0,36 58,50 116,44 174,64 232,80 290,92 348,84 406,68 464,52 520,44" fill="none" stroke="var(--canopy)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="290" cy="92" r="5" fill="var(--canopy)"/>
+          </svg>
+          <div class="caxis"><span>11p</span><span>1a</span><span>3a</span><span>5a</span><span>7a</span></div>
+        </div>
+      </div>
+
+      <!-- overnight HRV -->
+      <div class="card col-6">
+        <div class="head"><div class="k">Nighttime HRV</div><div class="headnote">avg 48 ms</div></div>
+        <div class="bignum"><b>52</b><small>ms · balanced</small></div>
+        <div class="chart">
+          <svg width="100%" height="130" viewBox="0 0 520 130" preserveAspectRatio="none">
+            <line x1="0" y1="34" x2="520" y2="34" stroke="rgba(30,74,52,.08)"/>
+            <line x1="0" y1="68" x2="520" y2="68" stroke="rgba(30,74,52,.08)"/>
+            <line x1="0" y1="102" x2="520" y2="102" stroke="rgba(30,74,52,.08)"/>
+            <polygon points="0,130 0,84 87,70 173,80 260,48 347,54 433,34 520,42 520,130" fill="rgba(93,127,67,.12)"/>
+            <polyline points="0,84 87,70 173,80 260,48 347,54 433,34 520,42" fill="none" stroke="var(--moss)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="433" cy="34" r="5" fill="var(--moss)"/>
+          </svg>
+          <div class="caxis"><span>12a</span><span>2a</span><span>4a</span><span>6a</span></div>
+        </div>
+      </div>
+
+      <!-- 7-night trend -->
+      <div class="card col-7">
+        <div class="head">
+          <div class="k">Sleep trend · 7 nights</div>
+          <div class="legend" style="margin:0;padding:0;border:0">
+            <span><span class="chip" style="border-radius:99px;background:var(--moss)"></span>on target</span>
+            <span><span class="chip" style="border-radius:99px;background:var(--ember)"></span>short</span>
+          </div>
+        </div>
+        <div class="bars">
+          <div class="bcol"><div class="hrs">7.4h</div><div class="bar" style="height:78%;background:#74863F"></div><div class="day">Mon</div></div>
+          <div class="bcol"><div class="hrs">6.1h</div><div class="bar" style="height:64%;background:#C0784A"></div><div class="day">Tue</div></div>
+          <div class="bcol"><div class="hrs">6.8h</div><div class="bar" style="height:71%;background:#A08B48"></div><div class="day">Wed</div></div>
+          <div class="bcol"><div class="hrs">7.9h</div><div class="bar" style="height:92%;background:#537B3D"></div><div class="day">Thu</div></div>
+          <div class="bcol"><div class="hrs">5.7h</div><div class="bar" style="height:52%;background:#C4633E"></div><div class="day">Fri</div></div>
+          <div class="bcol"><div class="hrs">7.1h</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">Sat</div></div>
+          <div class="bcol"><div class="hrs">7.6h</div><div class="bar" style="height:84%;background:#688343"></div><div class="day">Sun</div></div>
+        </div>
+      </div>
+
+      <!-- activity rings -->
+      <div class="card col-5">
+        <div class="k">Daily movement</div>
+        <div class="actwrap">
+          <div class="actrings">
+            <svg width="132" height="132" viewBox="0 0 132 132">
+              <circle cx="66" cy="66" r="54" fill="none" stroke="var(--mint)" stroke-width="10"/>
+              <circle cx="66" cy="66" r="54" fill="none" stroke="var(--canopy)" stroke-width="10" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="54"/>
+              <circle cx="66" cy="66" r="41" fill="none" stroke="var(--mint)" stroke-width="10"/>
+              <circle cx="66" cy="66" r="41" fill="none" stroke="var(--moss)" stroke-width="10" stroke-linecap="round" stroke-dasharray="258" stroke-dashoffset="72"/>
+              <circle cx="66" cy="66" r="28" fill="none" stroke="var(--mint)" stroke-width="10"/>
+              <circle cx="66" cy="66" r="28" fill="none" stroke="var(--sage)" stroke-width="10" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="22"/>
+            </svg>
+            <div class="center"><div class="num">88<small>activity</small></div></div>
+          </div>
+          <div class="actleg">
+            <div class="arow"><span class="chip" style="border-radius:99px;background:var(--canopy)"></span><span class="rl">Move</span><span class="rv">420 / 500 cal</span></div>
+            <div class="arow"><span class="chip" style="border-radius:99px;background:var(--moss)"></span><span class="rl">Steps</span><span class="rv">9.2k / 10k</span></div>
+            <div class="arow"><span class="chip" style="border-radius:99px;background:var(--sage)"></span><span class="rl">Stand</span><span class="rv">11 / 12 hr</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- consistency heatmap -->
+      <div class="card col-12">
+        <div class="head"><div class="k">Sleep consistency · June</div><div class="headnote">24 / 30 nights on target</div></div>
+        <div style="max-width:520px">
+          <div class="dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="hgrid">
+            <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell l3"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+            <div class="cell l4"></div><div class="cell l3"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell l4"></div>
+            <div class="cell l3"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l3"></div><div class="cell l4"></div>
+            <div class="cell l4"></div><div class="cell l3"></div><div class="cell l3"></div><div class="cell l1"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+            <div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

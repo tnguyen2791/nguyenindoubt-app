@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 16px 4px">
+    <div style="font-weight:700;font-size:15px;letter-spacing:-.01em">Nguyen<span style="color:var(--ember)">In</span>Doubt</div>
+    <span style="width:32px;height:32px;border-radius:99px;background:var(--mint);color:var(--canopy);font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">M</span>
+  </div>
+  <div style="flex:1;padding:0 16px 16px">
+    <div style="margin-top:14px">
+      <div style="font-size:13px;font-weight:600;color:var(--muted)">Good morning, Minh</div>
+      <div style="font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.12;margin-top:6px;color:var(--canopy)">Ready to take<br />on the day</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0 0">You recovered well overnight — a protective night and a low resting heart rate.</p>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)">Readiness</div>
+        <div style="font-size:11px;font-weight:600;color:var(--faint)">not a diagnosis</div>
+      </div>
+      <div style="display:flex;gap:18px;align-items:center">
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ScoreRing" score="{{ readiness }}" label="{{ readinessLabel }}" size="{{ 120 }}" hint-size="120px,120px"></x-import>
+        <div style="flex:1;display:grid;gap:10px">
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ContributorBar" name="Resting HR" state="optimal" hint-size="100%,34px"></x-import>
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ContributorBar" name="HRV balance" state="good" hint-size="100%,34px"></x-import>
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ContributorBar" name="Recovery index" state="pay attention" hint-size="100%,34px"></x-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;align-items:center">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-bottom:12px">Sleep</div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ScoreRing" score="{{ sleep }}" label="quality" size="{{ 104 }}" stroke-width="{{ 11 }}" hint-size="104px,104px"></x-import>
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-top:10px">protective</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;align-items:center">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-bottom:12px">Activity</div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.ScoreRing" score="{{ activity }}" label="move" size="{{ 104 }}" stroke-width="{{ 11 }}" color="var(--state-good)" hint-size="104px,104px"></x-import>
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-top:10px">9.2k steps</div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showTrend }}" hint-placeholder-val="{{ true }}">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:10px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)">Sleep trend · 7 nights</div>
+          <div style="font-size:11px;font-weight:600;color:var(--faint)">color = hours</div>
+        </div>
+        <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.TrendBars" data="{{ trend }}" height="{{ 110 }}" hint-size="100%,110px"></x-import>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding:10px 8px 22px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--canopy)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="5"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"></path></svg>
+      Today
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      Trends
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:38px;height:38px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--onaccent);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M12 5v14M5 12h14"></path></svg>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l2.5 2.5"></path></svg>
+      Explore
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"></path></svg>
+      Profile
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;readiness&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:82,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scores&quot;},&quot;sleep&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:95,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scores&quot;},&quot;activity&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:88,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scores&quot;},&quot;showTrend&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  renderVals() {
+    const readiness = this.props.readiness ?? 82;
+    const label = readiness >= 85 ? 'primed' : readiness >= 70 ? 'balanced' : readiness >= 55 ? 'take it easy' : 'rest day';
+    return {
+      readiness,
+      readinessLabel: label,
+      sleep: this.props.sleep ?? 95,
+      activity: this.props.activity ?? 88,
+      showTrend: this.props.showTrend ?? true,
+      trend: [
+        { display: '7.4', percent: 78, label: 'M', color: '#74863F' },
+        { display: '6.1', percent: 64, label: 'T', color: '#C0784A' },
+        { display: '6.8', percent: 71, label: 'W', color: '#A08B48' },
+        { display: '7.9', percent: 92, label: 'T', color: '#537B3D' },
+        { display: '5.7', percent: 52, label: 'F', color: '#C4633E' },
+        { display: '7.1', percent: 74, label: 'S', color: '#8C8E49' },
+        { display: '7.6', percent: 84, label: 'S', color: '#688343' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

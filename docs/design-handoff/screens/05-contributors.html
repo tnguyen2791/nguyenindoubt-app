@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Contributors breakdown</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:460px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .hero{display:flex;align-items:baseline;gap:10px;margin-top:8px}
+  .big{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .cap{font-size:13px;font-weight:600;color:var(--moss)}
+  .list{margin-top:20px;display:flex;flex-direction:column;gap:16px}
+  .item{display:grid;grid-template-columns:120px 1fr 104px;align-items:center;gap:12px}
+  .name{font-size:13px;font-weight:600;color:#33413a}
+  .track{height:8px;border-radius:99px;overflow:hidden}
+  .fill{height:100%;width:100%;border-radius:99px}
+  .state{font-size:12px;font-weight:600;white-space:nowrap;text-align:right}
+  .st-opt{color:#4F7A3C}
+  .st-good{color:#6E8544}
+  .st-flag{color:#C4633E}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="k">Readiness contributors</div>
+    <div class="hero"><div class="big">82</div><div class="cap">balanced today</div></div>
+    <div class="list">
+      <div class="item"><div class="name">Resting HR</div><div class="track"><div class="fill" style="background:#4F7A3C"></div></div><div class="state st-opt">optimal</div></div>
+      <div class="item"><div class="name">HRV balance</div><div class="track"><div class="fill" style="background:#6E8544"></div></div><div class="state st-good">good</div></div>
+      <div class="item"><div class="name">Body temp</div><div class="track"><div class="fill" style="background:#8C8E49"></div></div><div class="state st-good">good</div></div>
+      <div class="item"><div class="name">Recovery index</div><div class="track"><div class="fill" style="background:#C4633E"></div></div><div class="state st-flag">pay attention</div></div>
+      <div class="item"><div class="name">Sleep balance</div><div class="track"><div class="fill" style="background:#4F7A3C"></div></div><div class="state st-opt">optimal</div></div>
+      <div class="item"><div class="name">Previous night</div><div class="track"><div class="fill" style="background:#74863F"></div></div><div class="state st-good">good</div></div>
+    </div>
+  </div>
+</body>
+</html>

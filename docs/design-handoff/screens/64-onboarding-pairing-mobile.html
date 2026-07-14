@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ring pairing · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative}
+  .back{position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .dots{display:flex;gap:6px}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--mint)}
+  .dot.on{width:18px;background:var(--canopy)}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:22px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .pulsewrap{display:flex;align-items:center;justify-content:center;margin-top:34px;position:relative;height:190px}
+  .pulse{position:absolute;border-radius:99px;border:1.5px solid var(--sage);opacity:.5}
+  @media (prefers-reduced-motion: no-preference){
+    .pulse{animation:pp 2.6s ease-out infinite}
+    .pulse.p2{animation-delay:1.3s}
+    @keyframes pp{0%{width:110px;height:110px;opacity:.55}100%{width:210px;height:210px;opacity:0}}
+  }
+  .pulse{width:150px;height:150px}
+  .ringmark{width:110px;height:110px;border-radius:99px;border:14px solid var(--canopy);background:var(--fog);box-shadow:inset 0 2px 6px rgba(23,33,27,.18)}
+  .found{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-top:18px}
+  .fic{width:38px;height:38px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .fic svg{width:19px;height:19px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ft{flex:1}
+  .ft .t{font-size:14px;font-weight:700}
+  .ft .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .ok{font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap}
+  .fine{font-size:12px;color:var(--faint);line-height:1.5;margin-top:12px;text-align:center}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='43-onboarding-permissions-mobile.html'"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="dots"><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div>
+    </div>
+    <div class="scroll">
+      <h1>Found your ring</h1>
+      <p class="sub">Keep it close to your phone while we connect.</p>
+      <div class="pulsewrap">
+        <span class="pulse"></span>
+        <span class="pulse p2"></span>
+        <div class="ringmark"></div>
+      </div>
+      <div class="found">
+        <div class="fic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <div class="ft"><div class="t">NiD Ring · Gen 1</div><div class="d">Size 9 · charged 82%</div></div>
+        <div class="ok">ready</div>
+      </div>
+      <p class="fine">Wear it snug on your index or middle finger, sensor bump on the palm side.</p>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='66-onboarding-about-mobile.html'">Connect</button>
+      <a href="#" class="skip">I don't have my ring yet</a>
+    </div>
+  </div>
+</body>
+</html>

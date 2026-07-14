@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- handoff reference copy of a template -->
+<helmet><script src="./ds-base.js"></script></helmet>
+<div style="width:390px;min-height:844px;margin:0 auto;background:var(--fog);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+  <div style="flex:1;padding:0 16px 16px">
+    <h1 style="font-size:26px;font-weight:700;letter-spacing:-.02em;margin:26px 0 0">Explore</h1>
+    <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0 0">Short reads and practices — learn what your body is telling you.</p>
+
+    <div style="background:var(--mint);border-radius:18px;padding:20px;margin-top:18px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--moss)">Practice · 4 min</div>
+      <div style="font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--canopy);margin-top:6px">Box breathing</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0 0">A steady four-count in, hold, out, hold. One round settles a spiking moment; four rounds settle an evening.</p>
+      <span style="display:inline-block;background:var(--canopy);color:var(--onaccent);font-size:13px;font-weight:700;border-radius:99px;padding:9px 18px;margin-top:14px;cursor:pointer">Begin</span>
+    </div>
+
+    <sc-if value="{{ showMarkers }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 4px 10px">Your markers, explained</div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 12px">
+        <div style="display:flex;align-items:center;gap:8px;padding:0 0 11px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600">
+          Heart rate variability
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.InfoTip" term="Heart rate variability" hint-size="16px,16px">The tiny timing differences between heartbeats. Higher usually means your system is rested; a dip after a stressful day is normal and recovers with rest.</x-import>
+          <span style="color:var(--faint);font-size:12px;font-weight:600;margin-left:auto">HRV</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;font-weight:600">
+          Resting heart rate
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.InfoTip" term="Resting heart rate" hint-size="16px,16px">Your heart's pace at complete rest. A lower morning value than usual often just means good recovery.</x-import>
+          <span style="color:var(--faint);font-size:12px;font-weight:600;margin-left:auto">RHR</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 0;font-size:14px;font-weight:600">
+          Readiness
+          <x-import component-from-global-scope="NguyenInDoubtDataDisplaysOuraStyle_d0b3eb.InfoTip" term="Readiness" hint-size="16px,16px">A 0–100 summary of how recovered you are versus your own baseline — never compared to anyone else.</x-import>
+          <span style="color:var(--faint);font-size:12px;font-weight:600;margin-left:auto">0–100</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 4px 10px">Mind &amp; mood</div>
+    <sc-for list="{{ articles }}" as="a" hint-placeholder-count="3">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 16px;display:flex;gap:13px;align-items:center;margin-bottom:9px;cursor:pointer">
+        <div style="width:40px;height:40px;border-radius:11px;background:var(--mint);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M20.5 14.5A8 8 0 1 1 9.5 3.5a6.5 6.5 0 0 0 11 11Z"></path></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;line-height:1.3">{{ a.title }}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--faint);margin-top:3px">{{ a.meta }}</div>
+        </div>
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--faint);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><path d="M9 6l6 6-6 6"></path></svg>
+      </div>
+    </sc-for>
+
+    <p style="font-size:12px;color:var(--faint);line-height:1.6;margin:18px 8px 14px;text-align:center">Educational, not medical advice — and never a diagnosis.<br />
+      <b style="color:var(--muted)">If things feel heavy, talking helps.</b> In the US, call or text <b style="color:var(--muted)">988</b> anytime.</p>
+  </div>
+
+  <div style="position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding:10px 8px 22px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="5"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"></path></svg>
+      Today
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      Trends
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="width:38px;height:38px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--onaccent);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><path d="M12 5v14M5 12h14"></path></svg>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--canopy)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l2.5 2.5"></path></svg>
+      Explore
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)">
+      <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"></path></svg>
+      Profile
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showMarkers&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  applyTheme() {
+    const theme = this.props.theme ?? 'light';
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    document.body.style.background = theme === 'dark' ? '#050806' : '#E9ECE3';
+  }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  renderVals() {
+    return {
+      showMarkers: this.props.showMarkers ?? true,
+      articles: [
+        { title: 'Stress leaves a signature', meta: 'Read · 3 min — how tension shows up in HRV before you feel it' },
+        { title: 'Anxiety and sleep: breaking the loop', meta: 'Read · 5 min — why worried nights compound, and where to interrupt' },
+        { title: 'Low days are data, not verdicts', meta: 'Read · 4 min — reading a rough patch without spiraling on it' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

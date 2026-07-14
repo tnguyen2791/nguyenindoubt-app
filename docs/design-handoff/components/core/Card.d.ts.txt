@@ -1,0 +1,10 @@
+export interface CardProps {
+  /** uppercase canopy section label, e.g. "Readiness" */
+  label?: string;
+  /** right-aligned faint note, e.g. "not a diagnosis" */
+  note?: string;
+  padding?: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+export declare function Card(props: CardProps): JSX.Element;

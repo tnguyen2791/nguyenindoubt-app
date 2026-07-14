@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharing · opt in</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative}
+  .back{position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .ttl{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:22px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .search{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--canopy);border-radius:14px;padding:14px 16px;margin-top:24px}
+  .search svg{width:18px;height:18px;stroke:var(--canopy);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .search .v{font-size:15px;font-weight:600}
+  .search .caret{width:2px;height:18px;background:var(--canopy);animation:blink 1.1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  .result{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-top:12px;cursor:pointer}
+  .pava{width:44px;height:44px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pt{flex:1}
+  .pt .n{font-size:15px;font-weight:700}
+  .pt .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .ver{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap}
+  .ver svg{width:14px;height:14px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .fine{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin-top:18px;padding:0 4px}
+  .fine svg{width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='31-profile-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="ttl">Share with a provider</div>
+    </div>
+    <div class="scroll">
+      <h1>Choose who to share with</h1>
+      <p class="sub">Find your provider and opt in. You pick exactly what's shared — and they can accept or decline.</p>
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span class="v">Nguyen</span><span class="caret"></span>
+      </div>
+      <div class="result" onclick="location.href='84-sharing-invite-choose-mobile.html'">
+        <div class="pava">DN</div>
+        <div class="pt">
+          <div class="n">Dr. Nguyen</div>
+          <div class="d">Accepting share requests</div>
+        </div>
+        <span class="ver"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>verified</span>
+      </div>
+      <p class="fine">
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/></svg>
+        Nothing is shared until you choose what — and you can stop anytime.
+      </p>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='84-sharing-invite-choose-mobile.html'">Continue</button>
+      <a href="#" class="skip">My provider isn't here yet</a>
+    </div>
+  </div>
+</body>
+</html>

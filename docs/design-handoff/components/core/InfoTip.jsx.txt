@@ -1,0 +1,58 @@
+export function InfoTip({ term, children, defaultOpen = false, width = 230 }) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  return (
+    <span style={{ position: 'relative', display: 'inline-flex', verticalAlign: 'middle' }}>
+      <button
+        type="button"
+        aria-label={`What is ${term}?`}
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: 'var(--r-pill)',
+          border: '1px solid var(--border-hairline)',
+          background: open ? 'var(--accent)' : 'var(--mint)',
+          color: open ? 'var(--onaccent)' : 'var(--accent)',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 10,
+          fontWeight: 'var(--fw-bold)',
+          fontStyle: 'italic',
+          lineHeight: 1,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          padding: 0,
+          flexShrink: 0,
+        }}
+      >
+        i
+      </button>
+      {open && (
+        <span
+          role="tooltip"
+          style={{
+            position: 'absolute',
+            top: 22,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width,
+            background: 'var(--surface-card)',
+            border: '1px solid var(--border-hairline)',
+            borderRadius: 12,
+            padding: '12px 14px',
+            boxShadow: '0 8px 24px rgba(23,33,27,.14)',
+            zIndex: 30,
+            display: 'block',
+            fontFamily: 'var(--font-sans)',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ display: 'block', fontSize: 'var(--fs-caption)', fontWeight: 'var(--fw-bold)', color: 'var(--text-body)' }}>{term}</span>
+          <span style={{ display: 'block', fontSize: 'var(--fs-caption)', color: 'var(--text-muted)', lineHeight: 1.5, marginTop: 3 }}>{children}</span>
+        </span>
+      )}
+    </span>
+  );
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Baseline · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#E8EEE2;--canopy:#8FB56A;--moss:#7FA45E;--sage:#A9BA92;--mint:#26332A;--fog:#0B120F;--ember:#E08A63;--line:rgba(232,238,226,.12);--muted:#9DA99B;--faint:#7C8A7E;--surface:#18211A;--onaccent:#0B120F;--desk:#050806}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative}
+  .back{position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .dots{display:flex;gap:6px}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--mint)}
+  .dot.on{width:18px;background:var(--canopy)}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:22px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:16px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  .daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:16px}
+  .dayc{aspect-ratio:1;border-radius:99px;background:var(--mint);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--faint)}
+  .dayc.on{background:var(--canopy);color:var(--onaccent)}
+  .cap{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}
+  .track{position:relative;height:12px;border-radius:99px;background:var(--mint);margin-top:18px}
+  .band{position:absolute;top:-5px;bottom:-5px;left:38%;width:34%;border:1.5px dashed var(--sage);border-radius:10px}
+  .bandlab{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sage);text-align:center;margin-top:10px}
+  .axis{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--faint)}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot on"></span></div>
+    </div>
+    <div class="scroll">
+      <h1>First, we learn<br>your baseline</h1>
+      <p class="sub">For two weeks NguyenInDoubt watches quietly and builds your personal range. Scores compare you to you — never to anyone else.</p>
+      <div class="card">
+        <div class="head"><div class="k">Calibration</div><div class="headnote">Day 1 of 14</div></div>
+        <div class="daygrid">
+          <div class="dayc on">1</div><div class="dayc">2</div><div class="dayc">3</div><div class="dayc">4</div><div class="dayc">5</div><div class="dayc">6</div><div class="dayc">7</div>
+          <div class="dayc">8</div><div class="dayc">9</div><div class="dayc">10</div><div class="dayc">11</div><div class="dayc">12</div><div class="dayc">13</div><div class="dayc">14</div>
+        </div>
+        <p class="cap">Wear through the night when you can — missed days are fine, they just extend calibration a little.</p>
+      </div>
+      <div class="card">
+        <div class="head"><div class="k">Your range</div><div class="headnote">appears after calibration</div></div>
+        <div class="track"><div class="band"></div></div>
+        <div class="bandlab">your typical range</div>
+        <div class="axis"><span>lower</span><span>Resting HR</span><span>higher</span></div>
+      </div>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='33-empty-mobile-dark.html'">Start day one</button>
+      <a href="#" class="skip">How scores work</a>
+    </div>
+  </div>
+</body>
+</html>

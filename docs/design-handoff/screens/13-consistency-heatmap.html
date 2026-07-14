@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Consistency heatmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:420px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .val{font-size:13px;font-weight:600;color:var(--moss)}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:16px;font-size:11px;color:#7a887f;text-align:center}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:7px}
+  .cell{aspect-ratio:1;border-radius:7px;background:var(--mint)}
+  .l1{background:#D7E4C9}
+  .l2{background:var(--sage)}
+  .l3{background:var(--moss)}
+  .l4{background:var(--canopy)}
+  .flag{background:var(--ember)}
+  .empty{background:transparent}
+  .legend{display:flex;align-items:center;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:#7a887f}
+  .scale{display:flex;gap:4px}
+  .scale span{width:14px;height:14px;border-radius:4px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="k">Sleep consistency · June</div>
+      <div class="val">24 / 30 on target</div>
+    </div>
+    <div class="dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+    <div class="grid">
+      <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell l3"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+      <div class="cell l4"></div><div class="cell l3"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell l4"></div>
+      <div class="cell l3"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l3"></div><div class="cell l4"></div>
+      <div class="cell l4"></div><div class="cell l3"></div><div class="cell l3"></div><div class="cell l1"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+      <div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+    </div>
+    <div class="legend"><span>less</span><div class="scale"><span class="l1"></span><span class="l2"></span><span class="l3"></span><span class="l4"></span></div><span>more sleep</span><span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px"><span style="width:14px;height:14px;border-radius:4px;background:var(--ember);display:inline-block"></span>short night</span></div>
+  </div>
+</body>
+</html>

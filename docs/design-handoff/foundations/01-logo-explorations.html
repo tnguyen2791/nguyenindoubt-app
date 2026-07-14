@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="design_doc_mode" content="canvas" />
+<title>NiD · Wordmark spec</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--dfog:#0B120F;--dcanopy:#8FB56A;--dember:#E08A63}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .intro{position:absolute;left:40px;top:40px;width:440px}
+  .intro h1{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--canopy)}
+  .intro p{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
+  .frame{position:absolute;width:440px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 2px 14px rgba(23,33,27,.06)}
+  .cname{font-size:14px;font-weight:700}
+  .why{font-size:12px;color:var(--muted);line-height:1.5;margin-top:4px}
+  .stage{background:var(--fog);border:1px solid var(--line);border-radius:14px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;margin-top:14px;padding:18px}
+  .stage.dark{background:var(--dfog);border-color:transparent}
+  .word{font-weight:700;letter-spacing:-.03em;color:var(--canopy);line-height:1}
+  .word .in{color:var(--ember)}
+  .dark .word{color:var(--dcanopy)}
+  .dark .word .in{color:var(--dember)}
+  .nid{font-weight:700;letter-spacing:-.04em;color:var(--canopy);line-height:1}
+  .nid .i{color:var(--ember);font-style:normal}
+  .bdg{border-radius:26%;background:var(--canopy);display:flex;align-items:center;justify-content:center}
+  .bdg .nid{color:#fff}
+  .lab{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);margin-top:10px}
+  .row{display:flex;gap:12px;margin-top:12px}
+  .row .stage{flex:1;margin-top:0}
+  .sw{display:flex;gap:10px;margin-top:14px}
+  .swatch{flex:1;border-radius:12px;padding:12px;min-height:86px;display:flex;flex-direction:column;justify-content:flex-end}
+  .swatch .n{font-size:11px;font-weight:700}
+  .swatch .h{font-size:10px;font-weight:600;opacity:.75;margin-top:2px}
+  .spec{font-size:12px;color:var(--muted);line-height:1.65;margin-top:12px}
+  .spec b{color:var(--ink)}
+  .no{position:relative}
+  .no::after{content:"";position:absolute;inset:0;border-radius:14px;background:linear-gradient(to top left,transparent calc(50% - 1px),rgba(197,104,68,.75),transparent calc(50% + 1px))}
+  .nolab{font-size:11px;font-weight:600;color:var(--ember);margin-top:8px;text-align:center}
+  .cs{position:relative;padding:26px 34px;border:1px dashed var(--sage);border-radius:10px}
+</style>
+</head>
+<body>
+  <div class="intro">
+    <h1>NguyenInDoubt — wordmark spec</h1>
+    <p>Final identity (direction 2d): a type-only wordmark, Inter Bold, with "In" set in ember to isolate the pun. No pictorial mark. NiD is the compact form for icon-sized contexts.</p>
+  </div>
+
+  <!-- Primary lockup -->
+  <div class="frame" style="left:40px;top:180px">
+    <div class="cname">Primary lockup</div>
+    <div class="why">Used in top bars and anywhere the product speaks. Always one solid word — no spaces, no tile.</div>
+    <div class="stage"><div class="word" style="font-size:34px">Nguyen<span class="in">In</span>Doubt</div></div>
+    <div class="stage dark"><div class="word" style="font-size:34px">Nguyen<span class="in">In</span>Doubt</div></div>
+    <div class="lab">Light · Dark</div>
+    <div class="spec"><b>Type:</b> Inter Bold (700), letter-spacing −0.03em. Set as text, never outlined imagery.<br><b>Minimum size:</b> 13px. Below that, use the compact mark.</div>
+  </div>
+
+  <!-- Compact mark -->
+  <div class="frame" style="left:520px;top:180px">
+    <div class="cname">Compact mark — NiD</div>
+    <div class="why">For app icon, favicons, avatars, and spaces under ~80px wide. Lowercase "i" in ember.</div>
+    <div class="row">
+      <div class="stage"><div class="nid" style="font-size:40px">N<span class="i">i</span>D</div></div>
+      <div class="stage" style="background:#fff"><div class="bdg" style="width:84px;height:84px"><div class="nid" style="font-size:32px">N<span class="i">i</span>D</div></div></div>
+    </div>
+    <div class="lab">Freestanding · App icon tile</div>
+    <div class="spec"><b>Tile:</b> canopy fill, 26% corner radius, white NiD with ember "i".<br><b>Minimum size:</b> 16px freestanding, 24px tile.</div>
+  </div>
+
+  <!-- Color -->
+  <div class="frame" style="left:1000px;top:180px">
+    <div class="cname">Color</div>
+    <div class="why">Two colors only. Ember is reserved for "In" / "i" — never the whole word.</div>
+    <div class="sw">
+      <div class="swatch" style="background:var(--canopy);color:#fff"><div class="n">Canopy</div><div class="h">#1E4A34</div></div>
+      <div class="swatch" style="background:var(--ember);color:#fff"><div class="n">Ember</div><div class="h">#C56844</div></div>
+    </div>
+    <div class="sw">
+      <div class="swatch" style="background:var(--dcanopy);color:#0B120F"><div class="n">Canopy · dark UI</div><div class="h">#8FB56A</div></div>
+      <div class="swatch" style="background:var(--dember);color:#0B120F"><div class="n">Ember · dark UI</div><div class="h">#E08A63</div></div>
+    </div>
+    <div class="spec">On photography or tinted surfaces, use all-white or all-canopy — drop the ember accent rather than fight for contrast.</div>
+  </div>
+
+  <!-- Clear space -->
+  <div class="frame" style="left:40px;top:700px">
+    <div class="cname">Clear space</div>
+    <div class="why">Keep a margin equal to the cap-height of "N" on all sides, free of other elements.</div>
+    <div class="stage" style="padding:26px">
+      <div class="cs"><div class="word" style="font-size:28px">Nguyen<span class="in">In</span>Doubt</div></div>
+    </div>
+    <div class="spec"><b>Alignment:</b> baseline-align with adjacent nav text; don't optically center against icons taller than the cap-height.</div>
+  </div>
+
+  <!-- Don'ts -->
+  <div class="frame" style="left:520px;top:700px;width:600px">
+    <div class="cname">Don'ts</div>
+    <div class="why">How this gets broken.</div>
+    <div class="row">
+      <div>
+        <div class="stage no" style="width:170px"><div class="word" style="font-size:17px;white-space:nowrap">Nguyen In Doubt</div></div>
+        <div class="nolab">No spaces or gaps</div>
+      </div>
+      <div>
+        <div class="stage no" style="width:170px"><div class="word" style="font-size:19px;color:var(--ember)">Nguyen<span class="in">In</span>Doubt</div></div>
+        <div class="nolab">No all-ember</div>
+      </div>
+      <div>
+        <div class="stage no" style="width:170px;flex-direction:row"><div class="bdg" style="width:26px;height:26px;border-radius:8px;flex-shrink:0"><div class="nid" style="font-size:13px;color:#fff">N</div></div><div class="word" style="font-size:17px">Nguyen<span class="in">In</span>Doubt</div></div>
+        <div class="nolab">No tile beside the wordmark</div>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <div class="stage no" style="width:170px"><div class="word" style="font-size:19px;font-family:Georgia,serif;letter-spacing:0">Nguyen<span class="in">In</span>Doubt</div></div>
+        <div class="nolab">No other typefaces</div>
+      </div>
+      <div>
+        <div class="stage no" style="width:170px"><div class="word" style="font-size:19px;font-weight:400">Nguyen<span class="in">In</span>Doubt</div></div>
+        <div class="nolab">No light weights</div>
+      </div>
+      <div>
+        <div class="stage no" style="width:170px"><div class="word" style="font-size:19px;text-transform:uppercase;letter-spacing:.04em">Nguyen<span class="in">In</span>Doubt</div></div>
+        <div class="nolab">No all-caps</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

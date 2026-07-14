@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Welcome to NguyenInDoubt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  doc-page:not(:defined){visibility:hidden}
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  doc-page{font-family:'Inter',system-ui,sans-serif;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .masth{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--canopy);padding-bottom:14px}
+  .word{font-weight:700;letter-spacing:-.03em;color:var(--canopy);line-height:1;font-size:28px}
+  .word .in{color:var(--ember)}
+  .doclab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--faint)}
+  .lede{font-size:15px;line-height:1.65;color:var(--muted);margin-top:16px}
+  .lede b{color:var(--ink)}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:22px 0 10px}
+  p{font-size:13px;line-height:1.65;color:var(--muted);text-wrap:pretty}
+  p b{color:var(--ink);font-weight:600}
+  .steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;break-inside:avoid}
+  .step{background:var(--fog);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .num{width:26px;height:26px;border-radius:99px;background:var(--canopy);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step .t{font-size:13px;font-weight:700;margin-top:10px}
+  .step p{font-size:12px;margin-top:5px;line-height:1.55}
+  .share{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;background:var(--mint);border-radius:16px;padding:20px 22px;break-inside:avoid}
+  .share h3{font-size:15px;font-weight:700;color:var(--canopy)}
+  .share p{font-size:12.5px;margin-top:8px}
+  .codebox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;align-self:center}
+  .codebox .cl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--faint)}
+  .codebox .code{font-size:26px;font-weight:700;letter-spacing:.14em;color:var(--canopy);margin-top:10px;border-bottom:2px dashed var(--sage);padding-bottom:8px;min-height:34px}
+  .codebox .cw{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;break-inside:avoid}
+  ul{margin:0;padding-left:18px}
+  li{font-size:12.5px;line-height:1.65;color:var(--muted);margin-top:4px}
+  li b{color:var(--ink);font-weight:600}
+  .foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--faint);line-height:1.6;text-align:center}
+  .foot b{color:var(--muted)}
+</style>
+</head>
+<body>
+  <doc-page size="letter" margin="0.7in">
+    <div class="masth">
+      <div class="word">Nguyen<span class="in">In</span>Doubt</div>
+      <div class="doclab">Welcome · getting started</div>
+    </div>
+
+    <p class="lede"><b>When in doubt, check in — don't freak out.</b> NguyenInDoubt reads your body's quiet signals — sleep, heart rate, temperature — and tells you what they mean in plain words. Every reading compares you to <b>your own typical range</b>, never to anyone else. No streaks, no guilt, no alarms.</p>
+
+    <div class="k">Getting started</div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="t">Wear the ring</div>
+        <p>Snug on your index or middle finger, sensor on the palm side. Charge it every few days — it'll tell you when.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="t">Let it learn you</div>
+        <p>The first two weeks are calibration. Missed days are fine — they just extend it a little.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="t">One reading a morning</div>
+        <p>That's the whole habit. Open the app, read the note, get on with your day.</p>
+      </div>
+    </div>
+
+    <div class="k">Sharing with me — entirely optional</div>
+    <div class="share">
+      <div>
+        <h3>You choose what I see, if anything</h3>
+        <p>If you'd like me to see your readings, open <b>Profile → Request to share</b> and find me — Dr. Nguyen. You pick exactly what's shared — summaries, sleep detail, journal tags — and your written notes always stay yours.</p>
+        <p>Sharing is read-only, you see everything I see, and you can pause it anytime. No notice goes out when you do.</p>
+      </div>
+      <div class="codebox">
+        <div class="cl">How it works</div>
+        <p class="cw" style="text-align:left;margin-top:10px"><b>1.</b> You opt in and choose what to share<br><b>2.</b> I accept your request from my side<br><b>3.</b> Pause or change it anytime — no notice goes out</p>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="k">Learn as you go</div>
+        <ul>
+          <li><b>Tap any ⓘ dot</b> to get a plain-language explanation of a marker — HRV, readiness, temperature drift.</li>
+          <li><b>The Explore tab</b> has short reads and practices — stress, sleep, and low days included.</li>
+          <li><b>Box breathing</b> (4 minutes) is a good first practice for a racing evening.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="k">Good to know</div>
+        <ul>
+          <li><b>Ember-colored flags</b> mean "worth watching," never "panic." One odd reading is noise; three is a pattern.</li>
+          <li><b>Tags explain your scores</b> — they never change them.</li>
+          <li><b>Your data stays yours.</b> Processed on your device, never sold, never shared with advertisers.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="foot">NguyenInDoubt is educational — it never diagnoses, and it's not a substitute for care.<br><b>If things feel heavy, talking helps.</b> In the US, call or text <b>988</b> anytime.</p>
+  </doc-page>
+  <script src="doc-page.js"></script>
+</body>
+</html>

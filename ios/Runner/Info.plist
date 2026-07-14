@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Nguyenindoubt App</string>
+	<string>NguyenInDoubt</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,6 +22,24 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- Google sign-in requires the OAuth REVERSED_CLIENT_ID as a URL scheme so
+	     Google can redirect back into the app. The current GoogleService-Info.plist
+	     is a stub with no OAuth client (the Google provider is not enabled
+	     server-side yet), so this scheme is a documented placeholder built from
+	     GCM_SENDER_ID. Before flipping the app to real auth, enable Google sign-in
+	     in the Firebase console, re-download GoogleService-Info.plist, and replace
+	     the string below with its REVERSED_CLIENT_ID value. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.6173983291-kndcs876odq1cgcbaq8u6jgqhj9rv3dc</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>

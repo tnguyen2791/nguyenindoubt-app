@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sleep stages hypnogram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:560px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .val{font-size:13px;font-weight:600;color:var(--moss)}
+  .hypno{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+  .lane{display:grid;grid-template-columns:56px 1fr;align-items:center;gap:12px}
+  .lbl{font-size:11px;font-weight:700;color:#54635a;text-align:right}
+  .segs{display:flex;gap:3px;height:22px}
+  .seg{border-radius:5px}
+  .axis{display:flex;justify-content:space-between;margin-top:14px;padding-left:68px;font-size:11px;color:#7a887f}
+  .legend{display:flex;justify-content:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:#54635a}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .chip{width:10px;height:10px;border-radius:3px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="k">Sleep stages</div>
+      <div class="val">7h 36m in bed</div>
+    </div>
+    <div class="hypno">
+      <div class="lane"><div class="lbl">Awake</div><div class="segs"><div class="seg" style="flex:4;background:var(--sage)"></div><div class="seg" style="flex:38;background:transparent"></div><div class="seg" style="flex:3;background:var(--sage)"></div><div class="seg" style="flex:33;background:transparent"></div><div class="seg" style="flex:2;background:var(--sage)"></div></div></div>
+      <div class="lane"><div class="lbl">REM</div><div class="segs"><div class="seg" style="flex:20;background:transparent"></div><div class="seg" style="flex:9;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:22;background:transparent"></div><div class="seg" style="flex:12;background:var(--moss);opacity:.55"></div><div class="seg" style="flex:17;background:transparent"></div></div></div>
+      <div class="lane"><div class="lbl">Light</div><div class="segs"><div class="seg" style="flex:7;background:transparent"></div><div class="seg" style="flex:16;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:14;background:transparent"></div><div class="seg" style="flex:20;background:var(--moss);opacity:.8"></div><div class="seg" style="flex:23;background:var(--moss);opacity:.8"></div></div></div>
+      <div class="lane"><div class="lbl">Deep</div><div class="segs"><div class="seg" style="flex:4;background:transparent"></div><div class="seg" style="flex:11;background:var(--canopy)"></div><div class="seg" style="flex:36;background:transparent"></div><div class="seg" style="flex:9;background:var(--canopy)"></div><div class="seg" style="flex:20;background:transparent"></div></div></div>
+    </div>
+    <div class="axis"><span>11:20p</span><span>2:00a</span><span>4:40a</span><span>6:56a</span></div>
+    <div class="legend">
+      <span><span class="chip" style="background:var(--canopy)"></span>Deep 1h 12m</span>
+      <span><span class="chip" style="background:var(--moss);opacity:.8"></span>Light 4h 05m</span>
+      <span><span class="chip" style="background:var(--moss);opacity:.55"></span>REM 1h 34m</span>
+      <span><span class="chip" style="background:var(--sage)"></span>Awake 45m</span>
+    </div>
+  </div>
+</body>
+</html>

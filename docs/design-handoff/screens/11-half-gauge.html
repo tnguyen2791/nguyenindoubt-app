@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Half-circle gauge</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;width:240px;text-align:center}
+  .gauge{position:relative;width:196px;height:110px;margin:0 auto}
+  .center{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center}
+  .num{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .num small{font-size:14px;color:#54635a;font-weight:600}
+  .ends{display:flex;justify-content:space-between;font-size:11px;color:#7a887f;margin-top:4px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-top:14px}
+  .cap{font-size:13px;font-weight:600;color:#4F7A3C;margin-top:4px}
+  .cap.flag{color:#C4633E}
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="gauge">
+        <svg width="196" height="110" viewBox="0 0 196 110">
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="var(--mint)" stroke-width="14" stroke-linecap="round"/>
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="#4F7A3C" stroke-width="14" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="53"/>
+        </svg>
+        <div class="center"><div class="num">7.8<small>h</small></div></div>
+      </div>
+      <div class="ends"><span>0h</span><span>9h goal</span></div>
+      <div class="k">Sleep vs goal</div>
+      <div class="cap">goal met</div>
+    </div>
+    <div class="card">
+      <div class="gauge">
+        <svg width="196" height="110" viewBox="0 0 196 110">
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="var(--mint)" stroke-width="14" stroke-linecap="round"/>
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="#A08B48" stroke-width="14" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="88"/>
+        </svg>
+        <div class="center"><div class="num">6.0<small>h</small></div></div>
+      </div>
+      <div class="ends"><span>0h</span><span>9h goal</span></div>
+      <div class="k">Sleep vs goal</div>
+      <div class="cap" style="color:#A08B48">nearly there</div>
+    </div>
+    <div class="card">
+      <div class="gauge">
+        <svg width="196" height="110" viewBox="0 0 196 110">
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="var(--mint)" stroke-width="14" stroke-linecap="round"/>
+          <path d="M14 100 A84 84 0 0 1 182 100" fill="none" stroke="#C4633E" stroke-width="14" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="172"/>
+        </svg>
+        <div class="center"><div class="num">3.2<small>h</small></div></div>
+      </div>
+      <div class="ends"><span>0h</span><span>9h goal</span></div>
+      <div class="k">Sleep vs goal</div>
+      <div class="cap flag">well short</div>
+    </div>
+  </div>
+</body>
+</html>

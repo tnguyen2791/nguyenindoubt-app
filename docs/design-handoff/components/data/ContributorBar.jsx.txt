@@ -1,0 +1,21 @@
+const CONTRIB_STATE_COLORS = {
+  optimal: 'var(--state-optimal)',
+  good: 'var(--state-good)',
+  fair: 'var(--state-fair)',
+  'pay attention': 'var(--state-attention)',
+};
+
+export function ContributorBar({ name, state = 'good', fill = 100, color }) {
+  const c = color || CONTRIB_STATE_COLORS[state] || 'var(--state-good)';
+  return (
+    <div style={{ display: 'grid', gap: 5, fontFamily: 'var(--font-sans)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span style={{ fontSize: 'var(--fs-caption)', fontWeight: 'var(--fw-semibold)', color: 'var(--text-body)', whiteSpace: 'nowrap' }}>{name}</span>
+        <span style={{ fontSize: 'var(--fs-label)', fontWeight: 'var(--fw-semibold)', color: c, whiteSpace: 'nowrap' }}>{state}</span>
+      </div>
+      <div style={{ height: 7, borderRadius: 'var(--r-pill)', background: 'var(--mint)', overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, fill))}%`, borderRadius: 'var(--r-pill)', background: c }} />
+      </div>
+    </div>
+  );
+}

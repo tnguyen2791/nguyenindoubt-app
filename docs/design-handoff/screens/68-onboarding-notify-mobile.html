@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notification priming · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff;--desk:#E9ECE3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--desk);color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);display:flex;flex-direction:column}
+  .top{display:flex;align-items:center;justify-content:center;padding:22px 16px 6px;position:relative}
+  .back{position:absolute;left:16px;top:14px;width:32px;height:32px;border-radius:99px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+  .back svg{width:16px;height:16px;stroke:var(--canopy);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .dots{display:flex;gap:6px}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--mint)}
+  .dot.on{width:18px;background:var(--canopy)}
+  .scroll{flex:1;padding:0 24px 28px;display:flex;flex-direction:column}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.18;margin-top:22px;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.5;margin-top:10px}
+  .preview{background:var(--mint);border-radius:18px;padding:22px 16px;margin-top:26px}
+  .plab{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--moss);text-align:center;margin-bottom:12px}
+  .notif{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 14px;display:flex;gap:11px;align-items:flex-start;box-shadow:0 6px 18px rgba(23,33,27,.10)}
+  .nic{width:34px;height:34px;border-radius:26%;background:var(--canopy);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#fff;letter-spacing:-.04em}
+  .nic .i{color:var(--ember)}
+  .nt{flex:1;min-width:0}
+  .nt .h{display:flex;justify-content:space-between;align-items:baseline}
+  .nt .a{font-size:12px;font-weight:700}
+  .nt .w{font-size:10px;color:var(--faint)}
+  .nt .m{font-size:12px;color:var(--muted);line-height:1.45;margin-top:2px}
+  .points{margin-top:22px;display:grid;gap:12px}
+  .pt{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);line-height:1.5}
+  .pt svg{width:16px;height:16px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+  .spacer{flex:1;min-height:18px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:15px;border-radius:14px;cursor:pointer;text-align:center}
+  .skip{display:block;text-align:center;font-size:13px;font-weight:600;color:var(--muted);margin-top:14px;text-decoration:none;cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="back" onclick="location.href='66-onboarding-about-mobile.html'"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+      <div class="dots"><span class="dot"></span><span class="dot on"></span><span class="dot"></span></div>
+    </div>
+    <div class="scroll">
+      <h1>One note a morning</h1>
+      <p class="sub">Here's the only notification most days — your reading, when it's ready.</p>
+      <div class="preview">
+        <div class="plab">Preview</div>
+        <div class="notif">
+          <div class="nic">N<span class="i">i</span>D</div>
+          <div class="nt">
+            <div class="h"><span class="a">NguyenInDoubt</span><span class="w">7:04a</span></div>
+            <p class="m">Your reading is ready. A protective night — readiness 82.</p>
+          </div>
+        </div>
+      </div>
+      <div class="points">
+        <div class="pt"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>No streaks, no nudges to "close rings"</div>
+        <div class="pt"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Out-of-range alerts only if you turn them on</div>
+        <div class="pt"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Quiet hours respected — nothing overnight</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="cta" onclick="location.href='44-onboarding-baseline-mobile.html'">Enable notifications</button>
+      <a class="skip" onclick="location.href='44-onboarding-baseline-mobile.html'">Maybe later</a>
+    </div>
+  </div>
+</body>
+</html>

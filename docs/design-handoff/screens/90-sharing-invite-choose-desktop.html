@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharing invite · choose · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:28px 40px}
+  .brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .crumb{font-size:13px;font-weight:600;color:var(--faint)}
+  .crumb a{text-decoration:none}
+  .mid{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:480px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:36px}
+  h1{font-size:24px;font-weight:700;letter-spacing:-.015em;color:var(--canopy)}
+  .sub{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}
+  .prov{background:var(--fog);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:13px;margin-top:20px}
+  .pava{width:42px;height:42px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pt{flex:1}
+  .pt .n{font-size:14px;font-weight:700}
+  .pt .d{font-size:12px;color:var(--muted);margin-top:2px}
+  .ver{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--moss);white-space:nowrap}
+  .ver svg{width:14px;height:14px;stroke:var(--moss);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin:20px 2px 6px}
+  .row{display:flex;align-items:center;gap:12px;padding:13px 2px;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0}
+  .rl{font-size:14px;font-weight:600}
+  .rd{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0;margin-left:auto}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:var(--knob,#fff);box-shadow:0 1px 3px rgba(23,33,27,.25)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .cta{display:block;width:100%;border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:15px;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;text-align:center;margin-top:20px}
+  .fine{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--faint);line-height:1.5;margin-top:14px}
+  .fine svg{width:15px;height:15px;stroke:var(--moss);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+  .foot{text-align:center;font-size:11px;color:var(--faint);padding:20px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+    <div class="crumb"><a href="88-sharing-invite-code-desktop.html">Share with a provider</a> / Choose</div>
+  </div>
+  <div class="mid">
+    <div class="card">
+      <h1>Choose what to share</h1>
+      <p class="sub">Your request goes to them first. Start small — you can add or remove anything later.</p>
+      <div class="prov">
+        <div class="pava">DN</div>
+        <div class="pt">
+          <div class="n">Dr. Nguyen</div>
+          <div class="d">Accepting share requests</div>
+        </div>
+        <span class="ver"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg>verified</span>
+      </div>
+      <div class="k">They'll see</div>
+      <div class="row"><div><div class="rl">Scores &amp; trends</div><div class="rd">Readiness, sleep, and activity summaries</div></div><div class="sw on"></div></div>
+      <div class="row"><div><div class="rl">Sleep detail</div><div class="rd">Stages, heart rate, and HRV overnight</div></div><div class="sw on"></div></div>
+      <div class="row"><div><div class="rl">Journal tags</div><div class="rd">The tags you log — caffeine, stress, and the rest</div></div><div class="sw"></div></div>
+      <div class="row"><div><div class="rl">Journal notes</div><div class="rd">Your written notes stay yours unless you choose this</div></div><div class="sw"></div></div>
+      <button class="cta" onclick="location.href='92-sharing-invite-done-desktop.html'">Send request</button>
+      <p class="fine">
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3Z"/></svg>
+        Read-only, one provider, and you see everything they see. They can accept or decline — and you can cancel anytime.
+      </p>
+    </div>
+  </div>
+  <p class="foot">Sharing is read-only and always yours to pause · never a diagnosis</p>
+</body>
+</html>

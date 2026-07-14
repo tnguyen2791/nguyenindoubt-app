@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Provider settings · desktop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f;--surface:#ffffff;--onaccent:#ffffff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:32px 28px 48px;min-height:100vh}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .page{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .tr{display:flex;align-items:center;gap:12px}
+  .pbadge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);background:var(--mint);border-radius:99px;padding:6px 14px}
+  .avatar{width:32px;height:32px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .crumb{font-size:13px;font-weight:600;color:var(--faint);margin-top:26px}
+  .crumb a{text-decoration:none;font-weight:600}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.015em;margin-top:8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy);margin-bottom:6px}
+  .row{display:flex;align-items:center;gap:12px;padding:14px 2px;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0}
+  .rl{font-size:14px;font-weight:600}
+  .rd{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .rv{margin-left:auto;font-size:13px;color:var(--faint);white-space:nowrap}
+  .chev{width:16px;height:16px;stroke:var(--faint);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;margin-left:8px;flex-shrink:0}
+  .sw{width:44px;height:26px;border-radius:99px;background:var(--mint);position:relative;flex-shrink:0;margin-left:auto}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;background:var(--knob,#fff);box-shadow:0 1px 3px rgba(23,33,27,.25)}
+  .sw.on{background:var(--canopy)}
+  .sw.on::after{left:21px}
+  .me{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .mava{width:52px;height:52px;border-radius:99px;background:var(--canopy);color:var(--onaccent);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .mn{font-size:16px;font-weight:700}
+  .md{font-size:12px;color:var(--muted);margin-top:2px}
+  .gen{display:flex;gap:10px;align-items:center;background:var(--mint);border-radius:12px;padding:13px 15px;margin:6px 0 10px}
+  .gen .gt{font-size:12.5px;color:var(--ink);line-height:1.5;flex:1}
+  .genbtn{border:0;background:var(--canopy);color:var(--onaccent);font:inherit;font-size:12px;font-weight:700;border-radius:99px;padding:9px 16px;cursor:pointer;white-space:nowrap}
+  .code{font-family:ui-monospace,monospace;font-size:13px;font-weight:600;color:var(--canopy);background:var(--fog);border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+  .st{font-size:11px;font-weight:700;white-space:nowrap}
+  .st.pend{color:var(--faint)}
+  .st.conn{color:var(--moss)}
+  .signout{display:block;width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ember);font:inherit;font-size:14px;font-weight:700;padding:13px;border-radius:14px;cursor:pointer;text-align:center}
+  .note{font-size:12px;color:var(--faint);line-height:1.6;margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <div class="tr"><span class="pbadge">Provider</span><span class="avatar">DN</span></div>
+    </div>
+    <div class="crumb"><a href="76-provider-dashboard-desktop.html">People</a> / Settings</div>
+    <h1>Provider settings</h1>
+    <div class="grid">
+      <div class="col">
+        <div class="card">
+          <div class="me">
+            <div class="mava">DN</div>
+            <div>
+              <div class="mn">Dr. Nguyen</div>
+              <div class="md">dr.nguyen@practice.com · verified provider</div>
+            </div>
+          </div>
+          <div class="row"><div><div class="rl">Display name</div><div class="rd">How you appear to people who share</div></div><span class="rv">Dr. Nguyen</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="row"><div><div class="rl">Work email</div><div class="rd">Sign-in and digest delivery</div></div><span class="rv">dr.nguyen@practice.com</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+        </div>
+        <div class="card">
+          <div class="k">Sharing requests</div>
+          <div class="gen">
+            <p class="gt">People opt in from their own app. Accept or decline here — and remove access anytime.</p>
+            <button class="genbtn">Review requests</button>
+          </div>
+          <div class="row"><div><div class="rl">Minh Nguyen</div><div class="rd">Asked today · scores &amp; sleep</div></div><span class="st pend" style="margin-left:auto">waiting on you</span></div>
+          <div class="row"><div><div class="rl">Ana Lim</div><div class="rd">Sharing since Jul 2 · scores only</div></div><span class="st conn" style="margin-left:auto">connected</span></div>
+          <div class="row"><div><div class="rl">Thao Pham</div><div class="rd">Sharing since May 28 · scores, sleep &amp; journal</div></div><span class="st conn" style="margin-left:auto">connected</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="k">Notifications</div>
+          <div class="row"><div><div class="rl">Morning digest</div><div class="rd">One email when new readings arrive</div></div><span class="rv">8:00a</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="row"><div><div class="rl">Pattern notes</div><div class="rd">When someone's readings show a multi-day pattern</div></div><div class="sw on"></div></div>
+          <div class="row"><div><div class="rl">Sharing changes</div><div class="rd">When someone starts sharing with you</div></div><div class="sw on"></div></div>
+        </div>
+        <div class="card">
+          <div class="k">Good to know</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.65">You're never notified when someone pauses or narrows their sharing — that's by design. What you see is always exactly what they've chosen, nothing more.</p>
+        </div>
+        <button class="signout">Sign out</button>
+      </div>
+    </div>
+    <p class="note">Readings are context for conversations — never a diagnosis.</p>
+  </div>
+</body>
+</html>

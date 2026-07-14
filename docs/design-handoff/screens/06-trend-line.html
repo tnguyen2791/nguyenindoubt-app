@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Overnight trend line</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--fog);color:var(--ink);padding:28px}
+  .card{max-width:560px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .val{font-size:13px;font-weight:600;color:var(--moss)}
+  .hero{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+  .big{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .big small{font-size:18px;color:#54635a}
+  .chart{margin-top:18px}
+  .axis{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:#7a887f}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="k">Nighttime HRV</div>
+      <div class="val">avg 48 ms</div>
+    </div>
+    <div class="hero"><div class="big">52<small>ms</small></div><div class="val">balanced range</div></div>
+    <div class="chart">
+      <svg width="100%" height="140" viewBox="0 0 520 140" preserveAspectRatio="none">
+        <line x1="0" y1="35" x2="520" y2="35" stroke="rgba(30,74,52,.08)" stroke-width="1"/>
+        <line x1="0" y1="70" x2="520" y2="70" stroke="rgba(30,74,52,.08)" stroke-width="1"/>
+        <line x1="0" y1="105" x2="520" y2="105" stroke="rgba(30,74,52,.08)" stroke-width="1"/>
+        <polygon points="0,140 0,92 87,78 173,88 260,54 347,60 433,40 520,48 520,140" fill="rgba(93,127,67,.12)"/>
+        <polyline points="0,92 87,78 173,88 260,54 347,60 433,40 520,48" fill="none" stroke="#5D7F43" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="433" cy="40" r="5" fill="#5D7F43"/>
+      </svg>
+      <div class="axis"><span>12a</span><span>2a</span><span>4a</span><span>6a</span></div>
+    </div>
+  </div>
+</body>
+</html>

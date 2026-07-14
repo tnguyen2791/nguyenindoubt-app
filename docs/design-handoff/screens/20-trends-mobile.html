@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trends · mobile</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  :root{--ink:#17211B;--canopy:#1E4A34;--moss:#5D7F43;--sage:#A9BA92;--mint:#E4EDDD;--fog:#F6F7F1;--ember:#C56844;--line:rgba(30,74,52,.14);--muted:#54635a;--faint:#7a887f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:#E9ECE3;color:var(--ink)}
+  a{color:var(--canopy)}a:hover{color:var(--moss)}
+  .phone{width:390px;min-height:844px;margin:0 auto;background:var(--fog);position:relative;display:flex;flex-direction:column}
+  .scroll{flex:1;padding:0 16px 24px}
+  .top{position:sticky;top:0;z-index:5;background:var(--fog);display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px}
+  .brand{display:flex;align-items:center;font-weight:700;font-size:15px;letter-spacing:-.01em}
+  .brand .in{color:var(--ember)}
+  .avatar{width:32px;height:32px;border-radius:99px;background:var(--mint);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--canopy)}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:4px 2px 0}
+  /* segmented */
+  .seg{display:flex;background:var(--mint);border-radius:99px;padding:3px;margin-top:16px}
+  .seg button{flex:1;border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--muted);padding:8px 0;border-radius:99px;cursor:pointer}
+  .seg button.on{background:#fff;color:var(--canopy);box-shadow:0 1px 3px rgba(30,74,52,.12)}
+  .range{display:flex;gap:8px;margin-top:12px}
+  .range button{border:1px solid var(--line);background:#fff;font:inherit;font-size:12px;font-weight:600;color:var(--muted);padding:6px 14px;border-radius:99px;cursor:pointer}
+  .range button.on{background:var(--canopy);color:#fff;border-color:var(--canopy)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:14px}
+  .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--canopy)}
+  .head{display:flex;align-items:baseline;justify-content:space-between}
+  .headnote{font-size:11px;font-weight:600;color:var(--faint)}
+  /* stat row */
+  .stats{display:flex;justify-content:space-between;margin-top:6px}
+  .stat .n{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .stat .n small{font-size:13px;color:var(--muted);font-weight:600}
+  .stat .l{font-size:11px;color:var(--faint);margin-top:2px}
+  .caxis{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--faint)}
+  /* weekly bars */
+  .bars{display:flex;align-items:flex-end;gap:12px;height:120px;margin-top:14px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .hrs{font-size:11px;font-weight:700;color:var(--canopy);margin-bottom:5px}
+  .bar{width:100%;border-radius:8px 8px 5px 5px}
+  .day{font-size:10px;color:var(--faint);margin-top:6px}
+  /* heatmap */
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:14px;font-size:10px;color:var(--faint);text-align:center}
+  .hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:5px}
+  .cell{aspect-ratio:1;border-radius:5px;background:var(--mint)}
+  .l1{background:#D7E4C9}.l2{background:var(--sage)}.l3{background:var(--moss)}.l4{background:var(--canopy)}
+  .cell.flag{background:#C4633E}.cell.empty{background:transparent}
+  /* tab bar */
+  .tabbar{position:sticky;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding:10px 8px 22px}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--faint)}
+  .tab.active{color:var(--canopy)}
+  .tab svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tab .add{width:38px;height:38px;border-radius:99px;background:var(--canopy);display:flex;align-items:center;justify-content:center}
+  .tab .add svg{stroke:#fff;width:20px;height:20px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="brand">Nguyen<span class="in">In</span>Doubt</div>
+      <span class="avatar">M</span>
+    </div>
+    <div class="scroll">
+      <h1>Trends</h1>
+      <div class="seg"><button class="on">Sleep</button><button onclick="location.href='28-readiness-detail-mobile.html'">Readiness</button><button onclick="location.href='98-activity-detail-mobile.html'">Activity</button></div>
+      <div class="range"><button>Week</button><button class="on">Month</button><button>Quarter</button></div>
+
+      <!-- score trend -->
+      <div class="card" onclick="location.href='21-sleep-detail-mobile.html'" style="cursor:pointer">
+        <div class="head"><div class="k">Sleep score · 30 days</div><div class="headnote">trending up</div></div>
+        <div class="stats">
+          <div class="stat"><div class="n">84</div><div class="l">avg score</div></div>
+          <div class="stat"><div class="n">95</div><div class="l">best</div></div>
+          <div class="stat"><div class="n">6.9<small>h</small></div><div class="l">avg sleep</div></div>
+        </div>
+        <svg width="100%" height="130" viewBox="0 0 340 130" preserveAspectRatio="none" style="margin-top:14px">
+          <line x1="0" y1="30" x2="340" y2="30" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="70" x2="340" y2="70" stroke="rgba(30,74,52,.07)"/>
+          <line x1="0" y1="110" x2="340" y2="110" stroke="rgba(30,74,52,.07)"/>
+          <polygon points="0,130 0,78 28,84 57,66 85,72 113,54 142,60 170,44 198,58 227,40 255,50 283,34 312,42 340,30 340,130" fill="rgba(93,127,67,.12)"/>
+          <polyline points="0,78 28,84 57,66 85,72 113,54 142,60 170,44 198,58 227,40 255,50 283,34 312,42 340,30" fill="none" stroke="var(--moss)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="340" cy="30" r="4" fill="var(--moss)"/>
+        </svg>
+        <div class="caxis"><span>Jun 8</span><span>Jun 22</span><span>Jul 7</span></div>
+      </div>
+
+      <!-- weekly averages -->
+      <div class="card">
+        <div class="head"><div class="k">Weekly sleep avg</div><div class="headnote">hours</div></div>
+        <div class="bars">
+          <div class="bcol"><div class="hrs">6.4</div><div class="bar" style="height:64%;background:#A08B48"></div><div class="day">W1</div></div>
+          <div class="bcol"><div class="hrs">6.9</div><div class="bar" style="height:74%;background:#8C8E49"></div><div class="day">W2</div></div>
+          <div class="bcol"><div class="hrs">7.3</div><div class="bar" style="height:84%;background:#688343"></div><div class="day">W3</div></div>
+          <div class="bcol"><div class="hrs">7.5</div><div class="bar" style="height:90%;background:#537B3D"></div><div class="day">W4</div></div>
+        </div>
+      </div>
+
+      <!-- consistency -->
+      <div class="card">
+        <div class="head"><div class="k">Consistency</div><div class="headnote">24 / 30 on target</div></div>
+        <div class="dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="hgrid">
+          <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell l3"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+          <div class="cell l4"></div><div class="cell l3"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell l4"></div>
+          <div class="cell l3"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l3"></div><div class="cell l4"></div>
+          <div class="cell l4"></div><div class="cell l3"></div><div class="cell l3"></div><div class="cell l1"></div><div class="cell l2"></div><div class="cell l4"></div><div class="cell l3"></div>
+          <div class="cell l3"></div><div class="cell l4"></div><div class="cell flag"></div><div class="cell l2"></div><div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabbar">
+      <div class="tab" onclick="location.href='18-dashboard-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>Today</div>
+      <div class="tab active" onclick="location.href='20-trends-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Trends</div>
+      <div class="tab" onclick="location.href='30-add-sheet-mobile.html'" style="cursor:pointer"><div class="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div>
+      <div class="tab" onclick="location.href='70-explore-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>Explore</div>
+      <div class="tab" onclick="location.href='31-profile-mobile.html'" style="cursor:pointer"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Profile</div>
+    </div>
+  </div>
+</body>
+</html>
